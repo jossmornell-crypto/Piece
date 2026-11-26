@@ -100,7 +100,7 @@ function renderPanel() {
       <p class="s" style="font-size:12px;color:var(--mist);margin:6px 0 0">${esc(TIER_TEXT[hereTier()])}</p>
       <h3>Haki</h3>${meter("Observation", p.observation, "haki")}${meter("Armament", p.armament, "haki")}
       <div class="meter">Conqueror's <b style="float:right">${p.conqueror ? "AWAKENED" : "dormant"}</b></div>
-      <h3>Devil Fruit</h3>${f ? `<div class="card"><div class="t">${esc(f.name)}</div><div class="s">${esc(f.eng)} · ${esc(f.type)}</div>${esc(f.power)}<div class="s" style="margin-top:4px">Limit: ${esc(f.limit)}</div></div>${meter("Mastery", p.mastery)}` : `<p class="empty">No fruit. You can still swim.</p>`}
+      <h3>Devil Fruit</h3>${f ? `<div class="card"><div class="t">${esc(f.name)}</div><div class="s">${esc(f.eng)} · ${esc(f.type)}</div>${esc(f.power)}<div class="s" style="margin-top:4px">Limit: ${esc(f.limit)}</div></div>${meter("Mastery", p.mastery)}${p.fruit === "kuki" ? airPathHTML() : ""}` : `<p class="empty">No fruit. You can still swim.</p>`}
       ${techniquesHTML()}
       <h3>Weapons</h3>${p.weapons.length ? p.weapons.map((w) => `<div class="card"><div class="t">${esc(w.name)} <span class="disp ${w.grade === "Legendary" || w.grade === "Grade Blade" ? "pos" : "neu"}">${esc(w.grade)}</span></div><div class="s">${esc(w.kind)}</div>${esc(w.desc)}</div>`).join("") : `<p class="empty">Unarmed.</p>`}
       <h3>Inventory</h3>${p.items.length ? `<ul class="list">${p.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>` : `<p class="empty">Empty pockets.</p>`}
@@ -136,6 +136,10 @@ function renderPanel() {
   }
   P.innerHTML = h;
 }
+function airPathHTML() {
+  const m = S.player.mastery;
+  return `<h3>Air mastery path</h3><ol class="airpath">${AIR_PATH.map((a) => `<li class="${m >= a.at ? "on" : ""}"><span>${a.at}</span><div><b>${esc(a.name)}</b><small>${esc(a.desc)}</small></div></li>`).join("")}</ol>`;
+}
 function techniquesHTML() {
   const p = S.player, slots = techSlots(), full = p.techniques.length >= slots, next = nextSlotAt();
   let h = `<h3>Techniques (${p.techniques.length} / ${slots})</h3>`;
@@ -146,6 +150,7 @@ function techniquesHTML() {
   if (full) h += `<p class="empty">All slots used. ${next ? `Next slot at power level ${next}.` : "Earn more through great milestones."} Forget one to invent another.</p>`;
   else h += `<div class="invent"><div class="field"><label for="tName">Invent a technique</label><input id="tName" maxlength="50" placeholder="Name, e.g. Gale Piercer"></div>
     <div class="field"><textarea id="tDesc" rows="2" maxlength="220" placeholder="What does it do? Dream big; it starts at Raw and grows as you do."></textarea></div>
+    ${p.fruit === "kuki" ? `<div class="chips">${AIR_MOVES.filter((m) => !p.techniques.some((t) => t.name === m.name)).map((m) => `<button type="button" data-airmove="${esc(m.name)}" title="${esc(m.desc)}">${esc(m.name)}</button>`).join("")}</div>` : ""}
     <button type="button" class="btn ghost" id="tAdd">Add technique</button></div>`;
   return h;
 }
@@ -153,6 +158,8 @@ $("#panel").addEventListener("click", (e) => {
   const p = S?.player; if (!p) return;
   const f = e.target.closest("[data-forget]");
   if (f) { const i = +f.dataset.forget; if (p.forgetArm === i) { p.techniques.splice(i, 1); delete p.forgetArm; saveGame(); } else p.forgetArm = i; renderPanel(); return; }
+  const am = e.target.closest("[data-airmove]");
+  if (am) { const m = AIR_MOVES.find((x) => x.name === am.dataset.airmove); if (m) { $("#tName").value = m.name; $("#tDesc").value = m.desc; } return; }
   if (e.target.id === "tAdd") {
     const name = $("#tName").value.trim(), desc = $("#tDesc").value.trim();
     if (!name || !desc || p.techniques.length >= techSlots()) return;
@@ -212,14 +219,27 @@ function burst(cls, n, color) {
 function wind() { for (let i = 0; i < 12; i++) addFx("fx-wind", 1000, "", `top:${8 + Math.random() * 84}%;animation-delay:${Math.random() * 0.4}s;width:${20 + Math.random() * 40}%`); }
 function zoom() { addFx("fx-zoom", 900); }
 function aura(color = "#9b5cff") { addFx("fx-aura", 1800, "", `--c:${color}`); }
-function rankup(text) {
+// growth banners play one at a time so they never overlap
+const bannerQ = []; let bannerBusy = false;
+function rankup(text, air) {
   if (!vfxOn()) return;
-  addFx("fx-rank", 2600, `<small>Technique growth</small><strong></strong>`).querySelector("strong").textContent = text;
-  sparkles(); aura("#e6a93d");
+  bannerQ.push({ text, air });
+  if (!bannerBusy) nextBanner();
+}
+function nextBanner() {
+  const b = bannerQ.shift(); if (!b) { bannerBusy = false; return; }
+  bannerBusy = true;
+  addFx("fx-rank", 2600, `<small>${b.air ? "Air mastery" : "Technique growth"}</small><strong></strong>`).querySelector("strong").textContent = b.text;
+  sparkles(); aura(b.air ? "#bfe6ff" : "#e6a93d"); if (b.air) airburst();
+  setTimeout(nextBanner, 2700);
 }
 function dangerPulse(tier) {
   if (!vfxOn()) return;
   aura("#e0564f"); addFx("fx-card danger", 2600, `<div><small>Threat rising</small><strong>${"★".repeat(tier)}</strong></div>`);
+}
+function airburst() {
+  for (let i = 0; i < 4; i++) addFx("fx-ring", 1200, "", `animation-delay:${i * 0.12}s`);
+  wind(); addFx("fx-flash soft", 350);
 }
 function fruitSwirl(color) { addFx("fx-swirl", 1650, "", color ? `background:repeating-conic-gradient(transparent 0 12deg, ${color}66 12deg 18deg)` : ""); }
 function sparkles() { for (let i = 0; i < 14; i++) addFx("fx-sparkle", 1500, "", `left:${Math.random() * 100}%;top:${20 + Math.random() * 60}%;animation-delay:${Math.random() * .5}s`); }
@@ -245,6 +265,7 @@ function playVFX(list) {
       case "shatter": burst("fx-shard", 22); addFx("fx-flash soft", 400); sfx("パリンッ"); break;
       case "aura": aura(); break;
       case "zoom": zoom(); break;
+      case "airburst": airburst(); sfx("ボウッ"); break;
       case "rankup": rankup("Power surges"); break;
     }
   }, i * 380));
@@ -368,8 +389,11 @@ async function takeTurn(action) {
   if (out.moved) setTimeout(() => titleCard(out.moved), 300);
   if (out.danger) setTimeout(() => dangerPulse(out.danger), 3300);
   if (out.bountyUp > 0) setTimeout(bountyPoster, 900);
-  out.rankups?.forEach((t, i) => setTimeout(() => rankup(`${t.name}: ${RANKS[t.rank]}`), 1400 + i * 2700));
-  if (out.slotGained) setTimeout(() => rankup("New technique slot!"), 1400 + (out.rankups?.length || 0) * 2700);
+  setTimeout(() => {
+    out.rankups?.forEach((t) => rankup(`${t.name}: ${RANKS[t.rank]}`, S.player.fruit === "kuki"));
+    out.airUnlocks?.forEach((a) => rankup(`Unlocked: ${a.name}`, true));
+    if (out.slotGained) rankup("New technique slot!");
+  }, 1400);
   if (out.saga) pushLog({ t: "sys", kind: "event", label: `Saga ${out.saga}`, text: "A new age begins on the sea." });
   for (const ev of out.events) pushLog({ t: "sys", kind: "event", label: `Day ${S.day} · World event`, text: `${ev.title}. ${ev.desc}` });
   if (out.rumor) pushLog({ t: "sys", label: "Rumor on the wind", text: out.rumor });
@@ -410,7 +434,7 @@ function buildCreate() {
     const wNote = () => ($("#cWNote").textContent = ["#cW1", "#cW2"].map((s) => WEAPONS.find((w) => w.id === $(s).value)).filter(Boolean).map((w) => `${w.name}: ${w.desc}`).join("  ·  "));
     $("#cW1").onchange = wNote; $("#cW2").onchange = wNote; wNote();
   }
-  renderFruitPicks(); renderStarts();
+  renderFruitPicks(); renderStarts(); renderMoveIdeas();
 }
 function renderFruitPicks() {
   const chips = $("#fruitFilter"); chips.innerHTML = "";
@@ -418,26 +442,44 @@ function renderFruitPicks() {
     const b = document.createElement("button"); b.type = "button"; b.textContent = f; b.setAttribute("aria-pressed", f === fruitFilter);
     b.onclick = () => { fruitFilter = f; renderFruitPicks(); }; chips.append(b);
   }
-  const starters = WORLD_SEED.fruits.filter((f) => f.starter && (fruitFilter === "All" || f.type.includes(fruitFilter)));
+  const starters = WORLD_SEED.fruits.filter((f) => f.starter && (fruitFilter === "All" || f.type.includes(fruitFilter))).sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
   const box = $("#fruitPicks"); box.innerHTML = "";
   const opts = [...(fruitFilter === "All" ? [{ id: null, name: "No fruit", eng: "Keep the sea as your friend", power: "You can swim, and seastone can't touch you. Haki and your fighting style grow a little faster.", type: "", cost: "No miracle powers. You win with skill, grit and friends." }] : []), ...starters];
   for (const f of opts) {
     const b = document.createElement("button"); b.type = "button"; b.className = "fruitpick"; b.setAttribute("aria-pressed", f.id === pickedFruit);
-    b.innerHTML = `<b>${esc(f.name)}</b><small>${esc(f.eng)}${f.type ? " · " + esc(f.type) : ""}</small><br>${esc(f.power)}${f.cost ? `<span class="cost">Cost: ${esc(f.cost)}</span>` : ""}`;
+    b.innerHTML = `${f.featured ? `<span class="featured">Featured · full mastery path</span>` : ""}<b>${esc(f.name)}</b><small>${esc(f.eng)}${f.type ? " · " + esc(f.type) : ""}</small><br>${esc(f.power)}${f.cost ? `<span class="cost">Cost: ${esc(f.cost)}</span>` : ""}`;
     if (f.color) b.style.setProperty("--fc", f.color);
-    b.onclick = () => { pickedFruit = f.id; renderFruitPicks(); renderStarts(); };
+    if (f.featured) b.classList.add("feat");
+    b.onclick = () => { pickedFruit = f.id; renderFruitPicks(); renderStarts(); renderMoveIdeas(); };
     box.append(b);
   }
   $("#fruitCount").textContent = `${WORLD_SEED.fruits.filter((f) => f.starter).length} starter fruits · fruits you don't pick will be eaten by people somewhere in the world`;
 }
-function startOk(s) { return s.req === "any" || (s.req === "fruit") === !!pickedFruit; }
+function renderMoveIdeas() {
+  const box = $("#moveIdeas"); box.innerHTML = "";
+  box.hidden = pickedFruit !== "kuki";
+  if (box.hidden) return;
+  const lab = document.createElement("small"); lab.className = "note"; lab.style.width = "100%"; lab.textContent = "Air move ideas: tap one to fill the next empty technique slot.";
+  box.append(lab);
+  for (const m of AIR_MOVES) {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = m.name; b.title = m.desc;
+    b.onclick = () => { const i = [1, 2, 3].find((n) => !$("#cT" + n).value.trim()); if (!i) return; $("#cT" + i).value = m.name; $("#cT" + i + "d").value = m.desc; };
+    box.append(b);
+  }
+}
+function startOk(s) {
+  if (s.req === "any") return true;
+  if (s.req === "fruit" || s.req === "nofruit") return (s.req === "fruit") === !!pickedFruit;
+  return s.req === pickedFruit; // fruit-specific path
+}
 function renderStarts() {
   if (!startOk(STARTS.find((s) => s.id === pickedStart))) pickedStart = STARTS.find(startOk).id;
   const box = $("#startPicks"); box.innerHTML = "";
   for (const s of STARTS) {
     const ok = startOk(s);
     const b = document.createElement("button"); b.type = "button"; b.className = "fruitpick startpick"; b.disabled = !ok; b.setAttribute("aria-pressed", s.id === pickedStart);
-    b.innerHTML = `<b>${esc(s.title)}</b>${esc(s.text)}<span class="cost">${esc(s.cons)}</span>${ok ? "" : `<small>${s.req === "fruit" ? "Needs a Devil Fruit" : "Only without a Devil Fruit"}</small>`}`;
+    const why = s.req === "fruit" ? "Needs a Devil Fruit" : s.req === "nofruit" ? "Only without a Devil Fruit" : `Only with the ${WORLD_SEED.fruits.find((f) => f.id === s.req)?.eng || s.req}`;
+    b.innerHTML = `<b>${esc(s.title)}</b>${esc(s.text)}<span class="cost">${esc(s.cons)}</span>${ok ? "" : `<small>${esc(why)}</small>`}`;
     b.onclick = () => { pickedStart = s.id; renderStarts(); };
     box.append(b);
   }

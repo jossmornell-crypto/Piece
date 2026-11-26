@@ -294,3 +294,52 @@ const SEEDS = [
   { id: "s_any_seaking", kind: "side", where: "any", text: "A Sea King blocks the route and something about it is strange (injured, tamed, carrying a rider)." },
   { id: "s_any_bearer", kind: "side", where: "any", text: "A Devil Fruit user from the bearer list crosses the player's path in an interesting situation." }
 ];
+
+/* ============================================================
+   AIR-AIR FRUIT (Kuki Kuki no Mi, Paramecia): the showcase fruit
+   ============================================================ */
+Object.assign(WORLD_SEED.fruits.find((f) => f.id === "kuki"), {
+  featured: true,
+  power: "Shape any air you touch or breathe out. Compress it into bullets and cannons, harden it into invisible walls and stairs, empty it into vacuums, and steer currents to fly in bursts. Air you've shaped stays under your control until you let go or lose focus.",
+  limit: "No body transformation: you are flesh and blood and can be hit. You must touch the air or breathe it out to claim it, so range starts at arm's length plus one breath. You can't make air from nothing: underwater, in a vacuum, or with a seastone gag you are nearly powerless."
+});
+
+// mastery path: what the Air fruit can do at each mastery level
+const AIR_PATH = [
+  { at: 0, name: "Breath Shaping", desc: "Harden one breath into a small air bullet or a palm-sized shield. Range: arm's length." },
+  { at: 10, name: "Sky Step", desc: "Stamp air solid under your feet to run up a few steps of empty sky." },
+  { at: 20, name: "Pressure Cannon", desc: "Compress a full lungful and release it as a cannon blast that knocks people flat." },
+  { at: 30, name: "Vacuum Fist", desc: "Empty the air around a punch. Targets gasp, flames die, and sound vanishes for a heartbeat." },
+  { at: 40, name: "Air Sense", desc: "Feel movement through pressure changes in air you've claimed: a weak, fruit-based echo of Observation Haki." },
+  { at: 50, name: "Gale Wall", desc: "Raise a room-sized dome of hard air that stops cannonballs, for a few seconds." },
+  { at: 60, name: "Lung Thief", desc: "Steal the breath from a small group's lungs. Dangerous and draining; strong Haki resists it." },
+  { at: 70, name: "Updraft Flight", desc: "Ride self-made pressure currents for real flight over short distances." },
+  { at: 85, name: "Pressure Front", desc: "Shape a whole battlefield's air: drop pressure to cause dizziness, or form a storm front." },
+  { at: 100, name: "AWAKENING: Sky Dominion", desc: "The surroundings answer you: the air of an entire island becomes yours to shape, without touch or breath." }
+];
+
+// ready-made Air move ideas (the player can add these as techniques)
+const AIR_MOVES = [
+  { name: "Breath Bullet", desc: "Spit a compressed pellet of air that hits like a musket ball." },
+  { name: "Sky Step Rush", desc: "Chain air-steps to dash through the air and strike from above." },
+  { name: "Vacuum Fist", desc: "A punch wrapped in a vacuum that steals the target's breath and silences their shout." },
+  { name: "Pressure Cannon", desc: "Release a full lungful of compressed air as a cannon blast." },
+  { name: "Gale Wall", desc: "An invisible dome of hardened air that blocks attacks for a moment." },
+  { name: "Eardrum Pop", desc: "A sharp pressure snap beside an enemy's ears that leaves them dizzy and deaf." },
+  { name: "Updraft Launch", desc: "Blast air under yourself or an ally to launch skyward." },
+  { name: "Air Lance", desc: "Compress air into a needle-thin spear that pierces armor." },
+  { name: "Cushion Breath", desc: "Catch a falling ally (or yourself) on a pillow of soft air." },
+  { name: "Lung Thief", desc: "Pull the air out of an enemy's lungs from a distance." },
+  { name: "Whisper Wind", desc: "Carry your voice, or someone else's, along a thread of air to a far-off ear." },
+  { name: "Tempest Palm", desc: "Spin compressed air into a small cyclone fired from the palm." }
+];
+
+// a start path only the Air fruit can take
+STARTS.splice(4, 0, {
+  id: "skyfall", req: "kuki", title: "Fell from the sky",
+  text: "You were a sky-courier until a Concord gunship shot your balloon down. You ate the Air fruit from the cargo as you fell, and your first breath of power broke your fall onto Brinemoor's salt-flats.",
+  cons: "Air mastery starts higher. A Hundred Bells sky-monk is hunting the 'stolen' fruit, and the Concord wants the cargo's other contents.",
+  effects: { player: { mastery: 10, hp: -10, add_items: ["Torn courier satchel with a sealed Concord dispatch"] }, factions: [{ id: "gilded_concord", attitude: -10 }, { id: "hundred_bells", attitude: -10, note: "A monk is sent to recover the Air fruit." }],
+    new_events: [{ id: "sky_monk_arrives", day: 4, title: "A sky-monk descends on Brinemoor", desc: "Hakuen-style monk from Hundred Bells (invent or use one) arrives to reclaim the Air fruit 'stolen' from their cargo, by persuasion or by force.", public: false }] },
+  hook: "The player was a sky-courier whose balloon was shot down by a Concord gunship. While falling they ate the Air-Air Fruit (Kuki Kuki no Mi) from the cargo and caught themselves on a cushion of their own breath. They still carry a sealed Concord dispatch from the wreck. A sky-monk is coming for the fruit."
+});

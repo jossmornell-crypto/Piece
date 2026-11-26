@@ -243,3 +243,19 @@ textarea.code { width: 100%; min-height: 110px; background: var(--abyss); border
 .fx-card.danger strong { color: var(--blood); }
 .fx-quiet .fx-slash, .fx-quiet .fx-zoom, .fx-quiet .fx-aura { display: none; }
 @media (prefers-reduced-motion: reduce) { .fx-slash, .fx-zoom, .fx-aura, .fx-wind, .fx-drop, .fx-shard { display: none; } }
+
+/* ---- Air-Air fruit showcase ---- */
+.fruitpick.feat { background: linear-gradient(135deg, color-mix(in srgb, #bfe6ff 14%, var(--abyss)), var(--abyss)); }
+.fruitpick .featured { display: inline-block; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--abyss); background: #bfe6ff; border-radius: 999px; padding: 1px 8px; margin-bottom: 4px; }
+.airpath { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 6px; }
+.airpath li { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: start; font-size: 12px; opacity: .45; }
+.airpath li.on { opacity: 1; }
+.airpath li span { font-variant-numeric: tabular-nums; text-align: center; border: 1px solid var(--rope); border-radius: 6px; padding: 2px 0; color: var(--mist); }
+.airpath li.on span { border-color: #bfe6ff; color: #bfe6ff; }
+.airpath b { display: block; color: var(--foam); font-size: 13px; }
+.airpath small { color: var(--mist); line-height: 1.4; }
+#moveIdeas { margin-top: 4px; }
+.invent .chips { margin: 4px 0 10px; }
+.fx-ring { position: absolute; left: 50%; top: 55%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 3px solid #e9f7ffcc; box-shadow: 0 0 30px #bfe6ff88, inset 0 0 20px #bfe6ff55; animation: ring 1.1s cubic-bezier(.1,.7,.3,1) forwards; opacity: 0; }
+@keyframes ring { 0% { transform: scale(.2); opacity: 1 } 100% { transform: scale(28); opacity: 0; border-width: 1px } }
+@media (prefers-reduced-motion: reduce) { .fx-ring { display: none; } }

@@ -112,6 +112,11 @@ POWER SCALING (very important):
 - NEW techniques the player proposes (marked fresh) must be ruled on this turn: accept them in a scene, or reshape an unfair one (change desc, say why in note). Never just refuse; find the honest version.
 - Weapons have grades (Common, Fine, Grade Blade, Legendary). Named blades in named_weapons exist in the world and can be won, bought, stolen or earned.
 
+AIR-AIR FRUIT (Kuki Kuki no Mi, Paramecia), when the player has it:
+- It is a Paramecia: the user never turns into air and can be hit, cut and shot like anyone. They shape air they TOUCH or BREATHE OUT; range grows with mastery (see air_path: abilities above the player's mastery are not yet possible, except a one-moment desperate glimpse at a cost).
+- Air physics matter: shaped air can be bullets, cannons, invisible walls and stairs, vacuums that kill flames and silence sound, pressure that pops eardrums or causes dizziness, cushions, and currents to ride. Underwater, in a sealed vacuum, or with a seastone gag the user is nearly powerless. Strong Armament Haki can punch through hardened air; Observation Haki can read it.
+- Reward clever air use (oxygen tricks, sound carrying, pressure sensing, weather nudging) with vivid scenes and mastery growth (+1 to +3 for real creativity). Use the vfx cue "airburst" for big air moves.
+
 HIDDEN MISSIONS (the player never sees a quest list; never say "quest", "mission" or "side quest" out loud):
 - You manage "active_quests" (main and side). Start new ones naturally from "mission_seeds" when the story passes near them: a stranger's plea, an overheard fight, a poster, an ambush. Also invent new quests from the player's own actions and their consequences (enemies made, people saved, debts, rumors).
 - Advance, finish, fail, or let quests go stale as the story moves. Rewards and fallout come through normal state changes.
@@ -123,7 +128,7 @@ JSON keys (all optional except "suggestions" and "chronicle"):
 {"hours": number,
  "location": "island id the player is now at (only if they moved)",
  "weather": "clear|rain|storm|fog|embers|snow|night",
- "vfx": ["up to 3 of: shake, impact, speedlines, flash, haki, fruit, sparkle, gloom, slash, splash, fire, wind, shatter, aura, zoom, sfx:<short katakana sound like ドドド>"],
+ "vfx": ["up to 3 of: shake, impact, speedlines, flash, haki, fruit, sparkle, gloom, slash, splash, fire, wind, shatter, aura, zoom, airburst, sfx:<short katakana sound like ドドド>"],
  "player": {"hp": delta, "hp_set": n, "max_hp": delta, "berries": delta, "bounty": delta, "observation": delta, "armament": delta, "conqueror": true, "mastery": delta, "fruit": "fruit id if they ate one", "add_items": ["..."], "remove_items": ["exact item text"], "ship": "...", "epithet": "...", "add_crew": [{"name": "...", "role": "...", "npc_id": "..."}], "remove_crew": ["name"],
    "techniques": [{"name": "existing technique name", "rank": +1 or 0, "desc": "reshaped description (optional)", "note": "short ruling or growth note"}],
    "add_techniques": [{"name": "...", "desc": "..."}] (only a technique the player invents mid-scene; respect free slots),
@@ -158,6 +163,7 @@ function worldSnapshot() {
       haki: { observation: p.observation, armament: p.armament, conqueror: p.conqueror }, fruit: p.fruit, fruit_mastery: p.mastery, items: p.items, crew: p.crew, ship: p.ship,
       weapons: p.weapons, techniques: p.techniques.map((t) => ({ name: t.name, desc: t.desc, rank: RANKS[t.rank], fresh: !!t.fresh })) },
     islands: S.islands.map((i) => ({ id: i.id, name: i.name, sea: i.sea, tier: i.tier, controller: i.controller, status: i.status, desc: i.desc, known_to_player: !!i.known })),
+    ...(p.fruit === "kuki" ? { air_path: AIR_PATH.map((a) => ({ mastery: a.at, ability: a.name, desc: a.desc, unlocked: p.mastery >= a.at })) } : {}),
     named_weapons: S.namedWeapons.map((w) => ({ id: w.id, name: w.name, kind: w.kind, grade: w.grade, holder: w.holder, location: w.location, desc: w.desc })),
     active_quests: S.quests.map((q) => ({ id: q.id, kind: q.kind, title: q.title, desc: q.desc, notes: (q.notes || []).slice(-2) })),
     finished_quests: S.questMemory.slice(-12),
@@ -479,6 +485,7 @@ function processGM(json, action, narr) {
     if (byId(S.islands, id) || (Array.isArray(j.new_islands) && j.new_islands.some((x) => sid(x?.id || x?.name) === id))) S.location = id;
   }
   const oldTier = byId(S.islands, oldLoc)?.tier || 1;
+  const oldMastery = S.player.mastery;
   const slotsBefore = techSlots();
   const d = applyChanges(j);
   Object.assign(out, { chips: d.chips, bountyUp: d.bountyUp, rumor: d.rumor, fruitEaten: d.fruitEaten, rankups: d.rankups, saga: d.saga });
@@ -489,6 +496,10 @@ function processGM(json, action, narr) {
   }
   if (techSlots() > slotsBefore && !d.slotGained) out.chips.push({ text: "New technique slot unlocked!", cls: "gold" });
   out.slotGained = techSlots() > slotsBefore;
+  if (S.player.fruit === "kuki") {
+    out.airUnlocks = AIR_PATH.filter((a) => a.at > oldMastery && a.at <= S.player.mastery);
+    for (const a of out.airUnlocks) out.chips.push({ text: `Air ability unlocked: ${a.name}`, cls: "gold" });
+  }
   if (j.weather && ["clear", "rain", "storm", "fog", "embers", "snow", "night"].includes(j.weather)) S.weather = j.weather;
   advanceTime(j.hours ?? 1);
   fireDueEvents(out);
