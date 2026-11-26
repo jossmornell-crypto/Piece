@@ -61,6 +61,9 @@ function renderHUD() {
   const isl = byId(S.islands, S.location);
   $("#hudLoc").textContent = isl ? isl.name.split(" (")[0] : S.location;
   $("#hudWeather").textContent = S.weather;
+  const tier = hereTier();
+  $("#hudThreat").textContent = "★".repeat(tier) + "☆".repeat(5 - tier);
+  $("#hudThreat").title = TIER_TEXT[tier];
   Sea.setWeather(S.weather);
 }
 function renderSuggestions() {
@@ -92,10 +95,14 @@ function renderPanel() {
     const f = p.fruit ? byId(S.fruits, p.fruit) : null;
     h += `<h3>${esc(p.name)}${p.epithet ? ` "${esc(p.epithet)}"` : ""}</h3><dl class="kv">
       <dt>HP</dt><dd>${p.hp} / ${p.max_hp}</dd><dt>Bounty</dt><dd>${fmt(p.bounty)}</dd><dt>Berries</dt><dd>${fmt(p.berries)}</dd>
+      <dt>Power level</dt><dd><b style="color:var(--ochre)">${powerLevel()}</b> / 100</dd><dt>Threat here</dt><dd>${"★".repeat(hereTier())}</dd>
       <dt>Style</dt><dd>${esc(p.style)}</dd><dt>Origin</dt><dd>${esc(p.origin)}</dd><dt>Ship</dt><dd>${esc(p.ship)}</dd></dl>
+      <p class="s" style="font-size:12px;color:var(--mist);margin:6px 0 0">${esc(TIER_TEXT[hereTier()])}</p>
       <h3>Haki</h3>${meter("Observation", p.observation, "haki")}${meter("Armament", p.armament, "haki")}
       <div class="meter">Conqueror's <b style="float:right">${p.conqueror ? "AWAKENED" : "dormant"}</b></div>
       <h3>Devil Fruit</h3>${f ? `<div class="card"><div class="t">${esc(f.name)}</div><div class="s">${esc(f.eng)} · ${esc(f.type)}</div>${esc(f.power)}<div class="s" style="margin-top:4px">Limit: ${esc(f.limit)}</div></div>${meter("Mastery", p.mastery)}` : `<p class="empty">No fruit. You can still swim.</p>`}
+      ${techniquesHTML()}
+      <h3>Weapons</h3>${p.weapons.length ? p.weapons.map((w) => `<div class="card"><div class="t">${esc(w.name)} <span class="disp ${w.grade === "Legendary" || w.grade === "Grade Blade" ? "pos" : "neu"}">${esc(w.grade)}</span></div><div class="s">${esc(w.kind)}</div>${esc(w.desc)}</div>`).join("") : `<p class="empty">Unarmed.</p>`}
       <h3>Inventory</h3>${p.items.length ? `<ul class="list">${p.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>` : `<p class="empty">Empty pockets.</p>`}
       <h3>Dream</h3><p style="font-size:13px;line-height:1.5">${esc(p.dream)}</p>`;
   } else if (tab === "crew") {
@@ -119,10 +126,8 @@ function renderPanel() {
       return `<div class="card"><div class="t">${esc(f.name)}</div><div class="s">${esc(f.eng)} · ${esc(f.type)} · ${esc(holder)}</div>${esc(f.power)}</div>`;
     }).join("") + `<p class="empty">${S.fruits.length - known.length} fruits still undiscovered.</p>`;
   } else if (tab === "world") {
-    const active = S.threads.filter((t) => t.stage > 0 || t.id === "dream" || t.id === "saltcradle");
-    h += `<h3>Story threads</h3>` + active.map((t) => `<div class="card"><div class="t">${esc(t.name)}</div><div class="s">${esc(t.stages[t.stage])}</div><div class="stage">${t.stages.map((_, i) => `<i class="${i <= t.stage ? "on" : ""}"></i>`).join("")}</div></div>`).join("");
     const cal = S.events.filter((e) => e.public && e.status === "pending").sort((a, b) => a.day - b.day);
-    h += `<h3>Calendar of the sea</h3>` + (cal.length ? cal.map((e) => `<div class="card"><div class="t">Day ${e.day}: ${esc(e.title)}</div>${esc(e.desc)}</div>`).join("") : `<p class="empty">Nothing announced.</p>`);
+    h += `<h3>Posted notices</h3>` + (cal.length ? cal.map((e) => `<div class="card"><div class="t">Day ${e.day}: ${esc(e.title)}</div>${esc(e.desc)}</div>`).join("") : `<p class="empty">Nothing announced.</p>`);
     const past = S.events.filter((e) => e.status !== "pending").slice(-8).reverse();
     if (past.length) h += `<h3>What already happened</h3>` + past.map((e) => `<div class="card"><div class="t">${e.status === "cancelled" ? "Averted" : "Day " + (e.firedDay || e.day)}: ${esc(e.title)}</div></div>`).join("");
     h += `<h3>News &amp; rumors</h3>` + (S.news.length ? `<ul class="list">${S.news.slice(-10).reverse().map((n) => `<li>D${n.day}: ${esc(n.text)}</li>`).join("")}</ul>` : `<p class="empty">No news yet.</p>`);
@@ -131,6 +136,30 @@ function renderPanel() {
   }
   P.innerHTML = h;
 }
+function techniquesHTML() {
+  const p = S.player, slots = techSlots(), full = p.techniques.length >= slots, next = nextSlotAt();
+  let h = `<h3>Techniques (${p.techniques.length} / ${slots})</h3>`;
+  h += p.techniques.length ? p.techniques.map((t, i) => `<div class="card"><div class="t">${esc(t.name)} <span class="disp ${t.rank >= 2 ? "pos" : "neu"}">${RANKS[t.rank]}</span></div>
+    <div class="stage">${RANKS.map((_, r) => `<i class="${r <= t.rank ? "on" : ""}"></i>`).join("")}</div>
+    <div style="margin-top:6px">${esc(t.desc)}</div>${t.fresh ? `<div class="s">Untested: the sea will judge it on your next action.</div>` : ""}${t.note ? `<div class="s" style="margin-top:4px">${esc(t.note)}</div>` : ""}
+    <button type="button" class="linkbtn" data-forget="${i}">${p.forgetArm === i ? "Tap again to forget" : "Forget"}</button></div>`).join("") : `<p class="empty">No techniques yet.</p>`;
+  if (full) h += `<p class="empty">All slots used. ${next ? `Next slot at power level ${next}.` : "Earn more through great milestones."} Forget one to invent another.</p>`;
+  else h += `<div class="invent"><div class="field"><label for="tName">Invent a technique</label><input id="tName" maxlength="50" placeholder="Name, e.g. Gale Piercer"></div>
+    <div class="field"><textarea id="tDesc" rows="2" maxlength="220" placeholder="What does it do? Dream big; it starts at Raw and grows as you do."></textarea></div>
+    <button type="button" class="btn ghost" id="tAdd">Add technique</button></div>`;
+  return h;
+}
+$("#panel").addEventListener("click", (e) => {
+  const p = S?.player; if (!p) return;
+  const f = e.target.closest("[data-forget]");
+  if (f) { const i = +f.dataset.forget; if (p.forgetArm === i) { p.techniques.splice(i, 1); delete p.forgetArm; saveGame(); } else p.forgetArm = i; renderPanel(); return; }
+  if (e.target.id === "tAdd") {
+    const name = $("#tName").value.trim(), desc = $("#tDesc").value.trim();
+    if (!name || !desc || p.techniques.length >= techSlots()) return;
+    p.techniques.push({ name: name.slice(0, 50), desc: desc.slice(0, 220), rank: 0, fresh: true, note: "" });
+    saveGame(); renderPanel();
+  }
+});
 function mapSVG() {
   const isl = S.islands.filter((i) => i.known);
   const seaLabels = [["EAST BLUE", 800, 560], ["NORTH BLUE", 250, 60], ["SOUTH BLUE", 250, 570], ["WEST BLUE", 800, 60], ["PARADISE", 760, 205], ["NEW WORLD", 260, 205]];
@@ -168,6 +197,31 @@ function hakiBolts() {
   }
   addFx("fx-haki", 950, `<svg width="100%" height="100%" viewBox="0 0 ${w} ${h}">${paths}</svg>`);
 }
+function slash() {
+  const a = -25 + Math.random() * 50;
+  addFx("fx-slash", 700, "", `transform:rotate(${a}deg)`);
+  setTimeout(() => addFx("fx-slash thin", 600, "", `transform:rotate(${a + 8}deg) translateY(40px)`), 90);
+  addFx("fx-flash soft", 400);
+}
+function burst(cls, n, color) {
+  for (let i = 0; i < n; i++) {
+    const ang = Math.random() * Math.PI * 2, dist = 120 + Math.random() * 260;
+    addFx(cls, 1100, "", `left:50%;top:55%;--dx:${Math.cos(ang) * dist}px;--dy:${Math.sin(ang) * dist - 60}px;${color ? `background:${color};` : ""}animation-delay:${Math.random() * 0.15}s`);
+  }
+}
+function wind() { for (let i = 0; i < 12; i++) addFx("fx-wind", 1000, "", `top:${8 + Math.random() * 84}%;animation-delay:${Math.random() * 0.4}s;width:${20 + Math.random() * 40}%`); }
+function zoom() { addFx("fx-zoom", 900); }
+function aura(color = "#9b5cff") { addFx("fx-aura", 1800, "", `--c:${color}`); }
+function rankup(text) {
+  if (!vfxOn()) return;
+  addFx("fx-rank", 2600, `<small>Technique growth</small><strong></strong>`).querySelector("strong").textContent = text;
+  sparkles(); aura("#e6a93d");
+}
+function dangerPulse(tier) {
+  if (!vfxOn()) return;
+  aura("#e0564f"); addFx("fx-card danger", 2600, `<div><small>Threat rising</small><strong>${"★".repeat(tier)}</strong></div>`);
+}
+function fruitSwirl(color) { addFx("fx-swirl", 1650, "", color ? `background:repeating-conic-gradient(transparent 0 12deg, ${color}66 12deg 18deg)` : ""); }
 function sparkles() { for (let i = 0; i < 14; i++) addFx("fx-sparkle", 1500, "", `left:${Math.random() * 100}%;top:${20 + Math.random() * 60}%;animation-delay:${Math.random() * .5}s`); }
 function playVFX(list) {
   if (!vfxOn() || !Array.isArray(list)) return;
@@ -181,9 +235,17 @@ function playVFX(list) {
       case "speedlines": addFx("fx-speed", 1150); break;
       case "flash": addFx("fx-flash", 520); break;
       case "haki": hakiBolts(); shake(); break;
-      case "fruit": addFx("fx-swirl", 1650); break;
+      case "fruit": fruitSwirl(byId(S.fruits, S.player.fruit)?.color); break;
       case "sparkle": sparkles(); break;
       case "gloom": addFx("fx-gloom", 2300); break;
+      case "slash": slash(); sfx("ザンッ"); break;
+      case "splash": burst("fx-drop", 26, "#7fd3ff"); sfx("ザバッ"); break;
+      case "fire": burst("fx-drop ember", 30, "#ff8a3d"); addFx("fx-heat", 1200); sfx("ゴォッ"); break;
+      case "wind": wind(); sfx("ヒュオッ"); break;
+      case "shatter": burst("fx-shard", 22); addFx("fx-flash soft", 400); sfx("パリンッ"); break;
+      case "aura": aura(); break;
+      case "zoom": zoom(); break;
+      case "rankup": rankup("Power surges"); break;
     }
   }, i * 380));
 }
@@ -304,7 +366,11 @@ async function takeTurn(action) {
   playVFX(json?.vfx);
   if (out.fruitEaten && !(json?.vfx || []).includes("fruit")) setTimeout(() => playVFX(["fruit"]), 600);
   if (out.moved) setTimeout(() => titleCard(out.moved), 300);
+  if (out.danger) setTimeout(() => dangerPulse(out.danger), 3300);
   if (out.bountyUp > 0) setTimeout(bountyPoster, 900);
+  out.rankups?.forEach((t, i) => setTimeout(() => rankup(`${t.name}: ${RANKS[t.rank]}`), 1400 + i * 2700));
+  if (out.slotGained) setTimeout(() => rankup("New technique slot!"), 1400 + (out.rankups?.length || 0) * 2700);
+  if (out.saga) pushLog({ t: "sys", kind: "event", label: `Saga ${out.saga}`, text: "A new age begins on the sea." });
   for (const ev of out.events) pushLog({ t: "sys", kind: "event", label: `Day ${S.day} · World event`, text: `${ev.title}. ${ev.desc}` });
   if (out.rumor) pushLog({ t: "sys", label: "Rumor on the wind", text: out.rumor });
   if (S.player.hp <= 0) pushLog({ t: "sys", kind: "event", label: "Defeated", text: "You've been knocked out. Describe what you try when you come to." });
@@ -330,17 +396,49 @@ $("#drawerBtn").onclick = () => $("#side").classList.toggle("open");
 $("#log").addEventListener("click", () => $("#side").classList.remove("open"));
 
 // character creation
-let pickedFruit = null;
+let pickedFruit = null, fruitFilter = "All", pickedStart = "apprentice", createBuilt = false;
 function buildCreate() {
-  $("#cOrigin").innerHTML = ORIGINS.map((o) => `<option value="${o.id}">${esc(o.label)}</option>`).join("");
-  $("#cStyle").innerHTML = STYLES.map((s) => `<option>${esc(s)}</option>`).join("");
-  const starters = WORLD_SEED.fruits.filter((f) => f.starter);
+  if (!createBuilt) {
+    createBuilt = true;
+    $("#cOrigin").innerHTML = ORIGINS.map((o) => `<option value="${o.id}">${esc(o.label)}</option>`).join("");
+    $("#cStyle").innerHTML = STYLES.map((s, i) => `<option value="${i}">${esc(s.name)}</option>`).join("");
+    const styleNote = () => ($("#cStyleNote").textContent = STYLES[+$("#cStyle").value].note);
+    $("#cStyle").onchange = styleNote; styleNote();
+    const groups = [["sword", "Swords"], ["gun", "Guns"], ["other", "Other weapons"]];
+    const wOpts = `<option value="">None</option>` + groups.map(([k, l]) => `<optgroup label="${l}">${WEAPONS.filter((w) => w.kind === k).map((w) => `<option value="${w.id}">${esc(w.name)} (${w.grade})</option>`).join("")}</optgroup>`).join("");
+    $("#cW1").innerHTML = wOpts; $("#cW2").innerHTML = wOpts; $("#cW1").value = "cutlass";
+    const wNote = () => ($("#cWNote").textContent = ["#cW1", "#cW2"].map((s) => WEAPONS.find((w) => w.id === $(s).value)).filter(Boolean).map((w) => `${w.name}: ${w.desc}`).join("  ·  "));
+    $("#cW1").onchange = wNote; $("#cW2").onchange = wNote; wNote();
+  }
+  renderFruitPicks(); renderStarts();
+}
+function renderFruitPicks() {
+  const chips = $("#fruitFilter"); chips.innerHTML = "";
+  for (const f of ["All", "Paramecia", "Logia", "Zoan"]) {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = f; b.setAttribute("aria-pressed", f === fruitFilter);
+    b.onclick = () => { fruitFilter = f; renderFruitPicks(); }; chips.append(b);
+  }
+  const starters = WORLD_SEED.fruits.filter((f) => f.starter && (fruitFilter === "All" || f.type.includes(fruitFilter)));
   const box = $("#fruitPicks"); box.innerHTML = "";
-  const opts = [{ id: null, name: "No fruit", eng: "Keep the sea as your friend", power: "You can swim. Haki and your fighting style grow a little faster.", type: "" }, ...starters];
+  const opts = [...(fruitFilter === "All" ? [{ id: null, name: "No fruit", eng: "Keep the sea as your friend", power: "You can swim, and seastone can't touch you. Haki and your fighting style grow a little faster.", type: "", cost: "No miracle powers. You win with skill, grit and friends." }] : []), ...starters];
   for (const f of opts) {
     const b = document.createElement("button"); b.type = "button"; b.className = "fruitpick"; b.setAttribute("aria-pressed", f.id === pickedFruit);
-    b.innerHTML = `<b>${esc(f.name)}</b><small>${esc(f.eng)}${f.type ? " · " + esc(f.type) : ""}</small><br>${esc(f.power)}`;
-    b.onclick = () => { pickedFruit = f.id; buildCreate(); };
+    b.innerHTML = `<b>${esc(f.name)}</b><small>${esc(f.eng)}${f.type ? " · " + esc(f.type) : ""}</small><br>${esc(f.power)}${f.cost ? `<span class="cost">Cost: ${esc(f.cost)}</span>` : ""}`;
+    if (f.color) b.style.setProperty("--fc", f.color);
+    b.onclick = () => { pickedFruit = f.id; renderFruitPicks(); renderStarts(); };
+    box.append(b);
+  }
+  $("#fruitCount").textContent = `${WORLD_SEED.fruits.filter((f) => f.starter).length} starter fruits · fruits you don't pick will be eaten by people somewhere in the world`;
+}
+function startOk(s) { return s.req === "any" || (s.req === "fruit") === !!pickedFruit; }
+function renderStarts() {
+  if (!startOk(STARTS.find((s) => s.id === pickedStart))) pickedStart = STARTS.find(startOk).id;
+  const box = $("#startPicks"); box.innerHTML = "";
+  for (const s of STARTS) {
+    const ok = startOk(s);
+    const b = document.createElement("button"); b.type = "button"; b.className = "fruitpick startpick"; b.disabled = !ok; b.setAttribute("aria-pressed", s.id === pickedStart);
+    b.innerHTML = `<b>${esc(s.title)}</b>${esc(s.text)}<span class="cost">${esc(s.cons)}</span>${ok ? "" : `<small>${s.req === "fruit" ? "Needs a Devil Fruit" : "Only without a Devil Fruit"}</small>`}`;
+    b.onclick = () => { pickedStart = s.id; renderStarts(); };
     box.append(b);
   }
 }
@@ -348,8 +446,11 @@ $("#newBtn").onclick = () => { buildCreate(); show("create"); };
 $("#createForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const origin = ORIGINS.find((o) => o.id === $("#cOrigin").value);
-  S = newGame({ slot: +$("#cSlot").value, name: $("#cName").value.trim() || "Nameless", origin: origin.label + ". " + origin.text, style: $("#cStyle").value,
-    dream: $("#cDream").value.trim() || "Be free.", look: $("#cLook").value.trim(), fruit: pickedFruit });
+  const style = STYLES[+$("#cStyle").value];
+  const techniques = [1, 2, 3].map((i) => ({ name: $("#cT" + i).value.trim(), desc: $("#cT" + i + "d").value.trim() })).filter((t) => t.name);
+  const weapons = [...new Set([$("#cW1").value, $("#cW2").value].filter(Boolean))];
+  S = newGame({ slot: +$("#cSlot").value, name: $("#cName").value.trim() || "Nameless", origin: origin.label + ". " + origin.text, style: `${style.name} (${style.note})`,
+    dream: $("#cDream").value.trim() || "Be free.", look: $("#cLook").value.trim(), fruit: pickedFruit, start: pickedStart, weapons, techniques });
   S.threads.find((t) => t.id === "dream").name = "Dream: " + S.player.dream.slice(0, 60);
   hide("create"); hide("title");
   renderLog(); renderAll(); saveGame();
@@ -375,7 +476,7 @@ function buildSlots() {
   }
 }
 function startFrom(s) {
-  S = s; hide("slots"); hide("title"); renderLog(); renderAll();
+  S = migrate(s); hide("slots"); hide("title"); renderLog(); renderAll();
   if (!S.log.some((e) => e.t === "gm")) showRetryBegin();
 }
 $("#contBtn").onclick = () => { buildSlots(); $("#importMsg").textContent = ""; show("slots"); };

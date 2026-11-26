@@ -19,7 +19,7 @@
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html, body { height: 100%; }
+html, body { height: 100%; overflow: hidden; }
 body { margin: 0; background: var(--abyss); color: var(--foam); font-family: var(--f-ui); font-size: 15px; overflow: hidden; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -199,3 +199,47 @@ textarea.code { width: 100%; min-height: 110px; background: var(--abyss); border
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
   .fx-flash, .fx-speed, .fx-swirl, .fx-haki { display: none; }
 }
+
+/* ---- expansion: creation extras ---- */
+.sheet h3.sub { font-family: var(--f-display); font-weight: 400; color: var(--paper); font-size: 17px; margin: 22px 0 6px; padding-top: 14px; border-top: 1px solid var(--rope); }
+.note { display: block; color: var(--mist); font-size: 12px; line-height: 1.5; margin: -6px 0 12px; }
+.field .note { margin: 2px 0 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.chips button { background: transparent; border: 1px solid var(--rope); border-radius: 999px; padding: 4px 12px; font-size: 12px; color: var(--mist); }
+.chips button[aria-pressed="true"] { border-color: var(--ochre); color: var(--ochre); }
+.fruitpick { border-left: 4px solid var(--fc, var(--rope)); }
+.fruitpick .cost { display: block; margin-top: 6px; color: var(--ochre); font-size: 11px; }
+.startpick { border-left-color: var(--tide); }
+.startpick:disabled { opacity: .35; cursor: not-allowed; }
+.startpick small { display: block; margin-top: 4px; }
+.threat { color: var(--blood); letter-spacing: .05em; }
+.linkbtn { background: none; border: 0; padding: 0; margin-top: 6px; color: var(--mist); font-size: 12px; text-decoration: underline; }
+.linkbtn:hover { color: var(--blood); }
+.invent { border: 1px dashed var(--rope); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+.invent .field { margin-bottom: 8px; }
+
+/* ---- expansion: vfx ---- */
+.fx-flash.soft { animation-duration: .35s; opacity: .5; }
+.fx-slash { position: absolute; left: -10%; right: -10%; top: 48%; height: 6px; background: linear-gradient(90deg, transparent, #fff 30%, #fff 70%, transparent); box-shadow: 0 0 24px #fff, 0 0 60px var(--tide); animation: slash .6s cubic-bezier(.2,.9,.3,1) forwards; transform-origin: center; }
+.fx-slash.thin { height: 2px; box-shadow: 0 0 14px #fff; }
+@keyframes slash { 0% { clip-path: inset(0 100% 0 0); opacity: 1 } 40% { clip-path: inset(0 0 0 0); opacity: 1 } 100% { clip-path: inset(0 0 0 100%); opacity: 0 } }
+.fx-drop { position: absolute; width: 10px; height: 10px; border-radius: 50%; animation: drop 1s ease-out forwards; }
+.fx-drop.ember { width: 6px; height: 6px; box-shadow: 0 0 10px #ff8a3d; }
+@keyframes drop { from { transform: translate(0, 0) scale(1); opacity: 1 } to { transform: translate(var(--dx), var(--dy)) scale(.3); opacity: 0 } }
+.fx-shard { position: absolute; width: 14px; height: 22px; background: linear-gradient(135deg, #e9fbff, #7fd3ff); clip-path: polygon(50% 0, 100% 40%, 60% 100%, 0 70%); animation: shard 1s ease-out forwards; }
+@keyframes shard { from { transform: translate(0, 0) rotate(0); opacity: 1 } to { transform: translate(var(--dx), var(--dy)) rotate(540deg); opacity: 0 } }
+.fx-heat { position: absolute; inset: 0; background: radial-gradient(circle at 50% 60%, #ff8a3d55, transparent 60%); animation: gloom 1.2s ease forwards; }
+.fx-wind { position: absolute; left: -50%; height: 2px; background: linear-gradient(90deg, transparent, #ebe5d2aa, transparent); animation: wind .9s linear forwards; }
+@keyframes wind { from { transform: translateX(0) } to { transform: translateX(260vw) } }
+.fx-zoom { position: absolute; inset: -30%; background: repeating-conic-gradient(from 0deg at 50% 50%, transparent 0 4deg, #07121dcc 4.5deg 5deg, transparent 5.5deg 11deg); -webkit-mask: radial-gradient(circle, transparent 28%, #000 55%); mask: radial-gradient(circle, transparent 28%, #000 55%); animation: zoomin .9s ease-out forwards; }
+@keyframes zoomin { from { transform: scale(1.5); opacity: 0 } 30% { opacity: 1 } to { transform: scale(1); opacity: 0 } }
+.fx-aura { position: absolute; inset: 0; box-shadow: inset 0 0 120px 30px var(--c); animation: aura 1.8s ease-in-out forwards; }
+@keyframes aura { 0% { opacity: 0 } 25% { opacity: 1 } 50% { opacity: .5 } 75% { opacity: 1 } 100% { opacity: 0 } }
+.fx-rank { position: absolute; left: 0; right: 0; bottom: 22%; text-align: center; animation: rank 2.6s ease forwards; }
+.fx-rank small { display: block; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--ochre); }
+.fx-rank strong { font-family: var(--f-display); font-weight: 400; font-size: clamp(22px, 4.5vw, 40px); color: var(--paper); text-shadow: 0 0 24px var(--ochre), 3px 3px 0 var(--ink); }
+@keyframes rank { 0% { opacity: 0; transform: translateY(40px) } 15% { opacity: 1; transform: none } 80% { opacity: 1 } 100% { opacity: 0; transform: translateY(-30px) } }
+.fx-card.danger div { border-color: var(--blood); }
+.fx-card.danger strong { color: var(--blood); }
+.fx-quiet .fx-slash, .fx-quiet .fx-zoom, .fx-quiet .fx-aura { display: none; }
+@media (prefers-reduced-motion: reduce) { .fx-slash, .fx-zoom, .fx-aura, .fx-wind, .fx-drop, .fx-shard { display: none; } }

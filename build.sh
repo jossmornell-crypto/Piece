@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
   echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Literata:opsz,wght@7..72,400;7..72,600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">'
   echo '<style>'; cat src/style.css; echo '</style>'
   cat src/shell.html
-  echo '<script>'; cat src/world.js src/game.js src/ui.js; echo '</script>'
+  echo '<script>'; cat src/world.js src/content.js src/game.js src/ui.js; echo '</script>'
 } > game.html
 {
   echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>'

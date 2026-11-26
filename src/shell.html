@@ -6,6 +6,7 @@
     <div class="hud-stat"><b>Bounty</b><span id="hudBounty">฿0</span></div>
     <div class="hud-stat"><b>Day</b><span id="hudDay">1</span></div>
     <div class="hud-stat opt"><b>Location</b><span id="hudLoc">-</span></div>
+    <div class="hud-stat"><b>Threat</b><span id="hudThreat" class="threat">★☆☆☆☆</span></div>
     <div class="hud-stat opt"><b>Weather</b><span id="hudWeather">clear</span></div>
     <div class="hud-spacer"></div>
     <button class="iconbtn" id="drawerBtn" type="button" aria-controls="side">Log &amp; Map</button>
@@ -53,16 +54,38 @@
 <div class="overlay" id="create" hidden>
   <form class="sheet" id="createForm">
     <h2>Who sets sail?</h2>
-    <p>You start in Saltcradle Village on Brinemoor, East Blue, two days before Tithe Day.</p>
+    <p>You start in Saltcradle Village on Brinemoor, East Blue, a few days before Tithe Day.</p>
     <div class="grid2">
       <div class="field"><label for="cName">Name</label><input id="cName" maxlength="40" required value="Kaito Brine"></div>
-      <div class="field"><label for="cStyle">Fighting style</label><select id="cStyle"></select></div>
+      <div class="field"><label for="cOrigin">Origin</label><select id="cOrigin"></select></div>
     </div>
-    <div class="field"><label for="cOrigin">Origin</label><select id="cOrigin"></select></div>
     <div class="field"><label for="cDream">Your dream (said out loud to the sea)</label><input id="cDream" maxlength="140" value="Sail through the Wound and find out what the Hollow Crown really is."></div>
     <div class="field"><label for="cLook">Look and personality (optional)</label><input id="cLook" maxlength="160" placeholder="e.g. scar across the nose, laughs too loud, terrified of birds"></div>
-    <div class="field"><label>Devil Fruit</label></div>
+
+    <h3 class="sub">Fighting style &amp; weapons</h3>
+    <div class="field"><label for="cStyle">Fighting style</label><select id="cStyle"></select><small class="note" id="cStyleNote"></small></div>
+    <div class="grid2">
+      <div class="field"><label for="cW1">Weapon</label><select id="cW1"></select></div>
+      <div class="field"><label for="cW2">Second weapon</label><select id="cW2"></select></div>
+    </div>
+    <small class="note" id="cWNote"></small>
+
+    <h3 class="sub">Devil Fruit</h3>
+    <div class="chips" id="fruitFilter"></div>
+    <small class="note" id="fruitCount"></small>
     <div class="fruits" id="fruitPicks"></div>
+
+    <h3 class="sub">How your story starts</h3>
+    <p>Every start changes the world differently.</p>
+    <div class="fruits" id="startPicks"></div>
+
+    <h3 class="sub">Signature techniques (optional, up to 3)</h3>
+    <p>Invent anything. Each starts at Raw rank and grows with you. The sea scales its power to where you are. Earn more slots as your power level rises.</p>
+    <div class="techs">
+      <div class="grid2"><div class="field"><label for="cT1">Technique 1</label><input id="cT1" maxlength="50" placeholder="e.g. Salt Fang Pierce"></div><div class="field"><label for="cT1d">What it does</label><input id="cT1d" maxlength="220" placeholder="A spinning thrust that…"></div></div>
+      <div class="grid2"><div class="field"><label for="cT2">Technique 2</label><input id="cT2" maxlength="50"></div><div class="field"><label for="cT2d">What it does</label><input id="cT2d" maxlength="220"></div></div>
+      <div class="grid2"><div class="field"><label for="cT3">Technique 3</label><input id="cT3" maxlength="50"></div><div class="field"><label for="cT3d">What it does</label><input id="cT3d" maxlength="220"></div></div>
+    </div>
     <div class="grid2">
       <div class="field"><label for="cSlot">Save slot</label><select id="cSlot"><option value="1">Slot 1</option><option value="2">Slot 2</option><option value="3">Slot 3</option></select></div>
     </div>
