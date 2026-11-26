@@ -1,0 +1,137 @@
+<canvas id="sea" aria-hidden="true"></canvas>
+<div id="app">
+  <header id="hud">
+    <div class="brand">SUNDERED LINE</div>
+    <div class="hud-stat"><b>HP</b><div class="hpbar"><i id="hpFill" style="width:100%"></i></div></div>
+    <div class="hud-stat"><b>Bounty</b><span id="hudBounty">฿0</span></div>
+    <div class="hud-stat"><b>Day</b><span id="hudDay">1</span></div>
+    <div class="hud-stat opt"><b>Location</b><span id="hudLoc">-</span></div>
+    <div class="hud-stat opt"><b>Weather</b><span id="hudWeather">clear</span></div>
+    <div class="hud-spacer"></div>
+    <button class="iconbtn" id="drawerBtn" type="button" aria-controls="side">Log &amp; Map</button>
+    <button class="iconbtn" id="menuBtn" type="button">Menu</button>
+  </header>
+  <div id="main">
+    <section id="storyCol" aria-label="Story">
+      <div id="log" aria-live="polite"></div>
+      <form id="composer" autocomplete="off">
+        <div>
+          <div id="suggest"></div>
+          <div class="row">
+            <label for="action" class="sr" hidden>Your action</label>
+            <textarea id="action" rows="2" placeholder="Write anything you do or say. Example: I slam my fist on Danvers' desk and demand the tithe ledgers."></textarea>
+            <button class="btn" id="sendBtn" type="submit">ACT</button>
+            <button class="btn ghost" id="stopBtn" type="button" hidden>Stop</button>
+          </div>
+          <div class="hint" id="hint">Enter to act, Shift+Enter for a new line. Your words change the world.</div>
+        </div>
+      </form>
+    </section>
+    <aside id="side" aria-label="Captain's chart table">
+      <div id="tabs" role="tablist"></div>
+      <div id="panel" role="tabpanel"></div>
+    </aside>
+  </div>
+</div>
+<div id="fx" aria-hidden="true"></div>
+
+<div class="overlay" id="title">
+  <div class="titlebox">
+    <div class="kicker">An alternate-timeline pirate saga</div>
+    <h1 class="logo">TIDES OF THE<span>SUNDERED LINE</span></h1>
+    <div class="jp">裂けた赤い線の潮</div>
+    <p>Eighteen years after the Red Line was cut in two, a new generation sets sail. Write anything you want to do. An AI Game Master runs a living world of Emperors, Marines, rebels and Devil Fruits, and remembers every choice you make.</p>
+    <div class="menu">
+      <button class="btn" id="newBtn" type="button">NEW VOYAGE</button>
+      <button class="btn ghost" id="contBtn" type="button">Continue a voyage</button>
+      <button class="btn ghost" id="setBtn" type="button">Game Master settings</button>
+    </div>
+    <div class="status-line" id="engineStatus">Looking for the Game Master…</div>
+  </div>
+</div>
+
+<div class="overlay" id="create" hidden>
+  <form class="sheet" id="createForm">
+    <h2>Who sets sail?</h2>
+    <p>You start in Saltcradle Village on Brinemoor, East Blue, two days before Tithe Day.</p>
+    <div class="grid2">
+      <div class="field"><label for="cName">Name</label><input id="cName" maxlength="40" required value="Kaito Brine"></div>
+      <div class="field"><label for="cStyle">Fighting style</label><select id="cStyle"></select></div>
+    </div>
+    <div class="field"><label for="cOrigin">Origin</label><select id="cOrigin"></select></div>
+    <div class="field"><label for="cDream">Your dream (said out loud to the sea)</label><input id="cDream" maxlength="140" value="Sail through the Wound and find out what the Hollow Crown really is."></div>
+    <div class="field"><label for="cLook">Look and personality (optional)</label><input id="cLook" maxlength="160" placeholder="e.g. scar across the nose, laughs too loud, terrified of birds"></div>
+    <div class="field"><label>Devil Fruit</label></div>
+    <div class="fruits" id="fruitPicks"></div>
+    <div class="grid2">
+      <div class="field"><label for="cSlot">Save slot</label><select id="cSlot"><option value="1">Slot 1</option><option value="2">Slot 2</option><option value="3">Slot 3</option></select></div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" type="button" data-close="create">Back</button>
+      <button class="btn" type="submit">SET SAIL</button>
+    </div>
+  </form>
+</div>
+
+<div class="overlay" id="slots" hidden>
+  <div class="sheet">
+    <h2>Continue a voyage</h2>
+    <div class="slots" id="slotList"></div>
+    <div class="field"><label for="importCode">Or paste a save code</label><textarea class="code" id="importCode" placeholder="Paste a save code here"></textarea></div>
+    <div class="actions">
+      <button class="btn ghost" type="button" data-close="slots">Back</button>
+      <button class="btn" type="button" id="importBtn">LOAD CODE</button>
+    </div>
+    <p id="importMsg"></p>
+  </div>
+</div>
+
+<div class="overlay" id="settings" hidden>
+  <div class="sheet">
+    <h2>Game Master settings</h2>
+    <p id="setEngine"></p>
+    <div id="setSample">
+      <div class="field"><label for="tier">Game Master model</label>
+        <select id="tier">
+          <option value="quick">Quick: fastest replies, simpler storytelling</option>
+          <option value="default" selected>Balanced: recommended</option>
+          <option value="complex">Deep: richest storytelling, slowest</option>
+        </select>
+      </div>
+    </div>
+    <div id="setApi">
+      <div class="field"><label for="apiKey">Anthropic API key (only for playing this file outside claude.ai)</label><input id="apiKey" type="password" placeholder="sk-ant-..." autocomplete="off"></div>
+      <div class="field"><label for="apiModel">Model</label>
+        <select id="apiModel">
+          <option value="claude-opus-5-5">Claude Opus 5.5 (richest)</option>
+          <option value="claude-sonnet-5-5">Claude Sonnet 5.5 (balanced)</option>
+          <option value="claude-haiku-5-5">Claude Haiku 5.5 (fastest, cheapest)</option>
+        </select>
+      </div>
+      <p>The key stays in this browser's local storage and is sent only to api.anthropic.com.</p>
+    </div>
+    <div class="grid2">
+      <div class="field"><label for="speed">Text speed</label>
+        <select id="speed"><option value="6">Fast</option><option value="14" selected>Normal</option><option value="28">Cinematic</option></select>
+      </div>
+      <div class="field"><label for="vfxLevel">Visual effects</label>
+        <select id="vfxLevel"><option value="full" selected>Full</option><option value="quiet">Quiet (no flashes)</option><option value="off">Off</option></select>
+      </div>
+    </div>
+    <div class="actions"><button class="btn" type="button" id="saveSettings">SAVE</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="menu" hidden>
+  <div class="sheet">
+    <h2>Captain's menu</h2>
+    <p id="menuInfo"></p>
+    <div class="field"><label for="exportCode">Save code (copy it to keep your voyage anywhere)</label><textarea class="code" id="exportCode" readonly></textarea></div>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="copyCode">Copy save code</button>
+      <button class="btn ghost" type="button" id="menuSettings">Settings</button>
+      <button class="btn ghost" type="button" id="toTitle">Title screen</button>
+      <button class="btn" type="button" data-close="menu">RESUME</button>
+    </div>
+  </div>
+</div>
