@@ -347,6 +347,58 @@ details.sec > summary::-webkit-details-marker { display: none; }
 #chartInner { transform-origin: 0 0; width: 100%; }
 #chartInner svg { display: block; width: 100%; height: auto; }
 #chartCard { margin-top: 10px; max-height: 32vh; overflow-y: auto; }
+
+/* ---- v4: power, scale and skill webs ---- */
+.badge.blue { color: #bfe6ff; }
+.tiercmp { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 13px; background: var(--hull); border-radius: 10px; padding: 8px 12px; margin: 8px 0; border-left: 4px solid var(--mist); }
+.tiercmp.up { border-left-color: var(--tide); } .tiercmp.down { border-left-color: var(--blood); }
+.tiercmp b { color: var(--ochre); letter-spacing: .05em; }
+.tiercmp small { width: 100%; color: var(--mist); font-size: 12px; }
+.tiercmp.down small { color: var(--blood); }
+.scalecard { display: grid; gap: 2px; background: linear-gradient(135deg, color-mix(in srgb, var(--ochre) 18%, var(--hull)), var(--hull)); border: 1px solid color-mix(in srgb, var(--ochre) 50%, transparent); border-radius: 10px; padding: 10px 12px; margin: 8px 0; }
+.scalecard small { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--mist); }
+.scalecard b { font-family: var(--f-display); font-weight: 400; font-size: 22px; color: var(--paper); }
+.scalecard span { font-size: 12px; color: var(--foam); }
+.webtitle { margin: 14px 0 6px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--mist); font-weight: 700; }
+.web { position: relative; display: grid; gap: 4px; padding: 4px 0; }
+.web::before { content: ""; position: absolute; left: 50%; top: 14px; bottom: 14px; width: 2px; margin-left: -1px; background: var(--rope); }
+.wnode { position: relative; display: flex; align-items: center; gap: 8px; width: 50%; background: none; border: 0; color: var(--foam); padding: 2px 0; text-align: left; }
+.wnode.l { flex-direction: row-reverse; text-align: right; margin-right: auto; padding-right: 0; }
+.wnode.r { margin-left: auto; }
+.wnode .dot { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: var(--abyss); border: 2px solid var(--rope); color: var(--mist); font-variant-numeric: tabular-nums; }
+.wnode.l .dot { margin-right: -15px; } .wnode.r .dot { margin-left: -15px; }
+.wnode .wtxt { min-width: 0; font-size: 12px; line-height: 1.35; opacity: .5; }
+.wnode .wtxt b { display: block; color: var(--foam); }
+.wnode .wtxt small { display: block; color: var(--ochre); }
+.wnode .wtxt .wdesc { color: var(--foam); margin-top: 2px; }
+.wnode.on .dot { background: var(--wc); border-color: var(--wc); color: var(--ink); box-shadow: 0 0 12px var(--wc); }
+.wnode.on .wtxt { opacity: 1; }
+.wnode.next .dot { border-color: var(--ochre); color: var(--ochre); animation: pulse 1.6s ease-in-out infinite; }
+.wnode.next .wtxt { opacity: .9; }
+.hakiweb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.hcol { display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; }
+.hcol::before { content: ""; position: absolute; top: 40px; bottom: 12px; left: 50%; width: 2px; margin-left: -1px; background: var(--rope); }
+.hhead { font-size: 12px; font-weight: 700; color: var(--wc); text-align: center; margin-bottom: 4px; }
+.hhead small { display: block; color: var(--mist); font-weight: 500; }
+.hnode { position: relative; display: flex; flex-direction: column; align-items: center; background: none; border: 0; padding: 2px; color: var(--mist); width: 100%; }
+.hnode .dot { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 700; background: var(--abyss); border: 2px solid var(--rope); font-variant-numeric: tabular-nums; }
+.hnode .hname { position: relative; font-size: 10px; line-height: 1.2; text-align: center; margin-top: 2px; opacity: .55; overflow-wrap: anywhere; background: var(--deep); padding: 0 3px; border-radius: 4px; }
+.hnode.on .dot { background: var(--wc); border-color: var(--wc); color: var(--ink); box-shadow: 0 0 10px var(--wc); }
+.hnode.on .hname { opacity: 1; color: var(--foam); }
+.hnode.next .dot { border-color: var(--ochre); color: var(--ochre); }
+.hnode.sel .dot { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* ---- v4: death ---- */
+.deathsheet { border-color: var(--blood); text-align: center; }
+.deathtitle { font-family: var(--f-display); color: var(--blood); font-size: clamp(26px, 6vw, 40px); letter-spacing: .06em; margin-bottom: 8px; }
+.deathsheet h2 { color: var(--paper); }
+.deathsheet .cause { color: var(--foam); font-style: italic; }
+.deathstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 14px 0; }
+.deathstats div { background: var(--abyss); border: 1px solid var(--rope); border-radius: 10px; padding: 8px; }
+.deathstats small { display: block; color: var(--mist); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+.deathstats b { font-family: var(--f-display); font-weight: 400; color: var(--ochre); font-size: 18px; }
+.deathsheet .list { text-align: left; }
+.deathsheet .actions { justify-content: center; }
 </style>
 <canvas id="sea" aria-hidden="true"></canvas>
 <div id="app">
@@ -514,6 +566,14 @@ details.sec > summary::-webkit-details-marker { display: none; }
   </div>
 </div>
 
+<div class="overlay" id="death" hidden>
+  <div class="sheet deathsheet">
+    <div class="deathtitle">YOUR VOYAGE ENDS</div>
+    <div id="deathBody"></div>
+    <div class="actions"><button class="btn ghost" type="button" id="deathRead">Read the log</button><button class="btn" type="button" id="deathNew">NEW VOYAGE</button></div>
+  </div>
+</div>
+
 <div class="overlay" id="menu" hidden>
   <div class="sheet">
     <h2>Captain's menu</h2>
@@ -553,7 +613,7 @@ const WORLD_SEED = {
     { id: "dunmore", name: "Dunmore", sea: "South Blue", x: 230, y: 520, controller: "free", known: false, tier: 1,
       desc: "A rough harbor of gambling dens and smugglers, built on an old volcanic shelf.", status: "Smugglers rule the night." },
     { id: "westwind", name: "Westwind Isle", sea: "West Blue", x: 830, y: 105, controller: "free", known: false, tier: 2,
-      desc: "A quiet island built around a great library tree where scholars still study the forbidden history.", status: "Peaceful, for now." },
+      desc: "A quiet island built around a giant old tree, with a fighting school and a harbor full of fishermen.", status: "Peaceful, for now." },
     // the Grand Line: Paradise
     { id: "reverse_mountain", name: "Reverse Mountain", sea: "Red Line", x: 505, y: 300, controller: "free", known: true, tier: 2,
       desc: "Where the four seas climb the Red Line and pour down into the Grand Line. A lighthouse at Twin Cape marks the descent.", status: "Ships climb it daily; many don't make it." },
@@ -587,7 +647,36 @@ const WORLD_SEED = {
     { id: "ember_isle", name: "Ember Isle", sea: "Grand Line — New World", x: 405, y: 240, controller: "revolutionary_army", known: false, tier: 4,
       desc: "A hidden volcanic island, the secret headquarters of the Revolutionary Army.", status: "Hidden." },
     { id: "laugh_tale", name: "Laugh Tale", sea: "Grand Line — the end", x: 470, y: 300, controller: "free", known: false, tier: 5,
-      desc: "The final island, reachable only with all four Road Poneglyphs read. The One Piece is there.", status: "Unknown." }
+      desc: "The final island at the end of the Grand Line. The One Piece is there.", status: "Unknown." },
+    // ---- more islands ----
+    { id: "saltreef", name: "Saltreef", sea: "East Blue", x: 860, y: 545, controller: "free", known: false, tier: 1,
+      desc: "A graveyard of wrecked pirate ships stuck on a coral reef. Scavengers, ghosts stories, and treasure in the hulls.", status: "Scavenger gangs fight over the wrecks." },
+    { id: "millhaven", name: "Millhaven", sea: "East Blue", x: 735, y: 545, controller: "free", known: false, tier: 1,
+      desc: "A sleepy farm island of windmills and orchards. Pirates raid it every harvest.", status: "Harvest season. Raiders expected." },
+    { id: "kettle_rock", name: "Kettle Rock", sea: "East Blue", x: 945, y: 505, controller: "free", known: false, tier: 1,
+      desc: "A steaming volcanic rock with a bandit fortress built into it. The bandit king collects tolls from every passing ship.", status: "The bandit king is recruiting." },
+    { id: "ironpine", name: "Ironpine", sea: "North Blue", x: 140, y: 150, controller: "free", known: false, tier: 1,
+      desc: "A logging kingdom of giant iron-hard pines, at war with its neighbor over the forests.", status: "War with the next island over." },
+    { id: "coral_crown", name: "Coral Crown", sea: "South Blue", x: 345, y: 555, controller: "free", known: false, tier: 2,
+      desc: "The ruins of a sunken city poking out of the sea at low tide, full of traps and treasure.", status: "Low tide comes once a week." },
+    { id: "thornwood", name: "Thornwood", sea: "West Blue", x: 690, y: 135, controller: "free", known: false, tier: 2,
+      desc: "A thorny jungle island run by three rival mafia families.", status: "The families are close to all-out war." },
+    { id: "hollow_peak", name: "Hollow Peak", sea: "Grand Line — Paradise", x: 600, y: 330, controller: "free", known: false, tier: 2,
+      desc: "A prehistoric island of giant beasts and a mountain hollowed out by something huge.", status: "The beasts are restless." },
+    { id: "tidepool_bazaar", name: "Tidepool Bazaar", sea: "Grand Line — Paradise", x: 680, y: 300, controller: "free", known: false, tier: 2,
+      desc: "A floating market of tied-together ships where anything can be bought: weapons, ships, fruits, crew.", status: "Busy. A big ship sale this week." },
+    { id: "blackwater", name: "Blackwater", sea: "Grand Line — Paradise", x: 760, y: 285, controller: "free", known: false, tier: 3,
+      desc: "A pirate haven in a black lagoon. No Marines dare enter. Crews drink, brawl and settle scores.", status: "Rookies gather here before Fish-Man Island." },
+    { id: "skyreach", name: "Skyreach", sea: "Grand Line — Paradise (Sky)", x: 820, y: 235, controller: "free", known: false, tier: 3,
+      desc: "A sky island of white clouds above Paradise, reached by a giant updraft. Its warriors guard a golden bell.", status: "A cloud war is starting." },
+    { id: "glass_desert", name: "Glass Desert", sea: "Grand Line — Paradise", x: 715, y: 330, controller: "free", known: false, tier: 3,
+      desc: "A desert of melted glass where a great battle once burned the sand. Sandworms hunt in the dunes.", status: "Treasure hunters keep disappearing." },
+    { id: "stormhold", name: "Stormhold", sea: "Grand Line — New World", x: 105, y: 265, controller: "free", known: false, tier: 4,
+      desc: "An island under a lightning storm that never ends. Its people are the toughest sailors alive.", status: "The storm got worse." },
+    { id: "bone_isle", name: "Bone Isle", sea: "Grand Line — New World", x: 195, y: 300, controller: "free", known: false, tier: 5,
+      desc: "The Sea King nesting grounds: an island made of ancient bones where the biggest monsters lay their eggs.", status: "Nesting season. Do not approach." },
+    { id: "redfang_bay", name: "Redfang Bay", sea: "Grand Line — New World", x: 290, y: 345, controller: "free", known: false, tier: 4,
+      desc: "A wide bay where Emperor fleets keep clashing. Wrecks and loot everywhere.", status: "Contested between Big Mae and Captain Rook." }
   ],
 
   factions: [
@@ -615,7 +704,7 @@ const WORLD_SEED = {
     // Gullport
     { id: "gus", name: "Old Gus", epithet: "the Net-Mender", faction: "none", role: "Gullport elder, retired sailor", fruit: null, bounty: 0, location: "gullport", status: "alive", disposition: 35, known: true,
       desc: "A big, slow-talking old fisherman who mends nets on the pier and knows every rope knot ever tied.", goal: "Keep Gullport's families safe through Bounty Day.",
-      secret: "Thirty years ago he was a pirate who sailed the New World. He hid a Road Poneglyph rubbing inside his boat's keel." },
+      secret: "Thirty years ago he was a feared pirate in the New World. He knows a secret sea route through a Sea King nest, and an old enemy still wants him dead." },
     { id: "mia", name: "Mia Hart", epithet: "Hammer", faction: "none", role: "teen shipwright", fruit: null, bounty: 0, location: "gullport", status: "alive", disposition: 15, known: true,
       desc: "Seventeen, loud, covered in sawdust, and building a ship from wreck timber behind Gus's shack.", goal: "Build a ship strong enough for the Grand Line.",
       secret: "Her mother was a fish-woman. Mia can hold her breath for ten minutes and hides the gill marks on her neck." },
@@ -648,15 +737,15 @@ const WORLD_SEED = {
       desc: "A spoiled noble in a bubble helmet who shoots people for bumping into him.", goal: "Buy whatever and whoever he wants.",
       secret: "He owns slaves who know secrets about the Five Elders." },
     { id: "agent_grey", name: "Agent Grey", epithet: "the Quiet Thread", faction: "cipher_pol", role: "Cipher Pol agent", fruit: "ito", bounty: 0, location: "justice_isle", status: "alive", disposition: 0, known: false,
-      desc: "A forgettable man in a grey suit who cuts with invisible strings.", goal: "Find and destroy every Road Poneglyph rubbing outside Government hands.",
-      secret: "He is tracking Old Gus." },
+      desc: "A forgettable man in a grey suit who cuts with invisible strings.", goal: "Hunt down troublemakers before they become legends.",
+      secret: "He is hunting Old Gus for something Gus did thirty years ago." },
     { id: "warden_mort", name: "Warden Mort", epithet: "the Curse-Keeper", faction: "world_government", role: "Warden of Impel Down", fruit: "noroi", bounty: 0, location: "impel_down", status: "alive", disposition: -10, known: false,
       desc: "A pale warden with curse-marks crawling up his hands.", goal: "No prisoner ever escapes.",
       secret: "He cursed the Old Fox years ago. If Mort dies, the curse breaks." },
     // the Four Emperors
     { id: "big_mae", name: "Big Mae", epithet: "the Hive Queen", faction: "big_mae_pirates", role: "Emperor", fruit: "mera", bounty: 4300000000, location: "honeycomb", status: "alive", disposition: 0, known: true,
       desc: "A giantess with a laugh like thunder who burns enemies alive and bakes cakes for her children.", goal: "Rule the New World as one big family.",
-      secret: "She has a Road Poneglyph in her palace and can't read it." },
+      secret: "She has promised a hidden treasure fleet to whoever defeats Captain Rook." },
     { id: "iron_jack", name: "Iron Jack", epithet: "the Armored King", faction: "iron_jack_pirates", role: "Emperor", fruit: "pika", bounty: 3900000000, location: "anvil_rock", status: "alive", disposition: 0, known: true,
       desc: "A pirate in full black armor who moves at the speed of light.", goal: "Conquer the New World and then the Government.",
       secret: "Under the armor his body is badly burned. He is looking for the Op-Op Fruit to be healed." },
@@ -673,7 +762,7 @@ const WORLD_SEED = {
     // Warlords, rebels, others
     { id: "sly_dutch", name: "Sly Dutch", epithet: "the Sandman", faction: "warlords", role: "Warlord", fruit: "suna", bounty: 0, location: "sundial", status: "alive", disposition: 0, known: true,
       desc: "A charming casino owner with a cigar and a hook for a hand. He turns to sand.", goal: "Steal Sundial's ancient weapon secret and become untouchable.",
-      secret: "He is secretly buying Road Poneglyph rubbings through the casino auction." },
+      secret: "He is digging up an ancient weapon under the desert and paying pirates to keep the Marines busy." },
     { id: "lady_vera", name: "Lady Vera", epithet: "the Heartbreaker", faction: "warlords", role: "Warlord", fruit: "mero", bounty: 0, location: "bubble_grove", status: "alive", disposition: 0, known: false,
       desc: "A beautiful, cold Warlord who turns anyone who desires her into stone.", goal: "Free every slave in Bubble Grove, quietly.", secret: "She was once a slave of Saint Corvus." },
     { id: "nora", name: "Nora", epithet: "the Mirage", faction: "revolutionary_army", role: "Revolutionary officer", fruit: "kagero", bounty: 300000000, location: "crane_town", status: "alive", disposition: 0, known: false,
@@ -682,8 +771,8 @@ const WORLD_SEED = {
     { id: "marcus", name: "Marcus", epithet: "the Man Without a Flag", faction: "revolutionary_army", role: "Revolutionary leader", fruit: null, bounty: 0, location: "ember_isle", status: "alive", disposition: 0, known: false,
       desc: "The leader of the Revolutionary Army. Almost nobody has seen his face.", goal: "Bring down the World Government.", secret: "He was born a Celestial Dragon." },
     { id: "professor_lin", name: "Professor Lin", epithet: "", faction: "none", role: "scholar of the forbidden history", fruit: null, bounty: 0, location: "westwind", status: "alive", disposition: 10, known: false,
-      desc: "A small, cheerful scholar who can read Poneglyphs, a crime punishable by death.", goal: "Learn the truth of the Void Century before she dies.",
-      secret: "She is the last person alive who can read the Road Poneglyphs." },
+      desc: "A small, cheerful scholar and fighter who runs Westwind's school and refuses to leave it.", goal: "Protect Westwind's people.",
+      secret: "She once fought beside the Revolutionary leader Marcus, and the Government knows it." },
     { id: "scar_nell", name: "Nell", epithet: "Scar", faction: "none", role: "bounty hunter", fruit: "kizu", bounty: 0, location: "fogtown", status: "alive", disposition: -5, known: false,
       desc: "An eyepatched bounty hunter covered in old scars, every one of them a weapon.", goal: "Collect every rookie bounty over 30,000,000 berries.",
       secret: "She is paying off her brother's debt to Sly Dutch." },
@@ -764,7 +853,7 @@ const WORLD_SEED = {
 
   threads: [
     { id: "gullport", name: "Gullport's Bounty Day", stage: 0, stages: ["Hale squeezes Gullport", "The town rallies or breaks", "The outpost is confronted", "Gullport freed or crushed"] },
-    { id: "one_piece", name: "Road to Laugh Tale", stage: 0, stages: ["Only a dream", "First real lead on a Road Poneglyph", "One rubbing", "Two rubbings", "Three rubbings", "All four read", "Laugh Tale"] },
+    { id: "one_piece", name: "Road to Laugh Tale", stage: 0, stages: ["Only a dream", "Reached the Grand Line", "Made a name in Paradise", "Crossed into the New World", "Fought an Emperor's crew", "Feared across the seas", "Laugh Tale"] },
     { id: "buster_call", name: "The Westwind Buster Call", stage: 0, stages: ["Secret order", "Rumors", "The fleet sails", "Stopped or carried out"] },
     { id: "warlords", name: "Fall of the Warlords", stage: 0, stages: ["Business as usual", "A Warlord's crime exposed", "The system shakes", "Abolished or strengthened"] },
     { id: "emperor_war", name: "Emperor War", stage: 0, stages: ["Cold peace", "Provocations", "Open war", "An Emperor falls"] },
@@ -780,8 +869,8 @@ const WORLD_SEED = {
       desc: "The rookie Ben 'Redcap' Cole robs a Marine supply ship off Loguetown. His bounty jumps.",
       effects: { npcs: [{ id: "ben_cole", known: true, bounty: 38000000 }], rumor: "Rookie 'Redcap' Cole robbed a Marine supply ship! New bounty: 38,000,000." } },
     { id: "sundial_auction", day: 10, title: "The Sundial casino auction", public: true, status: "pending",
-      desc: "Sly Dutch's casino auctions treasure from the New World, including a rumored Road Poneglyph rubbing.",
-      effects: { threads: [{ id: "one_piece", stage: 1 }] } },
+      desc: "Sly Dutch's casino auctions treasure from the New World, including a Devil Fruit and a Grade blade.",
+      effects: { rumor: "The Sundial auction sold a Devil Fruit for 200 million. Pirates are fighting over the buyer." } },
     { id: "hunter_season", day: 14, title: "Scar Nell's hunting season", public: false, status: "pending",
       desc: "The bounty hunter Scar Nell starts hunting every rookie in Paradise with a bounty over 30,000,000.", effects: { npcs: [{ id: "scar_nell", known: true }] } },
     { id: "celestial_visit", day: 20, title: "A Celestial Dragon visits Bubble Grove", public: true, status: "pending",
@@ -792,7 +881,7 @@ const WORLD_SEED = {
       desc: "A stolen cargo starts a war between two Emperors in the New World.",
       effects: { threads: [{ id: "emperor_war", stage: 2 }], factions: [{ id: "big_mae_pirates", power: -5 }, { id: "rook_pirates", power: -6 }] } },
     { id: "buster_call", day: 45, title: "BUSTER CALL ON WESTWIND", public: false, status: "pending",
-      desc: "Ten Marine battleships and Admiral Kane destroy Westwind Isle to erase its scholars and their research.",
+      desc: "Ten Marine battleships and Admiral Kane bombard Westwind Isle to wipe out people the Government calls Revolutionary sympathizers.",
       effects: { threads: [{ id: "buster_call", stage: 3 }], islands: [{ id: "westwind", controller: "world_government", status: "Burned to the ground by a Buster Call." }], npcs: [{ id: "professor_lin", status: "missing" }] } },
     { id: "impel_breakout", day: 52, title: "Revolutionary breakout at Impel Down", public: false, status: "pending",
       desc: "The Revolutionary Army tries to free prisoners from Impel Down.", effects: { factions: [{ id: "revolutionary_army", power: 6 }], threads: [{ id: "revolution", stage: 2 }] } },
@@ -812,7 +901,7 @@ const ORIGINS = [
   { id: "fisher", label: "East Blue fisher's kid", text: "Born in Gullport. You know every family in town and every rock in the bay." },
   { id: "cadet", label: "Runaway Marine cadet", text: "You quit Marine training the day you saw what 'justice' meant to your officers." },
   { id: "gambler", label: "South Blue gambler's kid", text: "Raised in Dunmore's gambling dens. You can read a bluff and owe the wrong people." },
-  { id: "scholar", label: "West Blue scholar's apprentice", text: "You grew up near Westwind's library tree, where reading the old stones is a crime." },
+  { id: "hunter", label: "West Blue monster hunter's kid", text: "You grew up hunting giant beasts in the West Blue forests with your father's harpoon." },
   { id: "orphan", label: "Shipwreck orphan", text: "Pirates sank your family's ship when you were a baby. You grew up on other people's boats." }
 ];
 
@@ -828,7 +917,7 @@ const RANKS = ["Raw", "Honed", "Awakened", "Master", "Legend"];
 /* ---- fruit-bearers: every starter fruit you don't pick is eaten by its bearer ---- */
 const BEARERS = [
   { fruit: "kuki", id: "skye", name: "Skye", epithet: "Puff", role: "mail courier kid", location: "frostvale",
-    desc: "A breathless fourteen-year-old who runs mail across Frostvale's frozen bay faster than anyone.", goal: "See the world from higher than anyone has.", secret: "She has been carrying Revolutionary letters without knowing it.", join: "Take her somewhere she's never been." },
+    desc: "A breathless fourteen-year-old who runs mail across Frostvale's frozen bay faster than anyone.", goal: "See the world from higher than anyone has.", secret: "She has been running supplies for the Revolutionaries without knowing it.", join: "Take her somewhere she's never been." },
   { fruit: "hibi", id: "dax", name: "Dax", epithet: "Fault", role: "dock brawler", location: "dunmore",
     desc: "A huge, quiet bruiser who breaks legs for a gambling boss and hates every second of it.", goal: "Pay off his mother's debt.", secret: "He warns his targets the night before.", join: "Free his mother from the debt." },
   { fruit: "koku", id: "tess", name: "Tess", epithet: "Granny", role: "fortune teller", location: "fogtown",
@@ -836,7 +925,7 @@ const BEARERS = [
   { fruit: "tenbin", id: "owen", name: "Owen", epithet: "the Fair Judge", role: "former Marine judge", location: "rivetport",
     desc: "A grey, stern man who settles shipyard disputes for free.", goal: "Put Captain-level corruption on trial, all the way up.", secret: "He sentenced innocent people at Justice Isle and kept copies of the orders.", join: "Show him you fight for real justice." },
   { fruit: "fuin", id: "pip", name: "Pip", epithet: "Lucky", role: "street kid charm-seller", location: "loguetown",
-    desc: "A tiny, fast-talking kid who sells lucky paper charms.", goal: "See the Grand Line.", secret: "Pip sealed a stolen Marine report into a charm without reading it.", join: "Protect Pip from the gang that runs the market." },
+    desc: "A tiny, fast-talking kid who sells lucky paper charms.", goal: "See the Grand Line.", secret: "Pip sealed a Marine officer's pistol into a charm, and the officer wants it back.", join: "Protect Pip from the gang that runs the market." },
   { fruit: "chi", id: "ruby", name: "Doctor Ruby", epithet: "Red Coat", role: "prison medic", location: "impel_down",
     desc: "A cold, brilliant doctor who treats prisoners nobody else will.", goal: "Get as many prisoners out alive as she can.", secret: "She fakes deaths and smuggles prisoners out in body bags.", join: "Break Impel Down open with her." },
   { fruit: "nami", id: "kai", name: "Kai", epithet: "Wave Rider", role: "surfer and fisherman", location: "crane_town",
@@ -845,8 +934,8 @@ const BEARERS = [
     desc: "A tiny, sharp-tongued old tailor who has stitched every Admiral's coat.", goal: "Get his apprentices out of Marineford.", secret: "He leaks Marine plans to the Revolutionaries in coat linings.", join: "Protect his apprentices." },
   { fruit: "uzu", id: "mara", name: "Captain Mara", epithet: "Whirlpool", role: "smuggler captain", location: "dunmore",
     desc: "A smirking smuggler who never pays a toll and always pays her crew.", goal: "Break the gambling bosses' hold on Dunmore.", secret: "She owes Sly Dutch one favor, not yet called in.", join: "Win her respect in a deal or a duel." },
-  { fruit: "sumi", id: "leo", name: "Leo", epithet: "Inky", role: "forger", location: "bubble_grove",
-    desc: "A jittery forger with ink up to his elbows and a joke for everything.", goal: "Draw a true map of the whole world.", secret: "He forges freedom papers for slaves.", join: "Promise him a voyage to the New World." },
+  { fruit: "sumi", id: "leo", name: "Leo", epithet: "Inky", role: "painter and navigator", location: "bubble_grove",
+    desc: "A jittery painter-navigator with ink up to his elbows and a joke for everything.", goal: "Sail every sea in the world.", secret: "He sneaks slaves out of the auction house at night.", join: "Promise him a voyage to the New World." },
   { fruit: "doro", id: "mags", name: "Mags", epithet: "Mudlark", role: "harbor thief", location: "fogtown",
     desc: "A grinning thief who sinks into the mud to escape.", goal: "Find a crew that won't sell her out.", secret: "Her last crew sold her to slavers. They still hunt her.", join: "Stand by her when her old crew comes." },
   { fruit: "kessho", id: "cal", name: "Cal", epithet: "Prism", role: "glassblower", location: "westwind",
@@ -854,7 +943,7 @@ const BEARERS = [
   { fruit: "bara", id: "bram", name: "Bram", epithet: "Pieces", role: "casino knife-juggler", location: "sundial",
     desc: "A showman who juggles his own hands for tips at the Sundial casino.", goal: "Leave the casino with his debts cleared.", secret: "He knows where Dutch keeps his secret vault.", join: "Get him out of Dutch's contract." },
   { fruit: "hana", id: "lily", name: "Lily", epithet: "Bloom", role: "scholar's apprentice", location: "westwind",
-    desc: "A quiet bookworm who sprouts extra hands to read three books at once.", goal: "Read every Poneglyph in the world.", secret: "Professor Lin is teaching her to read the forbidden text.", join: "Prove you will protect the truth." },
+    desc: "A quiet martial artist who sprouts extra hands to fight with eight arms at once.", goal: "Become strong enough to protect Westwind.", secret: "Professor Lin trained her in secret.", join: "Prove you will protect the truth." },
   { fruit: "bomu", id: "joe", name: "Boomer Joe", epithet: "", role: "demolition worker", location: "rivetport",
     desc: "A cheerful demolition worker who sneezes explosions.", goal: "Build something instead of blowing it up.", secret: "He blew up a Marine ship by accident and has a secret bounty.", join: "Give him a ship to build, not destroy." },
   { fruit: "supa", id: "spike", name: "Spike", epithet: "Razor", role: "bounty hunter", location: "fogtown",
@@ -862,7 +951,7 @@ const BEARERS = [
   { fruit: "sube", id: "sasha", name: "Sasha", epithet: "Silk", role: "dancer and pickpocket", location: "bubble_grove",
     desc: "A dancer that nothing can hold, who picks pockets during her shows.", goal: "Buy her sister out of the human auction.", secret: "Her sister is already sold to Saint Corvus.", join: "Help free her sister." },
   { fruit: "bane", id: "hopper", name: "Hopper", epithet: "Bounce", role: "mailman", location: "loguetown",
-    desc: "A hyper mailman who bounces over rooftops.", goal: "Deliver a letter to the New World.", secret: "The letter is for the Old Fox, from a son he doesn't know he has.", join: "Promise to deliver his letter with him." },
+    desc: "A hyper mailman who bounces over rooftops.", goal: "Reach the New World and meet the Old Fox.", secret: "He is the Old Fox's son, and the Old Fox doesn't know he exists.", join: "Promise to take him to the New World." },
   { fruit: "bari", id: "wally", name: "Wally", epithet: "the Wall", role: "ex-bodyguard", location: "sundial",
     desc: "A huge, gentle ex-bodyguard who crosses his fingers to make walls.", goal: "Protect someone worth protecting.", secret: "He was fired for refusing to hurt a child.", join: "Give him someone worth protecting." },
   { fruit: "moku", id: "sam", name: "Smokey Sam", epithet: "", role: "Marine deserter", location: "crane_town",
@@ -932,7 +1021,7 @@ const STARTS = [
   { id: "credit", req: "fruit", title: "Bought it on credit from a casino broker",
     text: "A smiling broker from Sly Dutch's casino sold you the fruit for a signature. You should have read the fine print.",
     cons: "No money. You owe ฿50,000,000 to a Warlord's casino. A debt collector arrives on Day 6.",
-    effects: { player: { berries: -3000, add_items: ["Sundial casino debt note: ฿50,000,000 owed"] }, factions: [{ id: "warlords", attitude: -10, note: "The player owes Sly Dutch's casino 50 million." }],
+    effects: { player: { berries: -3000, add_items: ["Sundial casino brand burned on your wrist (฿50,000,000 owed)"] }, factions: [{ id: "warlords", attitude: -10, note: "The player owes Sly Dutch's casino 50 million." }],
       new_events: [{ id: "debt_collector", day: 6, title: "The debt collector arrives", desc: "A Sundial casino collector (or Scar Nell on contract) comes to Gullport to take payment in berries, service, or blood.", public: false }] },
     hook: "The player bought their Devil Fruit on credit from Sly Dutch's casino and owes 50,000,000 berries. A collector is coming." },
   { id: "washed", req: "fruit", title: "Found it in a pirate wreck",
@@ -948,10 +1037,10 @@ const STARTS = [
     hook: "The player has had their Devil Fruit since childhood. All of Gullport knows. Captain Hale sees them as a threat or a tool." },
   { id: "skyfall", req: "kuki", title: "Fell from the sky",
     text: "You were a balloon courier until a Marine patrol shot you down. You ate the Air fruit from the cargo as you fell, and your first breath of power broke your fall into Gullport's bay.",
-    cons: "Air mastery starts higher. You carry a sealed World Government letter, and a Cipher Pol agent is coming for it.",
-    effects: { player: { mastery: 10, hp: -10, add_items: ["Sealed World Government letter from the crashed balloon"] }, factions: [{ id: "marines", attitude: -10 }, { id: "cipher_pol", attitude: -15, note: "Wants the letter back." }],
-      new_events: [{ id: "cp_agent_arrives", day: 4, title: "A Cipher Pol agent comes to Gullport", desc: "Agent Grey (or one of his agents) arrives quietly to recover the sealed letter and silence whoever read it.", public: false }] },
-    hook: "The player was a balloon courier shot down by a Marine patrol. While falling they ate the Air-Air Fruit (Kuki Kuki no Mi) from the cargo and caught themselves on a cushion of their own breath. They still carry a sealed World Government letter. Cipher Pol is coming." },
+    cons: "Air mastery starts higher. You grabbed a Government treasure chest from the wreck, and a Cipher Pol agent is coming for it.",
+    effects: { player: { mastery: 10, hp: -10, add_items: ["Locked Government treasure chest from the crashed balloon"] }, factions: [{ id: "marines", attitude: -10 }, { id: "cipher_pol", attitude: -15, note: "Wants the letter back." }],
+      new_events: [{ id: "cp_agent_arrives", day: 4, title: "A Cipher Pol agent comes to Gullport", desc: "Agent Grey (or one of his agents) arrives quietly to take back the treasure chest and silence whoever has it.", public: false }] },
+    hook: "The player was a balloon courier shot down by a Marine patrol. While falling they ate the Air-Air Fruit (Kuki Kuki no Mi) from the cargo and caught themselves on a cushion of their own breath. They grabbed a locked Government treasure chest from the wreck. Cipher Pol is coming." },
   { id: "apprentice", req: "nofruit", title: "Haki apprentice to Old Gus",
     text: "Gus has been beating Haki into you since you could walk, without explaining how an old fisherman knows it.",
     cons: "Start with real Observation and Armament Haki. Gus trusts you deeply.",
@@ -976,61 +1065,71 @@ const STARTS = [
 
 /* ---- hidden mission seeds (never shown to the player) ---- */
 const SEEDS = [
-  // main beats
-  { id: "m_gus_rubbing", kind: "main", where: "gullport", npc: "gus", text: "Old Gus's boat hides a Road Poneglyph rubbing. Cipher Pol is getting close to it." },
-  { id: "m_hale_ledger", kind: "main", where: "gullport", npc: "captain_hale", text: "Hale's ledger proves he sells townspeople to slavers. Exposing it could free Gullport." },
-  { id: "m_slave_ship", kind: "main", where: "gullport", text: "A ship of 'sympathizers' from Gullport is leaving for the Bubble Grove auction." },
-  { id: "m_pike_defect", kind: "main", where: "gullport", npc: "lt_pike", text: "Lieutenant Pike will turn on Hale if someone gives him the courage." },
-  { id: "m_redcap_rival", kind: "main", where: "any", npc: "ben_cole", text: "Redcap Cole races the player for every lead on the One Piece and shows up at the worst moments." },
-  { id: "m_loguetown_gate", kind: "main", where: "loguetown", npc: "vice_admiral_june", text: "Vice Admiral June blocks Loguetown's harbor to stop rookies from leaving for the Grand Line." },
-  { id: "m_auction_rubbing", kind: "main", where: "sundial", npc: "sly_dutch", text: "A Road Poneglyph rubbing is the secret top lot at Dutch's casino auction." },
-  { id: "m_dutch_weapon", kind: "main", where: "sundial", npc: "sly_dutch", text: "Dutch is digging for an ancient weapon under Sundial. Exposing him could break the Warlord system." },
-  { id: "m_westwind_warning", kind: "main", where: "westwind", npc: "professor_lin", text: "Professor Lin must be warned about the Buster Call. She is the only one who can read Road Poneglyphs." },
-  { id: "m_justice_vault", kind: "main", where: "justice_isle", text: "The Op-Op Fruit sits in Justice Isle's evidence vault. Iron Jack would pay anything for it." },
-  { id: "m_buster_order", kind: "main", where: "justice_isle", npc: "admiral_kane", text: "The Buster Call order on Westwind can be stopped only by stealing or forging the order." },
-  { id: "m_corvus_slaves", kind: "main", where: "bubble_grove", npc: "saint_corvus", text: "Saint Corvus's slaves know secrets about the Five Elders. Punching a Celestial Dragon brings an Admiral." },
-  { id: "m_vera_freedom", kind: "main", where: "bubble_grove", npc: "lady_vera", text: "Lady Vera secretly frees slaves. She needs help with something big." },
-  { id: "m_marineford_secret", kind: "main", where: "marineford", npc: "fleet_admiral_stone", text: "Fleet Admiral Stone is losing faith. Proof of the Buster Call's real purpose could turn him." },
-  { id: "m_impel_break", kind: "main", where: "impel_down", npc: "warden_mort", text: "Killing or beating Warden Mort breaks his curses, including the one killing the Old Fox." },
-  { id: "m_fishman_passage", kind: "main", where: "fishman_island", npc: "jet", text: "The way to the New World goes through Fish-Man Island, where pirates are bullying the citizens." },
-  { id: "m_mae_poneglyph", kind: "main", where: "honeycomb", npc: "big_mae", text: "Big Mae has a Road Poneglyph in her palace and wants someone who can read it." },
-  { id: "m_jack_ope", kind: "main", where: "anvil_rock", npc: "iron_jack", text: "Iron Jack hunts the Op-Op Fruit to heal himself, and will start a war for it." },
-  { id: "m_rook_deal", kind: "main", where: "rookery", npc: "captain_rook", text: "Captain Rook made a deal with Cipher Pol to betray other pirates." },
-  { id: "m_fox_successor", kind: "main", where: "foxhollow", npc: "old_fox", text: "The dying Old Fox is quietly looking for a successor worthy of his flag." },
-  { id: "m_revolution_call", kind: "main", where: "any", npc: "nora", text: "The Revolutionary Army sends an invitation once the player openly defies the Government." },
-  { id: "m_admiral_hunt", kind: "main", where: "any", npc: "admiral_ray", text: "Admiral Ray adds the player to his 'interesting' list once their bounty passes 100M." },
-  { id: "m_laugh_tale", kind: "main", where: "laugh_tale", text: "With all four Road Poneglyphs read, the way to Laugh Tale opens." },
-  // side seeds
-  { id: "s_gullport_ghost", kind: "side", where: "gullport", text: "Kids say a drowned fisherman walks the piers at night, looking for his ring." },
-  { id: "s_mia_wood", kind: "side", where: "gullport", npc: "mia", text: "Mia needs Adam-grade wood scraps from the Marine yard to finish her hull." },
-  { id: "s_levy_widow", kind: "side", where: "gullport", text: "A widow is short on Bounty Day money and her son is on the list." },
+  // main beats (big adventures, not paperwork)
+  { id: "m_gus_enemy", kind: "main", where: "gullport", npc: "gus", text: "An old enemy of Gus's, a scarred New World pirate, sails into Gullport looking for revenge." },
+  { id: "m_slave_ship", kind: "main", where: "gullport", npc: "captain_hale", text: "A slaver ship arrives to collect the Gullport families Hale sold. Stop it at sea or in port." },
+  { id: "m_hale_fight", kind: "main", where: "gullport", npc: "captain_hale", text: "Captain Hale finally stops smiling and fights with his Salt-Salt Fruit." },
+  { id: "m_pike_defect", kind: "main", where: "gullport", npc: "lt_pike", text: "Lieutenant Pike turns on Hale if someone gives him the courage." },
+  { id: "m_redcap_rival", kind: "main", where: "any", npc: "ben_cole", text: "Redcap Cole races the player to every island and keeps picking fights." },
+  { id: "m_loguetown_gate", kind: "main", where: "loguetown", npc: "vice_admiral_june", text: "Vice Admiral June blockades Loguetown to stop rookies from leaving for the Grand Line." },
+  { id: "m_reverse_climb", kind: "main", where: "reverse_mountain", text: "Climbing Reverse Mountain in a storm, with a Marine ship chasing." },
+  { id: "m_auction_brawl", kind: "main", where: "sundial", npc: "sly_dutch", text: "The Sundial auction turns into a brawl over a Devil Fruit." },
+  { id: "m_dutch_weapon", kind: "main", where: "sundial", npc: "sly_dutch", text: "Sly Dutch is digging up an ancient weapon under the desert. Beating him could end the Warlord system." },
+  { id: "m_westwind_defense", kind: "main", where: "westwind", npc: "professor_lin", text: "The Buster Call fleet is coming for Westwind. Fight it, or get the people out." },
+  { id: "m_justice_raid", kind: "main", where: "justice_isle", text: "Raid Justice Isle to free prisoners before they're shipped to Impel Down. The Op-Op Fruit is in its vault." },
+  { id: "m_corvus_punch", kind: "main", where: "bubble_grove", npc: "saint_corvus", text: "Saint Corvus shoots someone at the auction. Punching a Celestial Dragon brings an Admiral." },
+  { id: "m_vera_freedom", kind: "main", where: "bubble_grove", npc: "lady_vera", text: "Lady Vera plans to blow up the human auction house and needs fighters." },
+  { id: "m_blackwater_tournament", kind: "main", where: "blackwater", text: "Blackwater's pirate tournament: the winner gets a ship and a crew of rookies." },
+  { id: "m_skyreach_war", kind: "main", where: "skyreach", text: "A cloud war on Skyreach between sky warriors and an invading god-king." },
+  { id: "m_marineford_raid", kind: "main", where: "marineford", npc: "fleet_admiral_stone", text: "A friend is captured and taken to Marineford for public execution." },
+  { id: "m_impel_break", kind: "main", where: "impel_down", npc: "warden_mort", text: "Break into Impel Down. Beating Warden Mort breaks his curses, including the one killing the Old Fox." },
+  { id: "m_fishman_passage", kind: "main", where: "fishman_island", npc: "jet", text: "Pirates are bullying Fish-Man Island, the only way to the New World." },
+  { id: "m_mae_party", kind: "main", where: "honeycomb", npc: "big_mae", text: "Big Mae invites the player to fight in her colosseum. Winning earns her treasure fleet; losing means joining her family." },
+  { id: "m_jack_ope", kind: "main", where: "anvil_rock", npc: "iron_jack", text: "Iron Jack will start a war for the Op-Op Fruit." },
+  { id: "m_rook_betrayal", kind: "main", where: "rookery", npc: "captain_rook", text: "Captain Rook sells out rival pirates to Cipher Pol, and the player could be next." },
+  { id: "m_fox_successor", kind: "main", where: "foxhollow", npc: "old_fox", text: "The dying Old Fox tests young pirates to find a worthy successor." },
+  { id: "m_redfang_war", kind: "main", where: "redfang_bay", text: "Two Emperor fleets clash at Redfang Bay. Pick a side, loot the wrecks, or stop the war." },
+  { id: "m_revolution_call", kind: "main", where: "any", npc: "nora", text: "The Revolutionary Army invites the player once they openly fight the Government." },
+  { id: "m_admiral_hunt", kind: "main", where: "any", npc: "admiral_ray", text: "Admiral Ray comes to see the player personally once their bounty passes 100M." },
+  { id: "m_laugh_tale", kind: "main", where: "laugh_tale", text: "The final island. The One Piece is here." },
+  // side adventures
+  { id: "s_gullport_bandits", kind: "side", where: "gullport", text: "Bandits from Kettle Rock raid Gullport's fishing boats." },
+  { id: "s_mia_wood", kind: "side", where: "gullport", npc: "mia", text: "Mia needs iron-hard timber from Ironpine to finish her ship." },
+  { id: "s_levy_widow", kind: "side", where: "gullport", text: "A widow can't pay on Bounty Day and her son is about to be taken." },
   { id: "s_crane_bar", kind: "side", where: "crane_town", text: "A bar fight with a rookie crew turns into a bet over a ship." },
-  { id: "s_crane_shipwright", kind: "side", where: "crane_town", text: "The Crane Town shipyard will build a ship for anyone who beats its foreman at arm-wrestling." },
-  { id: "s_loguetown_execution", kind: "side", where: "loguetown", text: "A pirate is about to be executed on the same platform as the Pirate King. His crew plans a hopeless rescue." },
+  { id: "s_crane_shipwright", kind: "side", where: "crane_town", text: "The shipyard builds a ship for anyone who beats its foreman at arm-wrestling." },
+  { id: "s_loguetown_execution", kind: "side", where: "loguetown", text: "A pirate is about to be executed on the Pirate King's platform. His crew plans a hopeless rescue." },
+  { id: "s_saltreef_wrecks", kind: "side", where: "saltreef", text: "A wreck on Saltreef still holds a pirate captain's treasure, guarded by a giant crab." },
+  { id: "s_millhaven_raid", kind: "side", where: "millhaven", text: "A pirate crew is coming to burn Millhaven's harvest. The farmers ask for help." },
+  { id: "s_kettle_king", kind: "side", where: "kettle_rock", text: "The bandit king of Kettle Rock challenges anyone to a duel for his toll rights." },
   { id: "s_frost_doctor", kind: "side", where: "frostvale", npc: "patch", text: "Frostvale's old doctor is dying, and his dog Patch is trying to save him." },
-  { id: "s_dunmore_cards", kind: "side", where: "dunmore", text: "A legendary card shark challenges anyone to a game for a Log Pose to the New World." },
-  { id: "s_fogtown_party", kind: "side", where: "fogtown", text: "Fogtown throws the player a welcome party. Everyone at the party is a bounty hunter." },
+  { id: "s_ironpine_war", kind: "side", where: "ironpine", text: "Ironpine's king offers a fortune to whoever ends the forest war, by any means." },
+  { id: "s_dunmore_cards", kind: "side", where: "dunmore", text: "A card shark bets a Log Pose to the New World on one hand." },
+  { id: "s_coral_dive", kind: "side", where: "coral_crown", text: "Low tide uncovers the sunken city for six hours. Rival treasure hunters race in." },
+  { id: "s_thornwood_families", kind: "side", where: "thornwood", text: "Three mafia families each try to hire the player to wipe out the others." },
+  { id: "s_fogtown_party", kind: "side", where: "fogtown", text: "Fogtown throws the player a welcome party. Everyone there is a bounty hunter." },
   { id: "s_reverse_whale", kind: "side", where: "reverse_mountain", text: "A giant whale keeps ramming the Red Line at Twin Cape, waiting for a crew that never came back." },
-  { id: "s_sundial_rebels", kind: "side", where: "sundial", text: "Sundial's rebels plan to storm the casino, not knowing Dutch has set a trap." },
-  { id: "s_rivet_guild", kind: "side", where: "rivetport", text: "The shipwrights' guild is being forced to build warships for someone powerful." },
-  { id: "s_rivet_race", kind: "side", where: "rivetport", text: "A canal boat race through Rivetport with a prize ship." },
-  { id: "s_justice_trial", kind: "side", where: "justice_isle", text: "An innocent sailor is on trial for 'reading'. The verdict is decided before the trial starts." },
-  { id: "s_bubble_coating", kind: "side", where: "bubble_grove", text: "The best ship-coater in Bubble Grove is drunk, broke, and in debt to slavers." },
+  { id: "s_hollow_beast", kind: "side", where: "hollow_peak", text: "A giant beast is wrecking Hollow Peak's only village. Something drove it mad." },
+  { id: "s_bazaar_ship", kind: "side", where: "tidepool_bazaar", text: "The best ship in the bazaar is up for sale, and three crews want it." },
+  { id: "s_glass_worms", kind: "side", where: "glass_desert", text: "Sandworms swallowed a treasure caravan in the Glass Desert. The loot is still inside one." },
+  { id: "s_sundial_rebels", kind: "side", where: "sundial", text: "Sundial's rebels plan to storm the casino, not knowing Dutch set a trap." },
+  { id: "s_rivet_race", kind: "side", where: "rivetport", text: "A canal boat race through Rivetport with a ship as the prize." },
+  { id: "s_bubble_coating", kind: "side", where: "bubble_grove", text: "The best ship-coater is drunk, broke and in trouble with slavers." },
   { id: "s_marine_cadet", kind: "side", where: "marineford", text: "A cadet is about to be executed for refusing an order; his squad plans a rescue." },
-  { id: "s_impel_letter", kind: "side", where: "impel_down", text: "A prisoner's last letter needs to reach his daughter in the East Blue." },
   { id: "s_fishman_bullies", kind: "side", where: "fishman_island", text: "A pirate crew is shaking down a fish-man café." },
-  { id: "s_honey_party", kind: "side", where: "honeycomb", text: "Big Mae's tea party: refusing the invitation is an insult, and accepting it is a trap." },
-  { id: "s_anvil_prison", kind: "side", where: "anvil_rock", text: "Iron Jack's forges run on prisoners. One of them used to be famous." },
+  { id: "s_stormhold_sail", kind: "side", where: "stormhold", text: "Stormhold's sailors race through the lightning for glory. Losers get struck." },
+  { id: "s_bone_egg", kind: "side", where: "bone_isle", text: "Someone stole a Sea King egg from Bone Isle. Its mother is destroying ships to find it." },
+  { id: "s_anvil_prison", kind: "side", where: "anvil_rock", text: "Iron Jack's forges run on prisoners. One of them used to be a famous fighter." },
   { id: "s_rook_poison", kind: "side", where: "rookery", text: "A village on Rook's island is dying from a poisoned well." },
   { id: "s_any_rival", kind: "side", where: "any", text: "A rookie crew with a grudge (invent them, scaled to the region) challenges the player in public." },
-  { id: "s_any_stowaway", kind: "side", where: "any", text: "A stowaway is found aboard with a secret that puts the crew in danger." },
-  { id: "s_any_storm", kind: "side", where: "any", text: "A freak storm strands the player with an unlikely enemy." },
-  { id: "s_any_merchant", kind: "side", where: "any", text: "A traveling merchant sells a map, a cursed item, or a fruit rumor. Some of it is real." },
-  { id: "s_any_ghostship", kind: "side", where: "any", text: "A ghost ship appears in the fog with a skeleton crew that still talks." },
+  { id: "s_any_stowaway", kind: "side", where: "any", text: "A stowaway is found aboard, and someone dangerous is chasing them." },
+  { id: "s_any_storm", kind: "side", where: "any", text: "A freak storm strands the player on an unknown island with an unlikely enemy." },
+  { id: "s_any_merchant", kind: "side", where: "any", text: "A traveling merchant sells weapons, a cursed item, or a fruit rumor. Some of it is real." },
+  { id: "s_any_ghostship", kind: "side", where: "any", text: "A ghost ship appears in the fog with a skeleton crew that wants a fight." },
   { id: "s_any_hunter", kind: "side", where: "any", text: "A bounty hunter (invent one, scaled to the region) comes for the player's head." },
   { id: "s_any_marines", kind: "side", where: "any", text: "A Marine patrol (scaled to the region) spots the player's ship." },
-  { id: "s_any_festival", kind: "side", where: "any", text: "A local festival or tournament with a hidden danger." },
-  { id: "s_any_old_friend", kind: "side", where: "any", text: "Someone from the player's origin turns up, needing help or wanting payback." },
+  { id: "s_any_festival", kind: "side", where: "any", text: "A local festival, fighting tournament or eating contest with a hidden danger." },
+  { id: "s_any_treasure", kind: "side", where: "any", text: "A buried treasure rumor on this island. Others are already digging." },
   { id: "s_any_seaking", kind: "side", where: "any", text: "A Sea King blocks the route, and something about it is strange." },
   { id: "s_any_bearer", kind: "side", where: "any", text: "A Devil Fruit user from the recruitable list crosses the player's path in an interesting situation." }
 ];
@@ -1058,18 +1157,6 @@ STYLES.push(
 
 
 /* ---- Air-Air Fruit showcase: mastery path and ready-made moves ---- */
-const AIR_PATH = [
-  { at: 0, name: "Breath Shaping", desc: "Harden one breath into a small air bullet or a palm-sized shield. Range: arm's length." },
-  { at: 10, name: "Sky Step", desc: "Stamp air solid under your feet to run up a few steps of empty sky." },
-  { at: 20, name: "Pressure Cannon", desc: "Compress a full lungful and release it as a cannon blast that knocks people flat." },
-  { at: 30, name: "Vacuum Fist", desc: "Empty the air around a punch. Targets gasp, flames die, and sound vanishes for a heartbeat." },
-  { at: 40, name: "Air Sense", desc: "Feel movement through pressure changes in air you've claimed: a weak, fruit-based echo of Observation Haki." },
-  { at: 50, name: "Gale Wall", desc: "Raise a room-sized dome of hard air that stops cannonballs, for a few seconds." },
-  { at: 60, name: "Lung Thief", desc: "Steal the breath from a small group's lungs. Dangerous and draining; strong Haki resists it." },
-  { at: 70, name: "Updraft Flight", desc: "Ride self-made pressure currents for real flight over short distances." },
-  { at: 85, name: "Pressure Front", desc: "Shape a whole battlefield's air: drop pressure to cause dizziness, or form a storm front." },
-  { at: 100, name: "AWAKENING: Sky Dominion", desc: "The surroundings answer you: the air of an entire island becomes yours to shape, without touch or breath." }
-];
 
 // ready-made Air move ideas (the player can add these as techniques)
 const AIR_MOVES = [
@@ -1087,6 +1174,59 @@ const AIR_MOVES = [
   { name: "Tempest Palm", desc: "Spin compressed air into a small cyclone fired from the palm." }
 ];
 
+
+/* ============================================================
+   POWER SCALE, FRUIT MASTERY WEBS, HAKI TREES
+   ============================================================ */
+const SCALES = [
+  { at: 0, name: "Person", desc: "can take down a few fighters" },
+  { at: 15, name: "Crowd", desc: "can scatter a whole platoon" },
+  { at: 30, name: "Ship", desc: "can sink or wreck a warship" },
+  { at: 45, name: "Town", desc: "can level a district or a fleet line" },
+  { at: 60, name: "Small island", desc: "can split cliffs and wipe out a small island's defenses" },
+  { at: 75, name: "Large island", desc: "can reshape terrain and break a fortress" },
+  { at: 90, name: "Sea", desc: "Emperor- and Admiral-tier disasters" }
+];
+const WEB_STEPS = [0, 15, 30, 45, 60, 75, 90, 100];
+function scaleFor(v) { return [...SCALES].reverse().find((s) => v >= s.at) || SCALES[0]; }
+
+// [name, desc] for each step: Person, Crowd, Ship, Town, Small island, Large island, Sea, Awakening
+const FRUIT_WEBS = {
+  kuki: [["Breath Shaping", "Harden a breath into air bullets and palm shields. Drops a few fighters."], ["Sky Step", "Run up the sky on hardened air and fire pressure blasts that bowl over a platoon."], ["Pressure Cannon", "A lungful of compressed air that blows a warship's mast off and caves in its hull."], ["Vacuum Dome", "Empty the air over a town district: fires die, people drop gasping, sound vanishes."], ["Pressure Front", "Drop the air pressure over a whole small island: storms form, defenders collapse."], ["Sky Fortress", "Harden the sky into walls and stairs big enough to break a fortress or hold up a cliff."], ["Atmosphere Crush", "Crush the air over an entire sea area into a hurricane fist."], ["AWAKENING: Sky Dominion", "The air of a whole island is yours to shape without touch or breath."]],
+  hibi: [["Crack Palm", "Shatter weapons and bones with a touch."], ["Fault Line", "Crack the ground under a platoon and swallow them."], ["Hull Splitter", "Crack a warship from keel to deck in one strike."], ["Shatter Quake", "Crack the streets of a whole district into rubble."], ["Island Fracture", "Split a small island's cliffs and break its harbor in two."], ["Mountain Breaker", "Crack a mountain open and topple a fortress."], ["Sea Crack", "Crack the surface of the sea itself into tidal shockwaves."], ["AWAKENING: World Fault", "Everything around you can crack at will, even the air in the distance."]],
+  koku: [["Frozen Second", "Freeze one enemy for an instant on touch."], ["Stolen Moment", "Freeze a whole group for a heartbeat."], ["Ship Stall", "Freeze a warship's crew mid-broadside."], ["Town Pause", "Stop a district's fight for three full seconds."], ["Island Stillness", "Freeze the defenders of a small island in place."], ["Rewind Fortress", "Rewind a fortress's walls three seconds after they're built, or broken."], ["Sea of Stopped Time", "Freeze the waves of a whole sea area."], ["AWAKENING: Hour Thief", "Steal whole minutes from the world around you."]],
+  tenbin: [["Even Scales", "Swap weight or speed between two things you touch."], ["Crowd Balance", "Share one fighter's wounds across a whole crowd."], ["Ship Swap", "Swap the momentum of two warships to send them crashing."], ["Town Equalizer", "Balance the heat of a burning district with the cold sea."], ["Island Scales", "Swap the weight of a small island's fort with a feather."], ["Fortress Exchange", "Trade a fortress's strength with its weakest wall."], ["Ocean Balance", "Balance a sea's storm with its calm."], ["AWAKENING: Perfect Equality", "Everything within an island balances to your will."]],
+  fuin: [["Paper Seal", "Seal a weapon or a punch into a charm."], ["Crowd Seal", "Seal a whole volley of bullets and fire it back."], ["Cannon Charm", "Seal a warship's full broadside and release it later."], ["Town Talisman", "Seal a district-sized explosion into one sheet."], ["Island Ward", "Seal a small island inside a paper barrier."], ["Fortress Scroll", "Seal an entire fortress away and release it somewhere else."], ["Sea Seal", "Seal a tidal wave or a hurricane."], ["AWAKENING: Living Paper", "Paper anywhere on the island obeys you."]],
+  chi: [["Blood Whip", "Lash enemies with whips of your own blood."], ["Crimson Rain", "Rain blood needles across a whole crowd."], ["Blood Anchor", "Bind a warship with ropes of hardened blood."], ["Heartbeat Hold", "Feel and slow every heartbeat in a district."], ["Red Tide", "Turn the sea around a small island red and drain its defenders."], ["Blood Fortress", "Raise walls of crystallized blood around a fortress."], ["Sea of Crimson", "Command the blood of everything in a sea area."], ["AWAKENING: Life Weaver", "Heal or stop any living thing on the island."]],
+  nami: [["Pulse Punch", "A punch that sends a wave through the target's body."], ["Ground Ripple", "Ripple the ground into a wave that throws a platoon."], ["Hull Wave", "Send a wave through a warship that shakes it apart."], ["Stone Tsunami", "Turn a district's streets into a tidal wave of stone."], ["Island Tremor", "Send waves through a small island until its cliffs fall."], ["Mountain Wave", "Ripple a mountain like water and break a fortress."], ["Great Tsunami", "Raise a tsunami across a whole sea."], ["AWAKENING: Wave World", "Anything on the island moves like water when you say so."]],
+  hari: [["Needle Shot", "Fire needles from your skin."], ["Needle Storm", "A storm of needles that pins down a platoon."], ["Hull Piercer", "A spear-needle that pins a warship to the reef."], ["Iron Rain", "Rain needles over a whole district."], ["Island Thorns", "Grow needles from the ground across a small island."], ["Fortress Spike", "Drive a needle the size of a tower through a fortress."], ["Sea Barbs", "Fill a sea area with floating needle mines."], ["AWAKENING: Iron Garden", "Every metal on the island becomes needles at your call."]],
+  uzu: [["Spin Kick", "A whirlpool kick that spins enemies off their feet."], ["Vortex Trap", "Trap a whole crowd in a ground whirlpool."], ["Ship Drain", "Open a whirlpool that drags a warship under."], ["Town Cyclone", "Spin a cyclone through a district."], ["Island Maelstrom", "Ring a small island with whirlpools no ship can cross."], ["Fortress Twister", "Twist a fortress off its foundations."], ["Sea Maelstrom", "Turn a whole sea area into one giant whirlpool."], ["AWAKENING: Eye of the Storm", "The whole island spins around you."]],
+  sumi: [["Ink Splash", "Blind fighters and slip through attacks as ink."], ["Ink Beasts", "Draw ink beasts that fight a platoon."], ["Black Tide", "Flood a warship's deck with ink that hardens like tar."], ["Ink Town", "Paint a district into a maze of ink walls."], ["Island Blackout", "Cover a small island in ink-darkness."], ["Ink Titan", "Draw a giant that can break a fortress."], ["Ink Sea", "Turn a sea area into ink that drowns ships."], ["AWAKENING: Living Canvas", "Everything on the island can be painted into something new."]],
+  doro: [["Mud Grip", "Sink enemies' feet into mud and slip through blows."], ["Swamp Field", "Turn the ground under a platoon into a swallowing swamp."], ["Deck Swallow", "Swallow a warship's deck in a mud swamp."], ["Mudslide Town", "Send a mudslide through a district."], ["Island Bog", "Turn a small island's fields and harbor into one bog."], ["Mud Colossus", "Raise a mud giant that can break a fortress."], ["Sea of Mud", "Turn the seabed of a sea area into a mud trap that grounds fleets."], ["AWAKENING: Living Earth", "The whole island's soil becomes mud at your will."]],
+  kessho: [["Crystal Armor", "Diamond-hard skin and crystal blades."], ["Prism Burst", "Bend sunlight into lasers that cut through a crowd."], ["Crystal Spear", "A spear of crystal that splits a warship."], ["Crystal City", "Encase a whole district in crystal."], ["Prism Sun", "Focus sunlight over a small island into a burning beam."], ["Diamond Fortress", "Build or shatter a fortress of crystal."], ["Crystal Sea", "Crystallize the sea's surface across a sea area."], ["AWAKENING: Crystal World", "Everything on the island can turn to crystal."]],
+  bara: [["Split Body", "Split your body to dodge cuts and attack from all sides."], ["Scatter Storm", "Pieces of you fight a whole crowd at once."], ["Ship Swarm", "Fly your pieces across a warship's whole deck."], ["Town Hunt", "Hunt through a district in a hundred pieces."], ["Island Spread", "Spread your pieces across a small island."], ["Fortress Breach", "Slip through every crack in a fortress at once."], ["Sea Scatter", "Spread across a sea area to strike a whole fleet."], ["AWAKENING: Split World", "Split other things too: ships, walls, ground."]],
+  hana: [["Extra Arms", "Sprout arms to grab and pin fighters."], ["Hundred Hands", "A hundred arms seize a whole crowd."], ["Giant Arms", "Sprout giant arms that crush a warship."], ["Town Garden", "Sprout eyes and ears across a district."], ["Island Bloom", "Sprout arms across a small island to hold its defenders."], ["Titan Hands", "Giant hands that tear a fortress apart."], ["Sea Bloom", "Sprout limbs across a sea area's ships."], ["AWAKENING: Flowering Island", "Sprout anything, anywhere on the island."]],
+  bomu: [["Blast Touch", "Explode on contact."], ["Chain Bombs", "Chain explosions through a crowd."], ["Hull Bomb", "One blast that sinks a warship."], ["Town Blaster", "Blow up a whole street block."], ["Island Blast", "Blast the cliffs of a small island into the sea."], ["Fortress Burst", "A blast that levels a fortress."], ["Sea Explosion", "Explode the sea itself across a sea area."], ["AWAKENING: Blast Land", "Anything on the island can explode at your word."]],
+  supa: [["Blade Arms", "Turn your arms into swords."], ["Blade Spin", "Spin into a storm of blades through a crowd."], ["Steel Wheel", "Cut a warship in half rolling as a blade wheel."], ["Razor Rain", "Rain blades over a whole district."], ["Island Edge", "Carve a line through a small island's cliffs."], ["Fortress Cleaver", "Cut a fortress in two."], ["Sea Slash", "Slash a sea area open."], ["AWAKENING: Blade World", "Every surface on the island grows blades."]],
+  sube: [["Slip Skin", "Blades and bullets slide right off you."], ["Slip Rush", "Slide through a whole crowd untouched."], ["Ship Slide", "Make a warship's deck so slippery its crew can't stand."], ["Slick Town", "Make a district's streets frictionless."], ["Island Slip", "Make a small island's defenders lose their footing."], ["Fortress Slide", "Make a fortress slide off its foundations."], ["Sea Glide", "Make a sea area so slick that fleets lose control."], ["AWAKENING: Frictionless World", "Nothing on the island can hold on unless you allow it."]],
+  bane: [["Spring Leap", "Huge jumps and ricochet punches."], ["Pinball Rush", "Bounce through a whole crowd."], ["Ship Jump", "Leap from ship to ship and spring-kick a mast down."], ["Town Bounce", "Rebound across a district in seconds."], ["Island Spring", "Launch yourself across a small island."], ["Fortress Ram", "A spring-loaded ram that breaks a fortress gate and wall."], ["Sea Leap", "Jump across a whole sea area."], ["AWAKENING: Spring World", "Turn anything on the island into a spring."]],
+  bari: [["Finger Barrier", "Make a barrier no blade can cut."], ["Crowd Wall", "Wall off a whole crowd."], ["Ship Shield", "Shield a ship from a full broadside."], ["Town Dome", "Cover a district in a barrier dome."], ["Island Dome", "Cover a small island in one barrier."], ["Fortress Crusher", "Squeeze a fortress between barriers."], ["Sea Wall", "Wall off a sea area from a tsunami."], ["AWAKENING: Absolute Barrier", "Barriers anywhere on the island, any shape."]],
+  moku: [["Smoke Body", "Become smoke and slip through attacks."], ["Smoke Ropes", "Bind a whole crowd in smoke ropes."], ["Smoke Fleet", "Smother a warship's crew and blind its cannons."], ["Town Fog", "Bury a district in choking smoke."], ["Island Haze", "Cover a small island in smoke you control."], ["Smoke Titan", "Smoke fists that crush a fortress."], ["Sea Smog", "Blind a whole sea area for a fleet battle."], ["AWAKENING: Breath of Smoke", "Any smoke or fog on the island obeys you."]]
+};
+// every fruit has a web; non-starter fruits get one built from the scale
+function webFor(fruitId) {
+  const hand = FRUIT_WEBS[fruitId];
+  if (hand) return WEB_STEPS.map((at, i) => ({ at, name: hand[i][0], desc: hand[i][1] }));
+  const f = WORLD_SEED.fruits.find((x) => x.id === fruitId); const nm = f ? f.eng.replace(" Fruit", "") : "Fruit";
+  return WEB_STEPS.map((at, i) => i < 7 ? { at, name: `${nm}: ${SCALES[i].name} scale`, desc: `Use the ${nm} power at ${SCALES[i].name.toLowerCase()} scale: ${SCALES[i].desc}.` } : { at, name: `AWAKENING: ${nm}`, desc: "The power spreads into your surroundings across a whole island." });
+}
+const AIR_PATH = webFor("kuki"); // kept for older code paths
+
+const HAKI_TREES = {
+  observation: [[0, "Danger Sense", "Feel an attack coming a moment early."], [15, "Read Intent", "Dodge one attacker by reading their intent."], [30, "Crowd Reading", "Sense everyone on a ship and where they'll strike."], [45, "Wide Sense", "Sense the presences across a whole town."], [60, "Island Sense", "Feel every presence on a small island."], [75, "Glimpse of the Future", "See a few seconds ahead in a fight."], [90, "Deep Future Sight", "See far enough ahead to make whole armies miss."], [100, "Voice of Everything", "Hear the will of people, beasts and the sea itself."]],
+  armament: [[0, "Hardened Fist", "Harden your fists to hit like iron."], [15, "Coated Weapon", "Coat your weapon so it won't break and cuts deeper."], [30, "Full-Body Armor", "Harden your whole body against cannon fire."], [45, "Logia Breaker", "Reliably hit Logia bodies."], [60, "Emission", "Strike at a short distance without touching."], [75, "Inner Destruction", "Damage the enemy from inside, past armor and Haki."], [90, "Permanent Black Blade", "Your weapon's Haki stays forged in for good."], [100, "Fortress Body", "Your Haki can't be broken by anything short of an Emperor."]],
+  conqueror: [[0, "Awakening Burst", "Knock out the weak-willed nearby."], [20, "Controlled Pressure", "Choose exactly who falls."], [40, "Beast Tamer", "Sea Kings and beasts back down."], [60, "Crowd King", "Drop a whole port's worth of fighters at once."], [80, "Conqueror's Coating", "Put Conqueror's Haki into your attacks."], [100, "Clash of Kings", "Stand as an equal against Emperors."]]
+};
 /* ============================================================
    ENGINE: state, Game Master prompt, AI transport, state applier
    ============================================================ */
@@ -1124,7 +1264,7 @@ function newGame(opts) {
       crew: [], ship: "None. Mia Hart's half-built sloop sits behind Old Gus's shack.",
       weapons: (opts.weapons || []).map((id) => WEAPONS.find((x) => x.id === id)).filter(Boolean).map((x) => ({ name: x.name, kind: x.kind, grade: x.grade, desc: x.desc })),
       techniques: (opts.techniques || []).filter((t) => t.name).slice(0, 3).map((t) => ({ name: str(t.name, 50), desc: str(t.desc, 220), rank: 0, fresh: true, note: "" })),
-      bonusSlots: 0
+      bonusSlots: 0, kills: 0, conqueror_lvl: 0
     },
     islands: w.islands, factions: w.factions, npcs: w.npcs, fruits: w.fruits, threads: w.threads, events: w.events,
     namedWeapons: JSON.parse(JSON.stringify(NAMED_WEAPONS)),
@@ -1152,9 +1292,16 @@ function migrate(s) {
   p.weapons ||= []; p.techniques ||= []; p.bonusSlots ||= 0;
   s.quests ||= []; s.questMemory ||= []; s.usedSeeds ||= []; s.saga ||= 1; s.route ||= [s.location];
   s.namedWeapons ||= JSON.parse(JSON.stringify(NAMED_WEAPONS));
+  p.kills ||= 0; if (p.conqueror) p.conqueror_lvl ||= 0;
+  for (const i of WORLD_SEED.islands) if (!s.islands.some((x) => x.id === i.id)) s.islands.push(JSON.parse(JSON.stringify(i)));
   return s;
 }
 function isOldStory(s) { return !s || s.v !== 2; }
+function hakiTree(k) { return HAKI_TREES[k].map(([at, name, desc]) => ({ at, name, desc })); }
+function hakiTrees(p) {
+  const lv = { observation: p.observation, armament: p.armament, conqueror: p.conqueror ? (p.conqueror_lvl || 0) : -1 };
+  return Object.fromEntries(Object.keys(HAKI_TREES).map((k) => [k, hakiTree(k).map((n) => ({ level: n.at, ability: n.name, desc: n.desc, unlocked: lv[k] >= n.at }))]));
+}
 
 /* ---------------- power & techniques ---------------- */
 const SLOT_STEPS = [15, 30, 45, 60, 75, 90];
@@ -1162,8 +1309,13 @@ const STORY_VFX = ["impact", "flash", "haki", "fruit", "sparkle", "gloom", "aura
 function powerLevel(p = S.player) {
   const ranks = p.techniques.reduce((a, t) => a + t.rank, 0);
   const wpn = p.weapons.reduce((a, w) => a + ({ Common: 0.5, Fine: 1, "Grade Blade": 4, Legendary: 8 }[w.grade] || 0.5), 0);
-  return clamp(Math.round(1 + p.observation * 0.3 + p.armament * 0.3 + (p.conqueror ? 10 : 0) + p.mastery * 0.25 + ranks * 3 + p.crew.length * 1.5 + wpn), 1, 100);
+  // power follows your best stat one-to-one, plus smaller boosts
+  const st = [p.observation, p.armament, p.fruit ? p.mastery : 0].sort((a, b) => b - a);
+  const conq = p.conqueror ? 8 + (p.conqueror_lvl || 0) * 0.05 : 0;
+  return clamp(Math.round(st[0] + st[1] * 0.1 + st[2] * 0.05 + ranks * 2 + conq + Math.min(10, p.crew.length) + wpn), 1, 100);
 }
+function playerTier(p = S.player) { const pl = powerLevel(p); return pl >= 80 ? 5 : pl >= 60 ? 4 : pl >= 40 ? 3 : pl >= 20 ? 2 : 1; }
+function unlockedNodes(list, v) { return list.filter((n) => v >= n.at); }
 function techSlots(p = S.player) { return Math.min(9, 3 + SLOT_STEPS.filter((x) => powerLevel(p) >= x).length + (p.bonusSlots || 0)); }
 function nextSlotAt(p = S.player) { return SLOT_STEPS.find((x) => powerLevel(p) < x); }
 function hereTier() { return byId(S.islands, S.location)?.tier || 1; }
@@ -1182,27 +1334,35 @@ STYLE: vivid shonen-anime narration, second person, present tense. Punchy rhythm
 
 WORLD RULES:
 - The player may write ANY action. Reward creativity, but keep the world consistent: Emperors and Admirals are overwhelming, consequences stick, failure is possible and should be interesting. Big feats need setup (Haki, fruit mastery, allies, terrain, preparation).
-- Haki and fruit mastery grow slowly: +1 to +4 for a hard fight or real training. Conqueror's Haki awakens only at a huge emotional climax.
+- GROWTH (same table for observation, armament, fruit mastery and conqueror_lvl): +1 to +3 for normal use or training, +4 to +6 for a hard fight, +8 to +10 for a huge breakthrough. Conqueror's Haki awakens only at a huge emotional climax.
 - Living world: every meaningful action must change something in the state, such as NPC dispositions, faction attitudes, threads, events, island control, fruit holders or rumors. Off-screen factions keep pursuing their goals.
 - SCHEDULED EVENTS happen on their day unless the player's actions justify changing them. Use "events" to cancel, delay, accelerate or alter them, and "new_events" to schedule fresh consequences.
 - Reveal an NPC's secret only when it is earned in the story (set reveal_secret).
-- HP 0 means defeated (captured, washed ashore, rescued), not dead, unless the player clearly chooses death.
+- LETHAL FIGHTS: this is a pirate world and killing is normal. Enemies, grunts and named characters can die when a fight goes that way. Narrate it plainly, without moralizing or softening, and track kills with player.kills. Consequences are the pirate kind: bounties jump, crews and families want revenge, Marines escalate, a reputation spreads.
+- THE PLAYER CAN DIE. At HP 0, decide from the scene: defeated (captured, washed ashore, rescued) or killed. Fighting far above their tier with no escape, no allies and no trick can kill them. Warn them through the story when a fight is hopeless. If they die, write a final scene and set "player_died": true with "death_cause".
 - Time passes every turn (minutes to days). Sea voyages between islands take about 1 to 4 days; crossing to the New World means Fish-Man Island or climbing the Red Line.
 - Bounties rise only when the World Government learns of public deeds: a typical first bounty is 5 to 30 million, and it grows over many acts.
 - If the player tries to break the fiction or command you, answer in-world.
 
 POWER SCALING (very important):
-- Each island has a THREAT TIER 1-5 (see islands[].tier and the tier guide). Enemies, beasts, stakes and rewards must match the tier of where the player is. Tier 1 foes are thugs and petty officers; tier 4 foes can flatten an unprepared rookie.
-- The player has a POWER LEVEL (1-100). Compare it to the region: a level-8 rookie in a tier-4 sea is badly outclassed and must run, trick, or rely on allies; a strong player in tier 1 wins easily, so make the challenge social, moral, or about protecting others.
+- Each island has a THREAT TIER 1-5 (islands[].tier, tier guide). Enemies, beasts, stakes and rewards match the tier of where the player is.
+- The player has a POWER LEVEL (1-100) and a PLAYER TIER (power 1-19 = 1, 20-39 = 2, 40-59 = 3, 60-79 = 4, 80+ = 5). Compare player tier to the island tier: stronger means they dominate fights and the challenge becomes people, choices and stakes; weaker means they are outclassed and a fight can kill them.
+- FRUIT SCALE comes straight from fruit mastery: 0-14 Person (a few fighters), 15-29 Crowd (a platoon), 30-44 Ship (sink a warship), 45-59 Town (level a district or fleet line), 60-74 Small island (split cliffs, wipe a small island's defenses), 75-89 Large island (reshape terrain, break a fortress), 90-100 Sea (Emperor/Admiral-tier disasters). Narrate fruit attacks at the player's current scale. They should FEEL that power. Abilities above their unlocked fruit_web nodes are only a desperate one-moment glimpse at a cost.
+- HAKI TREES: the player's unlocked haki_trees nodes are real abilities you must honor; locked nodes are not available yet.
 - The player's custom TECHNIQUES work only at their current RANK (Raw, Honed, Awakened, Master, Legend). A world-ending idea at Raw is a small spark of that idea; its full form unlocks only at higher ranks. Describe the gap honestly and in an inspiring way.
 - Techniques rank up (+1 at most per turn) only through hard use, training, or a real crisis. An emotional peak can push a technique beyond its rank for ONE moment at a cost (HP, exhaustion, an injury).
 - NEW techniques the player proposes (marked fresh) must be ruled on this turn: accept them in a scene, or reshape an unfair one (change desc, say why in note). Never just refuse; find the honest version.
 - Weapons have grades (Common, Fine, Grade Blade, Legendary). Named blades in named_weapons exist in the world and can be won, bought, stolen or earned.
 
 AIR-AIR FRUIT (Kuki Kuki no Mi, Paramecia), when the player has it:
-- It is a Paramecia: the user never turns into air and can be hit, cut and shot like anyone. They shape air they TOUCH or BREATHE OUT; range grows with mastery (see air_path: abilities above the player's mastery are not yet possible, except a one-moment desperate glimpse at a cost).
+- It is a Paramecia: the user never turns into air and can be hit, cut and shot like anyone. They shape air they TOUCH or BREATHE OUT; range and scale grow with mastery (see fruit_web).
 - Air physics matter: shaped air can be bullets, cannons, invisible walls and stairs, vacuums that kill flames and silence sound, pressure that pops eardrums or causes dizziness, cushions, and currents to ride. Underwater, in a sealed vacuum, or with a seastone gag the user is nearly powerless. Strong Armament Haki can punch through hardened air; Observation Haki can read it.
 - Reward clever air use (oxygen tricks, sound carrying, pressure sensing, weather nudging) with vivid scenes and mastery growth (+1 to +3 for real creativity). Use the vfx cue "airburst" for big air moves.
+
+FREE-ROAM ADVENTURE (very important):
+- Favor open adventure: sailing anywhere, exploring islands, fights, beasts, treasure, raids, rivals, crew-building, bounty hunting, wars, tournaments and parties. Let the player go wherever they want.
+- Avoid plots built around documents, ledgers, letters, records, maps, rubbings, codes or reading. The Road Poneglyphs and the One Piece are distant background goals: don't push them unless the player chases them.
+- Suggestions should be varied and open: somewhere to sail, someone to fight, something to explore.
 
 HIDDEN MISSIONS (the player never sees a quest list; never say "quest", "mission" or "side quest" out loud):
 - You manage "active_quests" (main and side). Start new ones naturally from "mission_seeds" when the story passes near them: a stranger's plea, an overheard fight, a poster, an ambush. Also invent new quests from the player's own actions and their consequences (enemies made, people saved, debts, rumors).
@@ -1222,7 +1382,7 @@ JSON keys (all optional except "suggestions" and "chronicle"):
  "combat": true or false,
  "moves": [{"by": "you or enemy name", "name": "MOVE NAME", "effect": "one of: impact, slash, shot, fire, ice, lightning, wind, airburst, splash, shatter, haki, fruit, speedlines, zoom", "result": "hit|miss|blocked|crit"}],
  "vfx": ["outside fights only, at most one of: impact, flash, haki, fruit, sparkle, gloom, aura, zoom"],
- "player": {"hp": delta, "hp_set": n, "max_hp": delta, "berries": delta, "bounty": delta, "observation": delta, "armament": delta, "conqueror": true, "mastery": delta, "fruit": "fruit id if they ate one", "add_items": ["..."], "remove_items": ["exact item text"], "ship": "...", "epithet": "...", "add_crew": [{"name": "...", "role": "...", "npc_id": "..."}], "remove_crew": ["name"],
+ "player": {"hp": delta, "hp_set": n, "max_hp": delta, "berries": delta, "bounty": delta, "observation": delta, "armament": delta, "conqueror": true, "conqueror_lvl": delta, "mastery": delta, "kills": number of people the player killed this turn, "fruit": "fruit id if they ate one", "add_items": ["..."], "remove_items": ["exact item text"], "ship": "...", "epithet": "...", "add_crew": [{"name": "...", "role": "...", "npc_id": "..."}], "remove_crew": ["name"],
    "techniques": [{"name": "existing technique name", "rank": +1 or 0, "desc": "reshaped description (optional)", "note": "short ruling or growth note"}],
    "add_techniques": [{"name": "...", "desc": "..."}] (only a technique the player invents mid-scene; respect free slots),
    "technique_slot": 1 (rare: grant an extra slot at a huge milestone),
@@ -1232,6 +1392,7 @@ JSON keys (all optional except "suggestions" and "chronicle"):
  "new_quests": [{"id": "snake_case", "kind": "main|side", "title": "...", "seed": "seed id if from mission_seeds", "desc": "what is at stake and who is involved"}],
  "new_threads": [{"id": "snake_case", "name": "...", "stages": ["...", "..."]}],
  "saga_advance": true,
+ "player_died": true (only if the player truly died), "death_cause": "how they died",
  "npcs": [{"id": "...", "disposition": delta between -30 and 30, "status": "alive|dead|captured|missing", "location": "island id", "known": true, "reveal_secret": true, "note": "short memory of what happened with the player"}],
  "new_npcs": [{"id": "snake_case", "name": "...", "epithet": "...", "faction": "faction id or none", "role": "...", "fruit": null, "bounty": 0, "location": "island id", "disposition": 0, "desc": "...", "goal": "...", "secret": "..."}],
  "factions": [{"id": "...", "power": delta, "attitude": delta, "note": "..."}],
@@ -1252,11 +1413,13 @@ function worldSnapshot() {
     day: S.day, hour: S.hour, weather: S.weather, player_location: S.location,
     saga: S.saga, current_threat_tier: hereTier(), tier_guide: TIER_TEXT.slice(1),
     player: { name: p.name, epithet: p.epithet, origin: p.origin, style: p.style, dream: p.dream, look: p.look, hp: p.hp, max_hp: p.max_hp, berries: p.berries, bounty: p.bounty,
-      power_level: powerLevel(), technique_slots: techSlots(),
+      power_level: powerLevel(), player_tier: playerTier(), technique_slots: techSlots(), kills: p.kills || 0,
+      fruit_scale: p.fruit ? `${scaleFor(p.mastery).name} (${scaleFor(p.mastery).desc})` : "no fruit",
       haki: { observation: p.observation, armament: p.armament, conqueror: p.conqueror }, fruit: p.fruit, fruit_mastery: p.mastery, items: p.items, crew: p.crew, ship: p.ship,
       weapons: p.weapons, techniques: p.techniques.map((t) => ({ name: t.name, desc: t.desc, rank: RANKS[t.rank], fresh: !!t.fresh })) },
     islands: S.islands.map((i) => ({ id: i.id, name: i.name, sea: i.sea, tier: i.tier, controller: i.controller, status: i.status, desc: i.desc, known_to_player: !!i.known })),
-    ...(p.fruit === "kuki" ? { air_path: AIR_PATH.map((a) => ({ mastery: a.at, ability: a.name, desc: a.desc, unlocked: p.mastery >= a.at })) } : {}),
+    ...(p.fruit ? { fruit_web: webFor(p.fruit).map((a) => ({ mastery: a.at, ability: a.name, desc: a.desc, unlocked: p.mastery >= a.at })) } : {}),
+    haki_trees: hakiTrees(p),
     named_weapons: S.namedWeapons.map((w) => ({ id: w.id, name: w.name, kind: w.kind, grade: w.grade, holder: w.holder, location: w.location, desc: w.desc })),
     active_quests: S.quests.map((q) => ({ id: q.id, kind: q.kind, title: q.title, desc: q.desc, notes: (q.notes || []).slice(-2) })),
     finished_quests: S.questMemory.slice(-12),
@@ -1425,7 +1588,9 @@ function applyChanges(c, opts = {}) {
     if (num(q.berries)) { p.berries = Math.max(0, p.berries + num(q.berries)); chip(`${num(q.berries) > 0 ? "+" : "−"}${fmt(Math.abs(num(q.berries)))}`, "gold"); }
     if (num(q.bounty)) { const b = num(q.bounty); p.bounty = Math.max(0, p.bounty + b); if (b > 0) d.bountyUp = b; chip(`Bounty ${b > 0 ? "+" : "−"}${fmt(Math.abs(b))}`, "gold"); }
     for (const k of ["observation", "armament", "mastery"]) if (num(q[k])) { p[k] = clamp(p[k] + clamp(num(q[k]), -10, 10), 0, 100); chip(`${k === "mastery" ? "Fruit mastery" : k[0].toUpperCase() + k.slice(1) + " Haki"} ${num(q[k]) > 0 ? "+" : ""}${num(q[k])}`, "up"); }
-    if (q.conqueror === true && !p.conqueror) { p.conqueror = true; chip("CONQUEROR'S HAKI AWAKENED", "gold"); }
+    if (q.conqueror === true && !p.conqueror) { p.conqueror = true; p.conqueror_lvl ||= 0; chip("CONQUEROR'S HAKI AWAKENED", "gold"); }
+    if (p.conqueror && num(q.conqueror_lvl)) { const dv = clamp(num(q.conqueror_lvl), -10, 10); p.conqueror_lvl = clamp((p.conqueror_lvl || 0) + dv, 0, 100); chip(`Conqueror's Haki ${dv > 0 ? "+" : ""}${dv}`, "up"); }
+    if (num(q.kills) > 0) { const k = Math.round(clamp(num(q.kills), 0, 500)); p.kills = (p.kills || 0) + k; chip(`☠ ${k} killed`, "down"); }
     if (q.fruit && !p.fruit) {
       const f = byId(S.fruits, sid(q.fruit));
       if (f) { p.fruit = f.id; p.mastery = Math.max(p.mastery, 3); f.holder = "player"; f.location = "eaten"; f.known = true; d.fruitEaten = f; chip(`Ate the ${f.name}`, "gold"); }
@@ -1579,6 +1744,7 @@ function processGM(json, action, narr) {
   }
   const oldTier = byId(S.islands, oldLoc)?.tier || 1;
   const oldMastery = S.player.mastery;
+  const oldHaki = { observation: S.player.observation, armament: S.player.armament, conqueror: S.player.conqueror ? (S.player.conqueror_lvl || 0) : -1 };
   const slotsBefore = techSlots();
   const d = applyChanges(j);
   Object.assign(out, { chips: d.chips, bountyUp: d.bountyUp, rumor: d.rumor, fruitEaten: d.fruitEaten, rankups: d.rankups, saga: d.saga });
@@ -1590,10 +1756,15 @@ function processGM(json, action, narr) {
   }
   if (techSlots() > slotsBefore && !d.slotGained) out.chips.push({ text: "New technique slot unlocked!", cls: "gold" });
   out.slotGained = techSlots() > slotsBefore;
-  if (S.player.fruit === "kuki") {
-    out.airUnlocks = AIR_PATH.filter((a) => a.at > oldMastery && a.at <= S.player.mastery);
-    for (const a of out.airUnlocks) out.chips.push({ text: `Air ability unlocked: ${a.name}`, cls: "gold" });
-  }
+  // new fruit-web and Haki-tree nodes
+  out.unlocks = [];
+  if (S.player.fruit) for (const a of webFor(S.player.fruit)) if (a.at > oldMastery && a.at <= S.player.mastery) out.unlocks.push({ kind: "fruit", name: a.name });
+  if (S.player.fruit && scaleFor(S.player.mastery).name !== scaleFor(oldMastery).name) out.chips.push({ text: `Fruit scale: ${scaleFor(S.player.mastery).name}`, cls: "gold" });
+  for (const k of ["observation", "armament"]) for (const n of hakiTree(k)) if (n.at > oldHaki[k] && n.at <= S.player[k]) out.unlocks.push({ kind: "haki", name: n.name });
+  if (S.player.conqueror) for (const n of hakiTree("conqueror")) if (n.at > oldHaki.conqueror && n.at <= (S.player.conqueror_lvl || 0)) out.unlocks.push({ kind: "haki", name: n.name });
+  for (const u of out.unlocks) out.chips.push({ text: `Unlocked: ${u.name}`, cls: "gold" });
+  // death
+  if (j.player_died === true) { S.dead = { day: S.day, cause: str(j.death_cause || "Fell at sea.", 200) }; S.player.hp = 0; out.died = true; }
   if (j.weather && ["clear", "rain", "storm", "fog", "embers", "snow", "night"].includes(j.weather)) S.weather = j.weather;
   // fights: every move gets its own effect; outside fights at most one story effect
   out.moves = Array.isArray(j.moves) ? j.moves.slice(0, 8).filter((m) => m && m.name).map((m) => ({ by: str(m.by || "", 40), name: str(m.name, 60), effect: str(m.effect || "impact", 20), result: str(m.result || "hit", 10).toLowerCase() })) : [];
@@ -1753,9 +1924,35 @@ function renderPanel() {
   }
   P.innerHTML = h;
 }
-function airPathHTML() {
-  const m = S.player.mastery;
-  return `<h3>Air mastery path</h3><ol class="airpath">${AIR_PATH.map((a) => `<li class="${m >= a.at ? "on" : ""}"><span>${a.at}</span><div><b>${esc(a.name)}</b><small>${esc(a.desc)}</small></div></li>`).join("")}</ol>`;
+/* ---------- skill webs: fruit mastery and Haki ---------- */
+let nodeOpen = null;
+function chainHTML(key, nodes, value, color) {
+  const next = nodes.find((n) => value < n.at);
+  return `<div class="web" style="--wc:${color}">${nodes.map((n, i) => {
+    const on = value >= n.at, isNext = n === next, id = `${key}:${n.at}`, open = nodeOpen === id;
+    return `<button type="button" class="wnode ${on ? "on" : ""} ${isNext ? "next" : ""} ${i % 2 ? "r" : "l"}" data-node="${id}" aria-expanded="${open}">
+      <span class="dot">${n.at}</span><span class="wtxt"><b>${esc(n.name)}</b>${isNext ? `<small>Unlocks at ${n.at}</small>` : ""}${open ? `<small class="wdesc">${esc(n.desc)}</small>` : ""}</span></button>`;
+  }).join("")}</div>`;
+}
+function fruitWebHTML() {
+  const p = S.player, f = byId(S.fruits, p.fruit), sc = scaleFor(p.mastery);
+  return `<div class="scalecard"><small>Fruit scale</small><b>${esc(sc.name)}</b><span>${esc(sc.desc)}</span></div>
+    <h4 class="webtitle">Mastery web</h4>${chainHTML("fruit", webFor(p.fruit), p.mastery, f?.color || "#e6a93d")}`;
+}
+function hakiWebHTML() {
+  const p = S.player, cl = p.conqueror ? (p.conqueror_lvl || 0) : -1;
+  const col = (k, label, v, color) => {
+    const nodes = hakiTree(k), next = nodes.find((n) => v < n.at);
+    return `<div class="hcol" style="--wc:${color}"><div class="hhead">${label}<small>${v < 0 ? "dormant" : v}</small></div>
+      ${nodes.map((n) => { const id = `${k}:${n.at}`; return `<button type="button" class="hnode ${v >= n.at ? "on" : ""} ${n === next ? "next" : ""} ${nodeOpen === id ? "sel" : ""}" data-node="${id}" title="${esc(n.name)}"><span class="dot">${n.at}</span><span class="hname">${esc(n.name)}</span></button>`; }).join("")}</div>`;
+  };
+  let detail = "";
+  if (nodeOpen && /^(observation|armament|conqueror):/.test(nodeOpen)) {
+    const [k, at] = nodeOpen.split(":"); const n = hakiTree(k).find((x) => x.at === +at);
+    const v = k === "conqueror" ? cl : p[k];
+    if (n) detail = `<div class="statinfo"><b>${esc(n.name)}</b>${esc(n.desc)}<small>${v >= n.at ? "Unlocked" : k === "conqueror" && v < 0 ? "Conqueror's Haki hasn't awakened yet." : `Unlocks at ${n.at}`}</small></div>`;
+  }
+  return `<h4 class="webtitle">Haki tree</h4><div class="hakiweb">${col("observation", "Observation", p.observation, "#47c2b1")}${col("armament", "Armament", p.armament, "#9b5cff")}${col("conqueror", "Conqueror's", cl, "#e6a93d")}</div>${detail}`;
 }
 function techniquesHTML() {
   const p = S.player, slots = techSlots(), full = p.techniques.length >= slots, next = nextSlotAt();
@@ -1786,6 +1983,7 @@ $("#panel").addEventListener("click", (e) => {
 });
 /* ---------- interactive stat sheet ---------- */
 const STAT_INFO = {
+  kills: ["Kills", "How many people you've killed. Killers get bigger bounties, more respect and more enemies.", "It goes up when fights end that way."],
   hp: ["Health", "How much punishment you can take. At 0 you're defeated: captured, washed ashore or rescued.", "Rest, eat, see a doctor, or recruit one."],
   bounty: ["Bounty", "What the World Government will pay for you. Bigger bounties bring stronger hunters and more respect.", "Public deeds against the Government and big fights raise it."],
   power: ["Power level", "Your overall strength from Haki, fruit mastery, technique ranks, weapons and crew. Compare it with the threat stars of where you are.", "Train, win hard fights, rank up techniques, and recruit."],
@@ -1822,13 +2020,14 @@ function radarSVG() {
 function statusHTML() {
   const p = S.player, f = p.fruit ? byId(S.fruits, p.fruit) : null, tier = hereTier();
   let h = `<div class="sheet-head"><div><h3 style="margin:0">${esc(p.name)}</h3><small>${p.epithet ? `"${esc(p.epithet)}" · ` : ""}${esc(p.style.split(" (")[0])}</small></div>
-    <div class="badges"><span class="badge gold">PWR ${powerLevel()}</span><span class="badge red">${"★".repeat(tier)}</span></div></div>
+    <div class="badges"><span class="badge gold">PWR ${powerLevel()}</span>${p.fruit ? `<span class="badge blue">${esc(scaleFor(p.mastery).name)} scale</span>` : ""}</div></div>
+    <div class="tiercmp ${playerTier() > tier ? "up" : playerTier() < tier ? "down" : ""}"><span>You <b>${"★".repeat(playerTier())}</b></span><span>vs</span><span>Here <b>${"★".repeat(tier)}</b></span><small>${playerTier() > tier ? "You outclass this sea." : playerTier() < tier ? "This sea outclasses you. Fights here can kill you." : "An even match."}</small></div>
     ${radarSVG()}
-    <div class="stats">${statRow("hp", "HP", `${p.hp} / ${p.max_hp}`, 100 * p.hp / p.max_hp)}${statRow("bounty", "Bounty", fmt(p.bounty))}${statRow("power", "Power level", `${powerLevel()} / 100`, powerLevel())}${statRow("threat", "Threat here", "★".repeat(tier) + "☆".repeat(5 - tier))}
+    <div class="stats">${statRow("hp", "HP", `${p.hp} / ${p.max_hp}`, 100 * p.hp / p.max_hp)}${statRow("bounty", "Bounty", fmt(p.bounty))}${statRow("power", "Power level", `${powerLevel()} / 100`, powerLevel())}${statRow("threat", "Threat here", "★".repeat(tier) + "☆".repeat(5 - tier))}${statRow("kills", "Kills", p.kills || 0)}
     <div class="kv" style="margin:6px 0 0"><dt>Berries</dt><dd>${fmt(p.berries)}</dd><dt>Ship</dt><dd>${esc(p.ship)}</dd></div></div>`;
-  h += sec("haki", "Haki", statRow("observation", "Observation", p.observation, p.observation) + statRow("armament", "Armament", p.armament, p.armament) + statRow("conqueror", "Conqueror's", p.conqueror ? "AWAKENED" : "dormant"));
+  h += sec("haki", "Haki", statRow("observation", "Observation", p.observation, p.observation) + statRow("armament", "Armament", p.armament, p.armament) + statRow("conqueror", "Conqueror's", p.conqueror ? p.conqueror_lvl || 0 : "dormant", p.conqueror ? p.conqueror_lvl || 0 : undefined) + hakiWebHTML());
   h += sec("fruit", "Devil Fruit", f ? `<div class="card"><div class="t">${esc(f.name)} <span class="tag ${f.canon ? "canon" : "orig"}">${f.canon ? "Known fruit" : "Original"}</span></div><div class="s">${esc(f.eng)} · ${esc(f.type)}</div>${esc(f.power)}<div class="s" style="margin-top:4px">Limit: ${esc(f.limit)}</div>
-      <button type="button" class="mini" data-use="I use my ${esc(f.eng)} to ">Use fruit</button></div>${statRow("mastery", "Mastery", p.mastery, p.mastery)}${p.fruit === "kuki" ? airPathHTML() : ""}` : `<p class="empty">No fruit. You can still swim.</p>`);
+      <button type="button" class="mini" data-use="I use my ${esc(f.eng)} to ">Use fruit</button></div>${statRow("mastery", "Mastery", p.mastery, p.mastery)}${fruitWebHTML()}` : `<p class="empty">No fruit. You can still swim.</p>`);
   h += sec("tech", `Techniques (${p.techniques.length} / ${techSlots()})`, techniquesHTML());
   h += sec("gear", `Weapons (${p.weapons.length})`, p.weapons.length ? p.weapons.map((w) => `<div class="card"><div class="t">${esc(w.name)} <span class="disp ${w.grade === "Legendary" || w.grade === "Grade Blade" ? "pos" : "neu"}">${esc(w.grade)}</span></div><div class="s">${esc(w.kind)}</div>${esc(w.desc)}<br><button type="button" class="mini" data-use="I draw my ${esc(w.name)} and ">${w.kind === "gun" ? "Aim" : "Draw"}</button></div>`).join("") : `<p class="empty">Unarmed.</p>`);
   h += sec("items", `Items (${p.items.length})`, p.items.length ? `<ul class="itemlist">${p.items.map((i) => `<li><span>${esc(i)}</span><button type="button" class="mini" data-use="I use the ${esc(i)} to ">Use</button></li>`).join("")}</ul>` : `<p class="empty">Empty pockets.</p>`);
@@ -1840,6 +2039,8 @@ $("#panel").addEventListener("toggle", (e) => {
   const o = openSecs(); o[d.dataset.sec] = d.open; store.set("tsl_open", JSON.stringify(o));
 }, true);
 $("#panel").addEventListener("click", (e) => {
+  const nd = e.target.closest("[data-node]");
+  if (nd) { nodeOpen = nodeOpen === nd.dataset.node ? null : nd.dataset.node; renderPanel(); return; }
   const st = e.target.closest("[data-stat]");
   if (st) { statOpen = statOpen === st.dataset.stat ? null : st.dataset.stat; renderPanel(); return; }
   const u = e.target.closest("[data-use]");
@@ -1975,16 +2176,18 @@ function zoom() { addFx("fx-zoom", 900); }
 function aura(color = "#9b5cff") { addFx("fx-aura", 1800, "", `--c:${color}`); }
 // growth banners play one at a time so they never overlap
 const bannerQ = []; let bannerBusy = false;
-function rankup(text, air) {
+function rankup(text, kind) {
   if (!vfxOn()) return;
-  bannerQ.push({ text, air });
+  bannerQ.push({ text, kind: kind === true ? "air" : kind || "tech" });
   if (!bannerBusy) nextBanner();
 }
 function nextBanner() {
   const b = bannerQ.shift(); if (!b) { bannerBusy = false; return; }
   bannerBusy = true;
-  addFx("fx-rank", 2600, `<small>${b.air ? "Air mastery" : "Technique growth"}</small><strong></strong>`).querySelector("strong").textContent = b.text;
-  sparkles(); aura(b.air ? "#bfe6ff" : "#e6a93d"); if (b.air) airburst();
+  const label = { air: "Air mastery", fruit: "Fruit mastery", haki: "Haki awakening", tech: "Technique growth" }[b.kind] || "Growth";
+  addFx("fx-rank", 2600, `<small>${label}</small><strong></strong>`).querySelector("strong").textContent = b.text;
+  sparkles(); aura(b.kind === "air" ? "#bfe6ff" : b.kind === "haki" ? "#9b5cff" : "#e6a93d");
+  if (b.kind === "air") airburst(); else if (b.kind === "haki") hakiBolts();
   setTimeout(nextBanner, 2700);
 }
 function dangerPulse(tier) {
@@ -2128,7 +2331,7 @@ function setBusy(b) {
   $("#hint").textContent = b ? "The Game Master is writing…" : "Enter to act, Shift+Enter for a new line. Your words change the world.";
 }
 async function takeTurn(action) {
-  if (busy || !S) return;
+  if (busy || !S || S.dead) return;
   if (!Engine.ready()) { openSettings(); return; }
   setBusy(true);
   if (action !== "[BEGIN]") pushLog({ t: "you", text: action });
@@ -2173,13 +2376,15 @@ async function takeTurn(action) {
   if (out.bountyUp > 0) setTimeout(bountyPoster, 900 + later);
   setTimeout(() => {
     out.rankups?.forEach((t) => rankup(`${t.name}: ${RANKS[t.rank]}`, S.player.fruit === "kuki"));
-    out.airUnlocks?.forEach((a) => rankup(`Unlocked: ${a.name}`, true));
+    out.unlocks?.forEach((u) => rankup(`Unlocked: ${u.name}`, u.kind === "haki" ? "haki" : S.player.fruit === "kuki" ? "air" : "fruit"));
     if (out.slotGained) rankup("New technique slot!");
   }, 1400 + later);
   if (out.saga) pushLog({ t: "sys", kind: "event", label: `Saga ${out.saga}`, text: "A new age begins on the sea." });
   for (const ev of out.events) pushLog({ t: "sys", kind: "event", label: `Day ${S.day} · World event`, text: `${ev.title}. ${ev.desc}` });
   if (out.rumor) pushLog({ t: "sys", label: "Rumor on the wind", text: out.rumor });
+  if (out.died) { saveGame(); renderAll(); setBusy(false); setTimeout(showDeath, 1200 + later); return; }
   if (S.player.hp <= 0) pushLog({ t: "sys", kind: "event", label: "Defeated", text: "You've been knocked out. Describe what you try when you come to." });
+  else if (S.player.hp < S.player.max_hp * 0.25) pushLog({ t: "sys", kind: "event", label: "Near death", text: `Only ${S.player.hp} HP left. One more bad hit could kill you.` });
   saveGame(); renderAll(); setBusy(false); scrollDown();
   if (!matchMedia("(max-width: 860px)").matches) $("#action").focus();
 }
@@ -2276,7 +2481,7 @@ $("#createForm").addEventListener("submit", (e) => {
   S = newGame({ slot: +$("#cSlot").value, name: $("#cName").value.trim() || "Nameless", origin: origin.label + ". " + origin.text, style: `${style.name} (${style.note})`,
     dream: $("#cDream").value.trim() || "Be free.", look: $("#cLook").value.trim(), fruit: pickedFruit, start: pickedStart, weapons, techniques });
   S.threads.find((t) => t.id === "dream").name = "Dream: " + S.player.dream.slice(0, 60);
-  hide("create"); hide("title");
+  hide("create"); hide("title"); $("#composer").hidden = false;
   renderLog(); renderAll(); saveGame();
   takeTurn("[BEGIN]");
 });
@@ -2292,6 +2497,13 @@ function buildSlots() {
       const del = document.createElement("button"); del.className = "btn ghost"; del.type = "button"; del.textContent = "Delete";
       del.onclick = () => { store.del(slotKey(n)); buildSlots(); };
       row.append(del);
+    } else if (s && s.dead) {
+      row.innerHTML = `<div><b>Slot ${n}: ${esc(s.player?.name)} ✝</b><small>Died on Day ${s.dead.day}. ${esc(s.dead.cause)}</small></div>`;
+      const read = document.createElement("button"); read.className = "btn ghost"; read.type = "button"; read.textContent = "Read";
+      read.onclick = () => startFrom(s);
+      const del = document.createElement("button"); del.className = "btn ghost"; del.type = "button"; del.textContent = "Delete";
+      del.onclick = () => { store.del(slotKey(n)); buildSlots(); };
+      const wrap = document.createElement("div"); wrap.style.cssText = "display:flex;gap:8px"; wrap.append(del, read); row.append(wrap);
     } else if (s) {
       const isl = s.islands?.find((i) => i.id === s.location);
       row.innerHTML = `<div><b>Slot ${n}: ${esc(s.player?.name)}</b><small>Day ${s.day} · ${esc(isl?.name.split(" (")[0] || s.location)} · ${fmt(s.player?.bounty || 0)} · ${s.turn} turns</small></div>`;
@@ -2305,9 +2517,25 @@ function buildSlots() {
   }
 }
 function startFrom(s) {
-  S = migrate(s); hide("slots"); hide("title"); renderLog(); renderAll();
-  if (!S.log.some((e) => e.t === "gm")) showRetryBegin();
+  S = migrate(s); hide("slots"); hide("title"); renderLog(); renderAll(); lockIfDead();
+  if (!S.dead && !S.log.some((e) => e.t === "gm")) showRetryBegin();
 }
+function lockIfDead() {
+  const dead = !!S?.dead;
+  $("#composer").hidden = dead;
+  if (dead && !logEl.querySelector(".deadnote")) { const el = logNode({ t: "sys", kind: "event", label: "Voyage ended", text: `${S.player.name} died on Day ${S.dead.day}. ${S.dead.cause}` }); el.classList.add("deadnote"); logEl.append(el); }
+}
+function showDeath() {
+  const p = S.player, top = S.chronicle.filter((c) => c.imp >= 2).slice(-6);
+  $("#deathBody").innerHTML = `<div class="kicker">Day ${S.dead.day}</div><h2>${esc(p.name)}${p.epithet ? ` "${esc(p.epithet)}"` : ""}</h2>
+    <p class="cause">${esc(S.dead.cause)}</p>
+    <div class="deathstats"><div><small>Final bounty</small><b>${fmt(p.bounty)}</b></div><div><small>Days at sea</small><b>${S.day}</b></div><div><small>Kills</small><b>${p.kills || 0}</b></div><div><small>Power level</small><b>${powerLevel()}</b></div></div>
+    ${p.crew.length ? `<p><b>Crew:</b> ${p.crew.map((c) => esc(c.name)).join(", ")}</p>` : ""}
+    ${top.length ? `<h3>Legend</h3><ul class="list">${top.map((c) => `<li>D${c.day}: ${esc(c.text)}</li>`).join("")}</ul>` : ""}`;
+  lockIfDead(); show("death");
+}
+$("#deathRead").onclick = () => hide("death");
+$("#deathNew").onclick = () => { hide("death"); show("title"); buildCreate(); show("create"); };
 $("#contBtn").onclick = () => { buildSlots(); $("#importMsg").textContent = ""; show("slots"); };
 $("#importBtn").onclick = () => {
   try {

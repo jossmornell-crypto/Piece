@@ -129,9 +129,35 @@ function renderPanel() {
   }
   P.innerHTML = h;
 }
-function airPathHTML() {
-  const m = S.player.mastery;
-  return `<h3>Air mastery path</h3><ol class="airpath">${AIR_PATH.map((a) => `<li class="${m >= a.at ? "on" : ""}"><span>${a.at}</span><div><b>${esc(a.name)}</b><small>${esc(a.desc)}</small></div></li>`).join("")}</ol>`;
+/* ---------- skill webs: fruit mastery and Haki ---------- */
+let nodeOpen = null;
+function chainHTML(key, nodes, value, color) {
+  const next = nodes.find((n) => value < n.at);
+  return `<div class="web" style="--wc:${color}">${nodes.map((n, i) => {
+    const on = value >= n.at, isNext = n === next, id = `${key}:${n.at}`, open = nodeOpen === id;
+    return `<button type="button" class="wnode ${on ? "on" : ""} ${isNext ? "next" : ""} ${i % 2 ? "r" : "l"}" data-node="${id}" aria-expanded="${open}">
+      <span class="dot">${n.at}</span><span class="wtxt"><b>${esc(n.name)}</b>${isNext ? `<small>Unlocks at ${n.at}</small>` : ""}${open ? `<small class="wdesc">${esc(n.desc)}</small>` : ""}</span></button>`;
+  }).join("")}</div>`;
+}
+function fruitWebHTML() {
+  const p = S.player, f = byId(S.fruits, p.fruit), sc = scaleFor(p.mastery);
+  return `<div class="scalecard"><small>Fruit scale</small><b>${esc(sc.name)}</b><span>${esc(sc.desc)}</span></div>
+    <h4 class="webtitle">Mastery web</h4>${chainHTML("fruit", webFor(p.fruit), p.mastery, f?.color || "#e6a93d")}`;
+}
+function hakiWebHTML() {
+  const p = S.player, cl = p.conqueror ? (p.conqueror_lvl || 0) : -1;
+  const col = (k, label, v, color) => {
+    const nodes = hakiTree(k), next = nodes.find((n) => v < n.at);
+    return `<div class="hcol" style="--wc:${color}"><div class="hhead">${label}<small>${v < 0 ? "dormant" : v}</small></div>
+      ${nodes.map((n) => { const id = `${k}:${n.at}`; return `<button type="button" class="hnode ${v >= n.at ? "on" : ""} ${n === next ? "next" : ""} ${nodeOpen === id ? "sel" : ""}" data-node="${id}" title="${esc(n.name)}"><span class="dot">${n.at}</span><span class="hname">${esc(n.name)}</span></button>`; }).join("")}</div>`;
+  };
+  let detail = "";
+  if (nodeOpen && /^(observation|armament|conqueror):/.test(nodeOpen)) {
+    const [k, at] = nodeOpen.split(":"); const n = hakiTree(k).find((x) => x.at === +at);
+    const v = k === "conqueror" ? cl : p[k];
+    if (n) detail = `<div class="statinfo"><b>${esc(n.name)}</b>${esc(n.desc)}<small>${v >= n.at ? "Unlocked" : k === "conqueror" && v < 0 ? "Conqueror's Haki hasn't awakened yet." : `Unlocks at ${n.at}`}</small></div>`;
+  }
+  return `<h4 class="webtitle">Haki tree</h4><div class="hakiweb">${col("observation", "Observation", p.observation, "#47c2b1")}${col("armament", "Armament", p.armament, "#9b5cff")}${col("conqueror", "Conqueror's", cl, "#e6a93d")}</div>${detail}`;
 }
 function techniquesHTML() {
   const p = S.player, slots = techSlots(), full = p.techniques.length >= slots, next = nextSlotAt();
@@ -162,6 +188,7 @@ $("#panel").addEventListener("click", (e) => {
 });
 /* ---------- interactive stat sheet ---------- */
 const STAT_INFO = {
+  kills: ["Kills", "How many people you've killed. Killers get bigger bounties, more respect and more enemies.", "It goes up when fights end that way."],
   hp: ["Health", "How much punishment you can take. At 0 you're defeated: captured, washed ashore or rescued.", "Rest, eat, see a doctor, or recruit one."],
   bounty: ["Bounty", "What the World Government will pay for you. Bigger bounties bring stronger hunters and more respect.", "Public deeds against the Government and big fights raise it."],
   power: ["Power level", "Your overall strength from Haki, fruit mastery, technique ranks, weapons and crew. Compare it with the threat stars of where you are.", "Train, win hard fights, rank up techniques, and recruit."],
@@ -198,13 +225,14 @@ function radarSVG() {
 function statusHTML() {
   const p = S.player, f = p.fruit ? byId(S.fruits, p.fruit) : null, tier = hereTier();
   let h = `<div class="sheet-head"><div><h3 style="margin:0">${esc(p.name)}</h3><small>${p.epithet ? `"${esc(p.epithet)}" · ` : ""}${esc(p.style.split(" (")[0])}</small></div>
-    <div class="badges"><span class="badge gold">PWR ${powerLevel()}</span><span class="badge red">${"★".repeat(tier)}</span></div></div>
+    <div class="badges"><span class="badge gold">PWR ${powerLevel()}</span>${p.fruit ? `<span class="badge blue">${esc(scaleFor(p.mastery).name)} scale</span>` : ""}</div></div>
+    <div class="tiercmp ${playerTier() > tier ? "up" : playerTier() < tier ? "down" : ""}"><span>You <b>${"★".repeat(playerTier())}</b></span><span>vs</span><span>Here <b>${"★".repeat(tier)}</b></span><small>${playerTier() > tier ? "You outclass this sea." : playerTier() < tier ? "This sea outclasses you. Fights here can kill you." : "An even match."}</small></div>
     ${radarSVG()}
-    <div class="stats">${statRow("hp", "HP", `${p.hp} / ${p.max_hp}`, 100 * p.hp / p.max_hp)}${statRow("bounty", "Bounty", fmt(p.bounty))}${statRow("power", "Power level", `${powerLevel()} / 100`, powerLevel())}${statRow("threat", "Threat here", "★".repeat(tier) + "☆".repeat(5 - tier))}
+    <div class="stats">${statRow("hp", "HP", `${p.hp} / ${p.max_hp}`, 100 * p.hp / p.max_hp)}${statRow("bounty", "Bounty", fmt(p.bounty))}${statRow("power", "Power level", `${powerLevel()} / 100`, powerLevel())}${statRow("threat", "Threat here", "★".repeat(tier) + "☆".repeat(5 - tier))}${statRow("kills", "Kills", p.kills || 0)}
     <div class="kv" style="margin:6px 0 0"><dt>Berries</dt><dd>${fmt(p.berries)}</dd><dt>Ship</dt><dd>${esc(p.ship)}</dd></div></div>`;
-  h += sec("haki", "Haki", statRow("observation", "Observation", p.observation, p.observation) + statRow("armament", "Armament", p.armament, p.armament) + statRow("conqueror", "Conqueror's", p.conqueror ? "AWAKENED" : "dormant"));
+  h += sec("haki", "Haki", statRow("observation", "Observation", p.observation, p.observation) + statRow("armament", "Armament", p.armament, p.armament) + statRow("conqueror", "Conqueror's", p.conqueror ? p.conqueror_lvl || 0 : "dormant", p.conqueror ? p.conqueror_lvl || 0 : undefined) + hakiWebHTML());
   h += sec("fruit", "Devil Fruit", f ? `<div class="card"><div class="t">${esc(f.name)} <span class="tag ${f.canon ? "canon" : "orig"}">${f.canon ? "Known fruit" : "Original"}</span></div><div class="s">${esc(f.eng)} · ${esc(f.type)}</div>${esc(f.power)}<div class="s" style="margin-top:4px">Limit: ${esc(f.limit)}</div>
-      <button type="button" class="mini" data-use="I use my ${esc(f.eng)} to ">Use fruit</button></div>${statRow("mastery", "Mastery", p.mastery, p.mastery)}${p.fruit === "kuki" ? airPathHTML() : ""}` : `<p class="empty">No fruit. You can still swim.</p>`);
+      <button type="button" class="mini" data-use="I use my ${esc(f.eng)} to ">Use fruit</button></div>${statRow("mastery", "Mastery", p.mastery, p.mastery)}${fruitWebHTML()}` : `<p class="empty">No fruit. You can still swim.</p>`);
   h += sec("tech", `Techniques (${p.techniques.length} / ${techSlots()})`, techniquesHTML());
   h += sec("gear", `Weapons (${p.weapons.length})`, p.weapons.length ? p.weapons.map((w) => `<div class="card"><div class="t">${esc(w.name)} <span class="disp ${w.grade === "Legendary" || w.grade === "Grade Blade" ? "pos" : "neu"}">${esc(w.grade)}</span></div><div class="s">${esc(w.kind)}</div>${esc(w.desc)}<br><button type="button" class="mini" data-use="I draw my ${esc(w.name)} and ">${w.kind === "gun" ? "Aim" : "Draw"}</button></div>`).join("") : `<p class="empty">Unarmed.</p>`);
   h += sec("items", `Items (${p.items.length})`, p.items.length ? `<ul class="itemlist">${p.items.map((i) => `<li><span>${esc(i)}</span><button type="button" class="mini" data-use="I use the ${esc(i)} to ">Use</button></li>`).join("")}</ul>` : `<p class="empty">Empty pockets.</p>`);
@@ -216,6 +244,8 @@ $("#panel").addEventListener("toggle", (e) => {
   const o = openSecs(); o[d.dataset.sec] = d.open; store.set("tsl_open", JSON.stringify(o));
 }, true);
 $("#panel").addEventListener("click", (e) => {
+  const nd = e.target.closest("[data-node]");
+  if (nd) { nodeOpen = nodeOpen === nd.dataset.node ? null : nd.dataset.node; renderPanel(); return; }
   const st = e.target.closest("[data-stat]");
   if (st) { statOpen = statOpen === st.dataset.stat ? null : st.dataset.stat; renderPanel(); return; }
   const u = e.target.closest("[data-use]");
@@ -351,16 +381,18 @@ function zoom() { addFx("fx-zoom", 900); }
 function aura(color = "#9b5cff") { addFx("fx-aura", 1800, "", `--c:${color}`); }
 // growth banners play one at a time so they never overlap
 const bannerQ = []; let bannerBusy = false;
-function rankup(text, air) {
+function rankup(text, kind) {
   if (!vfxOn()) return;
-  bannerQ.push({ text, air });
+  bannerQ.push({ text, kind: kind === true ? "air" : kind || "tech" });
   if (!bannerBusy) nextBanner();
 }
 function nextBanner() {
   const b = bannerQ.shift(); if (!b) { bannerBusy = false; return; }
   bannerBusy = true;
-  addFx("fx-rank", 2600, `<small>${b.air ? "Air mastery" : "Technique growth"}</small><strong></strong>`).querySelector("strong").textContent = b.text;
-  sparkles(); aura(b.air ? "#bfe6ff" : "#e6a93d"); if (b.air) airburst();
+  const label = { air: "Air mastery", fruit: "Fruit mastery", haki: "Haki awakening", tech: "Technique growth" }[b.kind] || "Growth";
+  addFx("fx-rank", 2600, `<small>${label}</small><strong></strong>`).querySelector("strong").textContent = b.text;
+  sparkles(); aura(b.kind === "air" ? "#bfe6ff" : b.kind === "haki" ? "#9b5cff" : "#e6a93d");
+  if (b.kind === "air") airburst(); else if (b.kind === "haki") hakiBolts();
   setTimeout(nextBanner, 2700);
 }
 function dangerPulse(tier) {
@@ -504,7 +536,7 @@ function setBusy(b) {
   $("#hint").textContent = b ? "The Game Master is writing…" : "Enter to act, Shift+Enter for a new line. Your words change the world.";
 }
 async function takeTurn(action) {
-  if (busy || !S) return;
+  if (busy || !S || S.dead) return;
   if (!Engine.ready()) { openSettings(); return; }
   setBusy(true);
   if (action !== "[BEGIN]") pushLog({ t: "you", text: action });
@@ -549,13 +581,15 @@ async function takeTurn(action) {
   if (out.bountyUp > 0) setTimeout(bountyPoster, 900 + later);
   setTimeout(() => {
     out.rankups?.forEach((t) => rankup(`${t.name}: ${RANKS[t.rank]}`, S.player.fruit === "kuki"));
-    out.airUnlocks?.forEach((a) => rankup(`Unlocked: ${a.name}`, true));
+    out.unlocks?.forEach((u) => rankup(`Unlocked: ${u.name}`, u.kind === "haki" ? "haki" : S.player.fruit === "kuki" ? "air" : "fruit"));
     if (out.slotGained) rankup("New technique slot!");
   }, 1400 + later);
   if (out.saga) pushLog({ t: "sys", kind: "event", label: `Saga ${out.saga}`, text: "A new age begins on the sea." });
   for (const ev of out.events) pushLog({ t: "sys", kind: "event", label: `Day ${S.day} · World event`, text: `${ev.title}. ${ev.desc}` });
   if (out.rumor) pushLog({ t: "sys", label: "Rumor on the wind", text: out.rumor });
+  if (out.died) { saveGame(); renderAll(); setBusy(false); setTimeout(showDeath, 1200 + later); return; }
   if (S.player.hp <= 0) pushLog({ t: "sys", kind: "event", label: "Defeated", text: "You've been knocked out. Describe what you try when you come to." });
+  else if (S.player.hp < S.player.max_hp * 0.25) pushLog({ t: "sys", kind: "event", label: "Near death", text: `Only ${S.player.hp} HP left. One more bad hit could kill you.` });
   saveGame(); renderAll(); setBusy(false); scrollDown();
   if (!matchMedia("(max-width: 860px)").matches) $("#action").focus();
 }
@@ -652,7 +686,7 @@ $("#createForm").addEventListener("submit", (e) => {
   S = newGame({ slot: +$("#cSlot").value, name: $("#cName").value.trim() || "Nameless", origin: origin.label + ". " + origin.text, style: `${style.name} (${style.note})`,
     dream: $("#cDream").value.trim() || "Be free.", look: $("#cLook").value.trim(), fruit: pickedFruit, start: pickedStart, weapons, techniques });
   S.threads.find((t) => t.id === "dream").name = "Dream: " + S.player.dream.slice(0, 60);
-  hide("create"); hide("title");
+  hide("create"); hide("title"); $("#composer").hidden = false;
   renderLog(); renderAll(); saveGame();
   takeTurn("[BEGIN]");
 });
@@ -668,6 +702,13 @@ function buildSlots() {
       const del = document.createElement("button"); del.className = "btn ghost"; del.type = "button"; del.textContent = "Delete";
       del.onclick = () => { store.del(slotKey(n)); buildSlots(); };
       row.append(del);
+    } else if (s && s.dead) {
+      row.innerHTML = `<div><b>Slot ${n}: ${esc(s.player?.name)} ✝</b><small>Died on Day ${s.dead.day}. ${esc(s.dead.cause)}</small></div>`;
+      const read = document.createElement("button"); read.className = "btn ghost"; read.type = "button"; read.textContent = "Read";
+      read.onclick = () => startFrom(s);
+      const del = document.createElement("button"); del.className = "btn ghost"; del.type = "button"; del.textContent = "Delete";
+      del.onclick = () => { store.del(slotKey(n)); buildSlots(); };
+      const wrap = document.createElement("div"); wrap.style.cssText = "display:flex;gap:8px"; wrap.append(del, read); row.append(wrap);
     } else if (s) {
       const isl = s.islands?.find((i) => i.id === s.location);
       row.innerHTML = `<div><b>Slot ${n}: ${esc(s.player?.name)}</b><small>Day ${s.day} · ${esc(isl?.name.split(" (")[0] || s.location)} · ${fmt(s.player?.bounty || 0)} · ${s.turn} turns</small></div>`;
@@ -681,9 +722,25 @@ function buildSlots() {
   }
 }
 function startFrom(s) {
-  S = migrate(s); hide("slots"); hide("title"); renderLog(); renderAll();
-  if (!S.log.some((e) => e.t === "gm")) showRetryBegin();
+  S = migrate(s); hide("slots"); hide("title"); renderLog(); renderAll(); lockIfDead();
+  if (!S.dead && !S.log.some((e) => e.t === "gm")) showRetryBegin();
 }
+function lockIfDead() {
+  const dead = !!S?.dead;
+  $("#composer").hidden = dead;
+  if (dead && !logEl.querySelector(".deadnote")) { const el = logNode({ t: "sys", kind: "event", label: "Voyage ended", text: `${S.player.name} died on Day ${S.dead.day}. ${S.dead.cause}` }); el.classList.add("deadnote"); logEl.append(el); }
+}
+function showDeath() {
+  const p = S.player, top = S.chronicle.filter((c) => c.imp >= 2).slice(-6);
+  $("#deathBody").innerHTML = `<div class="kicker">Day ${S.dead.day}</div><h2>${esc(p.name)}${p.epithet ? ` "${esc(p.epithet)}"` : ""}</h2>
+    <p class="cause">${esc(S.dead.cause)}</p>
+    <div class="deathstats"><div><small>Final bounty</small><b>${fmt(p.bounty)}</b></div><div><small>Days at sea</small><b>${S.day}</b></div><div><small>Kills</small><b>${p.kills || 0}</b></div><div><small>Power level</small><b>${powerLevel()}</b></div></div>
+    ${p.crew.length ? `<p><b>Crew:</b> ${p.crew.map((c) => esc(c.name)).join(", ")}</p>` : ""}
+    ${top.length ? `<h3>Legend</h3><ul class="list">${top.map((c) => `<li>D${c.day}: ${esc(c.text)}</li>`).join("")}</ul>` : ""}`;
+  lockIfDead(); show("death");
+}
+$("#deathRead").onclick = () => hide("death");
+$("#deathNew").onclick = () => { hide("death"); show("title"); buildCreate(); show("create"); };
 $("#contBtn").onclick = () => { buildSlots(); $("#importMsg").textContent = ""; show("slots"); };
 $("#importBtn").onclick = () => {
   try {

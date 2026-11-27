@@ -6,7 +6,7 @@ A free-text, anime-style pirate adventure set in an **alternate timeline of the 
 
 It's the Great Pirate Era, 22 years after the Pirate King's execution. The World Government, the Marines, Cipher Pol, Impel Down, the Seven Warlords, the Four Emperors and the Revolutionary Army all work as you'd expect. Every person in this timeline is new, though: famous characters never existed here.
 
-- 22 islands, from Gullport in the East Blue through Paradise, Marineford and Fish-Man Island to the New World, each with a threat tier (★ to ★★★★★)
+- 36 islands, from Gullport in the East Blue through Paradise, Marineford and Fish-Man Island to the New World, each with a threat tier (★ to ★★★★★)
 - 9 factions with power levels and an attitude toward you
 - 47 characters with simple names, each with a goal and a hidden secret. 21 of them are recruitable
 - 40 Devil Fruits: 20 original and 20 that already exist in One Piece, held by new owners or unclaimed. You can start with any of 20, including the featured Air-Air Fruit (a Paramecia with a full mastery path)
@@ -15,6 +15,8 @@ It's the Great Pirate Era, 22 years after the Pirate King's execution. The World
 - Your own techniques: start with 3 slots, earn more as your power level grows, and rank each technique from Raw to Legend
 - A hidden pool of main missions and side stories that come up naturally, plus endless new sagas
 - 10 scheduled world events, from Bounty Day to the Reverie on Day 60. They happen on their own unless your actions change them
+- Lethal fights: enemies can die, and so can you. A death ends the voyage with a memorial screen
+- Power follows mastery: fruit scale goes Person, Crowd, Ship, Town, Small island, Large island, Sea. Every fruit has a mastery web, and Observation, Armament and Conqueror's Haki each have a skill tree
 - Fight effects: every move in a fight gets an anime callout and its own effect. Ordinary dialogue gets none. All effects can be switched off in settings or with the FX button
 
 ## How the AI changes the world

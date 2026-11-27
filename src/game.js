@@ -35,7 +35,7 @@ function newGame(opts) {
       crew: [], ship: "None. Mia Hart's half-built sloop sits behind Old Gus's shack.",
       weapons: (opts.weapons || []).map((id) => WEAPONS.find((x) => x.id === id)).filter(Boolean).map((x) => ({ name: x.name, kind: x.kind, grade: x.grade, desc: x.desc })),
       techniques: (opts.techniques || []).filter((t) => t.name).slice(0, 3).map((t) => ({ name: str(t.name, 50), desc: str(t.desc, 220), rank: 0, fresh: true, note: "" })),
-      bonusSlots: 0
+      bonusSlots: 0, kills: 0, conqueror_lvl: 0
     },
     islands: w.islands, factions: w.factions, npcs: w.npcs, fruits: w.fruits, threads: w.threads, events: w.events,
     namedWeapons: JSON.parse(JSON.stringify(NAMED_WEAPONS)),
@@ -63,9 +63,16 @@ function migrate(s) {
   p.weapons ||= []; p.techniques ||= []; p.bonusSlots ||= 0;
   s.quests ||= []; s.questMemory ||= []; s.usedSeeds ||= []; s.saga ||= 1; s.route ||= [s.location];
   s.namedWeapons ||= JSON.parse(JSON.stringify(NAMED_WEAPONS));
+  p.kills ||= 0; if (p.conqueror) p.conqueror_lvl ||= 0;
+  for (const i of WORLD_SEED.islands) if (!s.islands.some((x) => x.id === i.id)) s.islands.push(JSON.parse(JSON.stringify(i)));
   return s;
 }
 function isOldStory(s) { return !s || s.v !== 2; }
+function hakiTree(k) { return HAKI_TREES[k].map(([at, name, desc]) => ({ at, name, desc })); }
+function hakiTrees(p) {
+  const lv = { observation: p.observation, armament: p.armament, conqueror: p.conqueror ? (p.conqueror_lvl || 0) : -1 };
+  return Object.fromEntries(Object.keys(HAKI_TREES).map((k) => [k, hakiTree(k).map((n) => ({ level: n.at, ability: n.name, desc: n.desc, unlocked: lv[k] >= n.at }))]));
+}
 
 /* ---------------- power & techniques ---------------- */
 const SLOT_STEPS = [15, 30, 45, 60, 75, 90];
@@ -73,8 +80,13 @@ const STORY_VFX = ["impact", "flash", "haki", "fruit", "sparkle", "gloom", "aura
 function powerLevel(p = S.player) {
   const ranks = p.techniques.reduce((a, t) => a + t.rank, 0);
   const wpn = p.weapons.reduce((a, w) => a + ({ Common: 0.5, Fine: 1, "Grade Blade": 4, Legendary: 8 }[w.grade] || 0.5), 0);
-  return clamp(Math.round(1 + p.observation * 0.3 + p.armament * 0.3 + (p.conqueror ? 10 : 0) + p.mastery * 0.25 + ranks * 3 + p.crew.length * 1.5 + wpn), 1, 100);
+  // power follows your best stat one-to-one, plus smaller boosts
+  const st = [p.observation, p.armament, p.fruit ? p.mastery : 0].sort((a, b) => b - a);
+  const conq = p.conqueror ? 8 + (p.conqueror_lvl || 0) * 0.05 : 0;
+  return clamp(Math.round(st[0] + st[1] * 0.1 + st[2] * 0.05 + ranks * 2 + conq + Math.min(10, p.crew.length) + wpn), 1, 100);
 }
+function playerTier(p = S.player) { const pl = powerLevel(p); return pl >= 80 ? 5 : pl >= 60 ? 4 : pl >= 40 ? 3 : pl >= 20 ? 2 : 1; }
+function unlockedNodes(list, v) { return list.filter((n) => v >= n.at); }
 function techSlots(p = S.player) { return Math.min(9, 3 + SLOT_STEPS.filter((x) => powerLevel(p) >= x).length + (p.bonusSlots || 0)); }
 function nextSlotAt(p = S.player) { return SLOT_STEPS.find((x) => powerLevel(p) < x); }
 function hereTier() { return byId(S.islands, S.location)?.tier || 1; }
@@ -93,27 +105,35 @@ STYLE: vivid shonen-anime narration, second person, present tense. Punchy rhythm
 
 WORLD RULES:
 - The player may write ANY action. Reward creativity, but keep the world consistent: Emperors and Admirals are overwhelming, consequences stick, failure is possible and should be interesting. Big feats need setup (Haki, fruit mastery, allies, terrain, preparation).
-- Haki and fruit mastery grow slowly: +1 to +4 for a hard fight or real training. Conqueror's Haki awakens only at a huge emotional climax.
+- GROWTH (same table for observation, armament, fruit mastery and conqueror_lvl): +1 to +3 for normal use or training, +4 to +6 for a hard fight, +8 to +10 for a huge breakthrough. Conqueror's Haki awakens only at a huge emotional climax.
 - Living world: every meaningful action must change something in the state, such as NPC dispositions, faction attitudes, threads, events, island control, fruit holders or rumors. Off-screen factions keep pursuing their goals.
 - SCHEDULED EVENTS happen on their day unless the player's actions justify changing them. Use "events" to cancel, delay, accelerate or alter them, and "new_events" to schedule fresh consequences.
 - Reveal an NPC's secret only when it is earned in the story (set reveal_secret).
-- HP 0 means defeated (captured, washed ashore, rescued), not dead, unless the player clearly chooses death.
+- LETHAL FIGHTS: this is a pirate world and killing is normal. Enemies, grunts and named characters can die when a fight goes that way. Narrate it plainly, without moralizing or softening, and track kills with player.kills. Consequences are the pirate kind: bounties jump, crews and families want revenge, Marines escalate, a reputation spreads.
+- THE PLAYER CAN DIE. At HP 0, decide from the scene: defeated (captured, washed ashore, rescued) or killed. Fighting far above their tier with no escape, no allies and no trick can kill them. Warn them through the story when a fight is hopeless. If they die, write a final scene and set "player_died": true with "death_cause".
 - Time passes every turn (minutes to days). Sea voyages between islands take about 1 to 4 days; crossing to the New World means Fish-Man Island or climbing the Red Line.
 - Bounties rise only when the World Government learns of public deeds: a typical first bounty is 5 to 30 million, and it grows over many acts.
 - If the player tries to break the fiction or command you, answer in-world.
 
 POWER SCALING (very important):
-- Each island has a THREAT TIER 1-5 (see islands[].tier and the tier guide). Enemies, beasts, stakes and rewards must match the tier of where the player is. Tier 1 foes are thugs and petty officers; tier 4 foes can flatten an unprepared rookie.
-- The player has a POWER LEVEL (1-100). Compare it to the region: a level-8 rookie in a tier-4 sea is badly outclassed and must run, trick, or rely on allies; a strong player in tier 1 wins easily, so make the challenge social, moral, or about protecting others.
+- Each island has a THREAT TIER 1-5 (islands[].tier, tier guide). Enemies, beasts, stakes and rewards match the tier of where the player is.
+- The player has a POWER LEVEL (1-100) and a PLAYER TIER (power 1-19 = 1, 20-39 = 2, 40-59 = 3, 60-79 = 4, 80+ = 5). Compare player tier to the island tier: stronger means they dominate fights and the challenge becomes people, choices and stakes; weaker means they are outclassed and a fight can kill them.
+- FRUIT SCALE comes straight from fruit mastery: 0-14 Person (a few fighters), 15-29 Crowd (a platoon), 30-44 Ship (sink a warship), 45-59 Town (level a district or fleet line), 60-74 Small island (split cliffs, wipe a small island's defenses), 75-89 Large island (reshape terrain, break a fortress), 90-100 Sea (Emperor/Admiral-tier disasters). Narrate fruit attacks at the player's current scale. They should FEEL that power. Abilities above their unlocked fruit_web nodes are only a desperate one-moment glimpse at a cost.
+- HAKI TREES: the player's unlocked haki_trees nodes are real abilities you must honor; locked nodes are not available yet.
 - The player's custom TECHNIQUES work only at their current RANK (Raw, Honed, Awakened, Master, Legend). A world-ending idea at Raw is a small spark of that idea; its full form unlocks only at higher ranks. Describe the gap honestly and in an inspiring way.
 - Techniques rank up (+1 at most per turn) only through hard use, training, or a real crisis. An emotional peak can push a technique beyond its rank for ONE moment at a cost (HP, exhaustion, an injury).
 - NEW techniques the player proposes (marked fresh) must be ruled on this turn: accept them in a scene, or reshape an unfair one (change desc, say why in note). Never just refuse; find the honest version.
 - Weapons have grades (Common, Fine, Grade Blade, Legendary). Named blades in named_weapons exist in the world and can be won, bought, stolen or earned.
 
 AIR-AIR FRUIT (Kuki Kuki no Mi, Paramecia), when the player has it:
-- It is a Paramecia: the user never turns into air and can be hit, cut and shot like anyone. They shape air they TOUCH or BREATHE OUT; range grows with mastery (see air_path: abilities above the player's mastery are not yet possible, except a one-moment desperate glimpse at a cost).
+- It is a Paramecia: the user never turns into air and can be hit, cut and shot like anyone. They shape air they TOUCH or BREATHE OUT; range and scale grow with mastery (see fruit_web).
 - Air physics matter: shaped air can be bullets, cannons, invisible walls and stairs, vacuums that kill flames and silence sound, pressure that pops eardrums or causes dizziness, cushions, and currents to ride. Underwater, in a sealed vacuum, or with a seastone gag the user is nearly powerless. Strong Armament Haki can punch through hardened air; Observation Haki can read it.
 - Reward clever air use (oxygen tricks, sound carrying, pressure sensing, weather nudging) with vivid scenes and mastery growth (+1 to +3 for real creativity). Use the vfx cue "airburst" for big air moves.
+
+FREE-ROAM ADVENTURE (very important):
+- Favor open adventure: sailing anywhere, exploring islands, fights, beasts, treasure, raids, rivals, crew-building, bounty hunting, wars, tournaments and parties. Let the player go wherever they want.
+- Avoid plots built around documents, ledgers, letters, records, maps, rubbings, codes or reading. The Road Poneglyphs and the One Piece are distant background goals: don't push them unless the player chases them.
+- Suggestions should be varied and open: somewhere to sail, someone to fight, something to explore.
 
 HIDDEN MISSIONS (the player never sees a quest list; never say "quest", "mission" or "side quest" out loud):
 - You manage "active_quests" (main and side). Start new ones naturally from "mission_seeds" when the story passes near them: a stranger's plea, an overheard fight, a poster, an ambush. Also invent new quests from the player's own actions and their consequences (enemies made, people saved, debts, rumors).
@@ -133,7 +153,7 @@ JSON keys (all optional except "suggestions" and "chronicle"):
  "combat": true or false,
  "moves": [{"by": "you or enemy name", "name": "MOVE NAME", "effect": "one of: impact, slash, shot, fire, ice, lightning, wind, airburst, splash, shatter, haki, fruit, speedlines, zoom", "result": "hit|miss|blocked|crit"}],
  "vfx": ["outside fights only, at most one of: impact, flash, haki, fruit, sparkle, gloom, aura, zoom"],
- "player": {"hp": delta, "hp_set": n, "max_hp": delta, "berries": delta, "bounty": delta, "observation": delta, "armament": delta, "conqueror": true, "mastery": delta, "fruit": "fruit id if they ate one", "add_items": ["..."], "remove_items": ["exact item text"], "ship": "...", "epithet": "...", "add_crew": [{"name": "...", "role": "...", "npc_id": "..."}], "remove_crew": ["name"],
+ "player": {"hp": delta, "hp_set": n, "max_hp": delta, "berries": delta, "bounty": delta, "observation": delta, "armament": delta, "conqueror": true, "conqueror_lvl": delta, "mastery": delta, "kills": number of people the player killed this turn, "fruit": "fruit id if they ate one", "add_items": ["..."], "remove_items": ["exact item text"], "ship": "...", "epithet": "...", "add_crew": [{"name": "...", "role": "...", "npc_id": "..."}], "remove_crew": ["name"],
    "techniques": [{"name": "existing technique name", "rank": +1 or 0, "desc": "reshaped description (optional)", "note": "short ruling or growth note"}],
    "add_techniques": [{"name": "...", "desc": "..."}] (only a technique the player invents mid-scene; respect free slots),
    "technique_slot": 1 (rare: grant an extra slot at a huge milestone),
@@ -143,6 +163,7 @@ JSON keys (all optional except "suggestions" and "chronicle"):
  "new_quests": [{"id": "snake_case", "kind": "main|side", "title": "...", "seed": "seed id if from mission_seeds", "desc": "what is at stake and who is involved"}],
  "new_threads": [{"id": "snake_case", "name": "...", "stages": ["...", "..."]}],
  "saga_advance": true,
+ "player_died": true (only if the player truly died), "death_cause": "how they died",
  "npcs": [{"id": "...", "disposition": delta between -30 and 30, "status": "alive|dead|captured|missing", "location": "island id", "known": true, "reveal_secret": true, "note": "short memory of what happened with the player"}],
  "new_npcs": [{"id": "snake_case", "name": "...", "epithet": "...", "faction": "faction id or none", "role": "...", "fruit": null, "bounty": 0, "location": "island id", "disposition": 0, "desc": "...", "goal": "...", "secret": "..."}],
  "factions": [{"id": "...", "power": delta, "attitude": delta, "note": "..."}],
@@ -163,11 +184,13 @@ function worldSnapshot() {
     day: S.day, hour: S.hour, weather: S.weather, player_location: S.location,
     saga: S.saga, current_threat_tier: hereTier(), tier_guide: TIER_TEXT.slice(1),
     player: { name: p.name, epithet: p.epithet, origin: p.origin, style: p.style, dream: p.dream, look: p.look, hp: p.hp, max_hp: p.max_hp, berries: p.berries, bounty: p.bounty,
-      power_level: powerLevel(), technique_slots: techSlots(),
+      power_level: powerLevel(), player_tier: playerTier(), technique_slots: techSlots(), kills: p.kills || 0,
+      fruit_scale: p.fruit ? `${scaleFor(p.mastery).name} (${scaleFor(p.mastery).desc})` : "no fruit",
       haki: { observation: p.observation, armament: p.armament, conqueror: p.conqueror }, fruit: p.fruit, fruit_mastery: p.mastery, items: p.items, crew: p.crew, ship: p.ship,
       weapons: p.weapons, techniques: p.techniques.map((t) => ({ name: t.name, desc: t.desc, rank: RANKS[t.rank], fresh: !!t.fresh })) },
     islands: S.islands.map((i) => ({ id: i.id, name: i.name, sea: i.sea, tier: i.tier, controller: i.controller, status: i.status, desc: i.desc, known_to_player: !!i.known })),
-    ...(p.fruit === "kuki" ? { air_path: AIR_PATH.map((a) => ({ mastery: a.at, ability: a.name, desc: a.desc, unlocked: p.mastery >= a.at })) } : {}),
+    ...(p.fruit ? { fruit_web: webFor(p.fruit).map((a) => ({ mastery: a.at, ability: a.name, desc: a.desc, unlocked: p.mastery >= a.at })) } : {}),
+    haki_trees: hakiTrees(p),
     named_weapons: S.namedWeapons.map((w) => ({ id: w.id, name: w.name, kind: w.kind, grade: w.grade, holder: w.holder, location: w.location, desc: w.desc })),
     active_quests: S.quests.map((q) => ({ id: q.id, kind: q.kind, title: q.title, desc: q.desc, notes: (q.notes || []).slice(-2) })),
     finished_quests: S.questMemory.slice(-12),
@@ -336,7 +359,9 @@ function applyChanges(c, opts = {}) {
     if (num(q.berries)) { p.berries = Math.max(0, p.berries + num(q.berries)); chip(`${num(q.berries) > 0 ? "+" : "−"}${fmt(Math.abs(num(q.berries)))}`, "gold"); }
     if (num(q.bounty)) { const b = num(q.bounty); p.bounty = Math.max(0, p.bounty + b); if (b > 0) d.bountyUp = b; chip(`Bounty ${b > 0 ? "+" : "−"}${fmt(Math.abs(b))}`, "gold"); }
     for (const k of ["observation", "armament", "mastery"]) if (num(q[k])) { p[k] = clamp(p[k] + clamp(num(q[k]), -10, 10), 0, 100); chip(`${k === "mastery" ? "Fruit mastery" : k[0].toUpperCase() + k.slice(1) + " Haki"} ${num(q[k]) > 0 ? "+" : ""}${num(q[k])}`, "up"); }
-    if (q.conqueror === true && !p.conqueror) { p.conqueror = true; chip("CONQUEROR'S HAKI AWAKENED", "gold"); }
+    if (q.conqueror === true && !p.conqueror) { p.conqueror = true; p.conqueror_lvl ||= 0; chip("CONQUEROR'S HAKI AWAKENED", "gold"); }
+    if (p.conqueror && num(q.conqueror_lvl)) { const dv = clamp(num(q.conqueror_lvl), -10, 10); p.conqueror_lvl = clamp((p.conqueror_lvl || 0) + dv, 0, 100); chip(`Conqueror's Haki ${dv > 0 ? "+" : ""}${dv}`, "up"); }
+    if (num(q.kills) > 0) { const k = Math.round(clamp(num(q.kills), 0, 500)); p.kills = (p.kills || 0) + k; chip(`☠ ${k} killed`, "down"); }
     if (q.fruit && !p.fruit) {
       const f = byId(S.fruits, sid(q.fruit));
       if (f) { p.fruit = f.id; p.mastery = Math.max(p.mastery, 3); f.holder = "player"; f.location = "eaten"; f.known = true; d.fruitEaten = f; chip(`Ate the ${f.name}`, "gold"); }
@@ -490,6 +515,7 @@ function processGM(json, action, narr) {
   }
   const oldTier = byId(S.islands, oldLoc)?.tier || 1;
   const oldMastery = S.player.mastery;
+  const oldHaki = { observation: S.player.observation, armament: S.player.armament, conqueror: S.player.conqueror ? (S.player.conqueror_lvl || 0) : -1 };
   const slotsBefore = techSlots();
   const d = applyChanges(j);
   Object.assign(out, { chips: d.chips, bountyUp: d.bountyUp, rumor: d.rumor, fruitEaten: d.fruitEaten, rankups: d.rankups, saga: d.saga });
@@ -501,10 +527,15 @@ function processGM(json, action, narr) {
   }
   if (techSlots() > slotsBefore && !d.slotGained) out.chips.push({ text: "New technique slot unlocked!", cls: "gold" });
   out.slotGained = techSlots() > slotsBefore;
-  if (S.player.fruit === "kuki") {
-    out.airUnlocks = AIR_PATH.filter((a) => a.at > oldMastery && a.at <= S.player.mastery);
-    for (const a of out.airUnlocks) out.chips.push({ text: `Air ability unlocked: ${a.name}`, cls: "gold" });
-  }
+  // new fruit-web and Haki-tree nodes
+  out.unlocks = [];
+  if (S.player.fruit) for (const a of webFor(S.player.fruit)) if (a.at > oldMastery && a.at <= S.player.mastery) out.unlocks.push({ kind: "fruit", name: a.name });
+  if (S.player.fruit && scaleFor(S.player.mastery).name !== scaleFor(oldMastery).name) out.chips.push({ text: `Fruit scale: ${scaleFor(S.player.mastery).name}`, cls: "gold" });
+  for (const k of ["observation", "armament"]) for (const n of hakiTree(k)) if (n.at > oldHaki[k] && n.at <= S.player[k]) out.unlocks.push({ kind: "haki", name: n.name });
+  if (S.player.conqueror) for (const n of hakiTree("conqueror")) if (n.at > oldHaki.conqueror && n.at <= (S.player.conqueror_lvl || 0)) out.unlocks.push({ kind: "haki", name: n.name });
+  for (const u of out.unlocks) out.chips.push({ text: `Unlocked: ${u.name}`, cls: "gold" });
+  // death
+  if (j.player_died === true) { S.dead = { day: S.day, cause: str(j.death_cause || "Fell at sea.", 200) }; S.player.hp = 0; out.died = true; }
   if (j.weather && ["clear", "rain", "storm", "fog", "embers", "snow", "night"].includes(j.weather)) S.weather = j.weather;
   // fights: every move gets its own effect; outside fights at most one story effect
   out.moves = Array.isArray(j.moves) ? j.moves.slice(0, 8).filter((m) => m && m.name).map((m) => ({ by: str(m.by || "", 40), name: str(m.name, 60), effect: str(m.effect || "impact", 20), result: str(m.result || "hit", 10).toLowerCase() })) : [];
