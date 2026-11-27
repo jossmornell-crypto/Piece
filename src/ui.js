@@ -64,7 +64,13 @@ function renderHUD() {
   const tier = hereTier();
   $("#hudThreat").textContent = "★".repeat(tier) + "☆".repeat(5 - tier);
   $("#hudThreat").title = TIER_TEXT[tier];
+  $("#combatBadge").hidden = !S.combat;
   Sea.setWeather(S.weather);
+}
+function renderFxBtn() {
+  const any = Object.values(settings.fx).some(Boolean);
+  $("#fxBtn").textContent = any ? "FX on" : "FX off";
+  $("#fxBtn").setAttribute("aria-pressed", any);
 }
 function renderSuggestions() {
   const box = $("#suggest"); box.innerHTML = "";
@@ -92,25 +98,12 @@ function renderPanel() {
   if (!S) return;
   const P = $("#panel"); const p = S.player; let h = "";
   if (tab === "status") {
-    const f = p.fruit ? byId(S.fruits, p.fruit) : null;
-    h += `<h3>${esc(p.name)}${p.epithet ? ` "${esc(p.epithet)}"` : ""}</h3><dl class="kv">
-      <dt>HP</dt><dd>${p.hp} / ${p.max_hp}</dd><dt>Bounty</dt><dd>${fmt(p.bounty)}</dd><dt>Berries</dt><dd>${fmt(p.berries)}</dd>
-      <dt>Power level</dt><dd><b style="color:var(--ochre)">${powerLevel()}</b> / 100</dd><dt>Threat here</dt><dd>${"★".repeat(hereTier())}</dd>
-      <dt>Style</dt><dd>${esc(p.style)}</dd><dt>Origin</dt><dd>${esc(p.origin)}</dd><dt>Ship</dt><dd>${esc(p.ship)}</dd></dl>
-      <p class="s" style="font-size:12px;color:var(--mist);margin:6px 0 0">${esc(TIER_TEXT[hereTier()])}</p>
-      <h3>Haki</h3>${meter("Observation", p.observation, "haki")}${meter("Armament", p.armament, "haki")}
-      <div class="meter">Conqueror's <b style="float:right">${p.conqueror ? "AWAKENED" : "dormant"}</b></div>
-      <h3>Devil Fruit</h3>${f ? `<div class="card"><div class="t">${esc(f.name)}</div><div class="s">${esc(f.eng)} · ${esc(f.type)}</div>${esc(f.power)}<div class="s" style="margin-top:4px">Limit: ${esc(f.limit)}</div></div>${meter("Mastery", p.mastery)}${p.fruit === "kuki" ? airPathHTML() : ""}` : `<p class="empty">No fruit. You can still swim.</p>`}
-      ${techniquesHTML()}
-      <h3>Weapons</h3>${p.weapons.length ? p.weapons.map((w) => `<div class="card"><div class="t">${esc(w.name)} <span class="disp ${w.grade === "Legendary" || w.grade === "Grade Blade" ? "pos" : "neu"}">${esc(w.grade)}</span></div><div class="s">${esc(w.kind)}</div>${esc(w.desc)}</div>`).join("") : `<p class="empty">Unarmed.</p>`}
-      <h3>Inventory</h3>${p.items.length ? `<ul class="list">${p.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>` : `<p class="empty">Empty pockets.</p>`}
-      <h3>Dream</h3><p style="font-size:13px;line-height:1.5">${esc(p.dream)}</p>`;
+    h += statusHTML();
   } else if (tab === "crew") {
     h += `<h3>Crew</h3>` + (p.crew.length ? p.crew.map((m) => { const n = m.npc_id ? byId(S.npcs, m.npc_id) : null; return `<div class="card"><div class="t">${esc(m.name)}</div><div class="s">${esc(m.role)}</div>${n ? esc(n.desc) : ""}</div>`; }).join("") : `<p class="empty">You sail alone for now. Recruit people by earning their trust.</p>`);
     h += `<h3>Ship</h3><p style="font-size:13px">${esc(p.ship)}</p>`;
   } else if (tab === "map") {
-    h += `<h3>Chart of the Sundered Seas</h3><div id="mapWrap">${mapSVG()}</div><h3>Known islands</h3>`;
-    h += S.islands.filter((i) => i.known).map((i) => `<div class="card"><div class="t">${esc(i.name)}${i.id === S.location ? " · YOU ARE HERE" : ""}</div><div class="s">${esc(i.sea)} · held by ${esc(factionName(i.controller))}</div>${esc(i.status)}</div>`).join("");
+    h += mapPanelHTML();
   } else if (tab === "factions") {
     h += `<h3>Powers of the sea</h3>` + S.factions.map((f) => `<div class="card"><div class="t">${esc(f.name)} ${dispTag(f.attitude)}</div><div class="s">${esc(f.kind)}</div>${esc(f.desc)}${meter("Power", f.power)}</div>`).join("");
   } else if (tab === "people") {
@@ -123,7 +116,7 @@ function renderPanel() {
     const known = S.fruits.filter((f) => f.known);
     h += `<h3>Devil Fruit encyclopedia (${known.length} / ${S.fruits.length})</h3>` + known.map((f) => {
       const holder = f.holder === "player" ? "You" : f.holder === "none" ? "Unclaimed" : (byId(S.npcs, f.holder)?.name || f.holder);
-      return `<div class="card"><div class="t">${esc(f.name)}</div><div class="s">${esc(f.eng)} · ${esc(f.type)} · ${esc(holder)}</div>${esc(f.power)}</div>`;
+      return `<div class="card"><div class="t">${esc(f.name)} <span class="tag ${f.canon ? "canon" : "orig"}">${f.canon ? "Known fruit" : "Original"}</span></div><div class="s">${esc(f.eng)} · ${esc(f.type)} · ${esc(holder)}</div>${esc(f.power)}</div>`;
     }).join("") + `<p class="empty">${S.fruits.length - known.length} fruits still undiscovered.</p>`;
   } else if (tab === "world") {
     const cal = S.events.filter((e) => e.public && e.status === "pending").sort((a, b) => a.day - b.day);
@@ -142,11 +135,11 @@ function airPathHTML() {
 }
 function techniquesHTML() {
   const p = S.player, slots = techSlots(), full = p.techniques.length >= slots, next = nextSlotAt();
-  let h = `<h3>Techniques (${p.techniques.length} / ${slots})</h3>`;
+  let h = "";
   h += p.techniques.length ? p.techniques.map((t, i) => `<div class="card"><div class="t">${esc(t.name)} <span class="disp ${t.rank >= 2 ? "pos" : "neu"}">${RANKS[t.rank]}</span></div>
     <div class="stage">${RANKS.map((_, r) => `<i class="${r <= t.rank ? "on" : ""}"></i>`).join("")}</div>
     <div style="margin-top:6px">${esc(t.desc)}</div>${t.fresh ? `<div class="s">Untested: the sea will judge it on your next action.</div>` : ""}${t.note ? `<div class="s" style="margin-top:4px">${esc(t.note)}</div>` : ""}
-    <button type="button" class="linkbtn" data-forget="${i}">${p.forgetArm === i ? "Tap again to forget" : "Forget"}</button></div>`).join("") : `<p class="empty">No techniques yet.</p>`;
+    <div class="row2"><button type="button" class="mini" data-use="I use ${esc(t.name)}: ">Use</button><button type="button" class="linkbtn" data-forget="${i}">${p.forgetArm === i ? "Tap again to forget" : "Forget"}</button></div></div>`).join("") : `<p class="empty">No techniques yet.</p>`;
   if (full) h += `<p class="empty">All slots used. ${next ? `Next slot at power level ${next}.` : "Earn more through great milestones."} Forget one to invent another.</p>`;
   else h += `<div class="invent"><div class="field"><label for="tName">Invent a technique</label><input id="tName" maxlength="50" placeholder="Name, e.g. Gale Piercer"></div>
     <div class="field"><textarea id="tDesc" rows="2" maxlength="220" placeholder="What does it do? Dream big; it starts at Raw and grows as you do."></textarea></div>
@@ -167,40 +160,177 @@ $("#panel").addEventListener("click", (e) => {
     saveGame(); renderPanel();
   }
 });
-function mapSVG() {
+/* ---------- interactive stat sheet ---------- */
+const STAT_INFO = {
+  hp: ["Health", "How much punishment you can take. At 0 you're defeated: captured, washed ashore or rescued.", "Rest, eat, see a doctor, or recruit one."],
+  bounty: ["Bounty", "What the World Government will pay for you. Bigger bounties bring stronger hunters and more respect.", "Public deeds against the Government and big fights raise it."],
+  power: ["Power level", "Your overall strength from Haki, fruit mastery, technique ranks, weapons and crew. Compare it with the threat stars of where you are.", "Train, win hard fights, rank up techniques, and recruit."],
+  threat: ["Threat", "How dangerous this sea is. Enemies here are scaled to it.", "Higher-threat seas have stronger foes and bigger rewards."],
+  observation: ["Observation Haki", "Sense presences and emotions, and read attacks before they land.", "Grows through danger, focus and fighting blind. +1 to +4 per real test."],
+  armament: ["Armament Haki", "Harden your body and weapons with willpower. Lets you hit Logia users.", "Grows through hard fights and training."],
+  conqueror: ["Conqueror's Haki", "The rare will of a king. It can knock out the weak-willed.", "Can awaken only at a huge emotional climax."],
+  mastery: ["Fruit mastery", "How well you control your Devil Fruit. Higher mastery unlocks stronger uses.", "Use your fruit creatively and push it in real fights."]
+};
+let statOpen = null;
+function openSecs() { return safeJSON(store.get("tsl_open")) || { haki: true, fruit: true, tech: true, gear: false, items: false }; }
+function sec(id, title, body) {
+  const o = openSecs()[id];
+  return `<details class="sec" data-sec="${id}" ${o ? "open" : ""}><summary>${title}</summary><div class="sec-body">${body}</div></details>`;
+}
+function statRow(key, label, value, bar) {
+  const open = statOpen === key, info = STAT_INFO[key];
+  return `<button type="button" class="statrow ${open ? "open" : ""}" data-stat="${key}" aria-expanded="${open}"><span>${esc(label)}</span><b>${value}</b>${bar !== undefined ? `<i class="sbar"><i style="width:${clamp(bar, 0, 100)}%"></i></i>` : ""}</button>
+    ${open && info ? `<div class="statinfo"><b>${esc(info[0])}</b>${esc(info[1])}<small>How to raise it: ${esc(info[2])}</small></div>` : ""}`;
+}
+function radarSVG() {
+  const p = S.player, rankSum = p.techniques.reduce((a, t) => a + t.rank, 0);
+  const axes = [["Observation", p.observation], ["Armament", p.armament], ["Fruit", p.fruit ? p.mastery : 0], ["Techniques", Math.min(100, rankSum * 8)], ["Crew", Math.min(100, p.crew.length * 12)]];
+  const cx = 110, cy = 100, R = 72, pt = (i, v) => { const a = -Math.PI / 2 + i * 2 * Math.PI / axes.length; return [cx + Math.cos(a) * R * v, cy + Math.sin(a) * R * v]; };
+  const ring = (v) => axes.map((_, i) => pt(i, v).join(",")).join(" ");
+  const shape = axes.map(([, v], i) => pt(i, Math.max(0.04, v / 100)).join(",")).join(" ");
+  return `<svg class="radar" viewBox="0 0 220 200" role="img" aria-label="Stat radar">
+    ${[0.25, 0.5, 0.75, 1].map((v) => `<polygon points="${ring(v)}" fill="none" stroke="var(--rope)" stroke-width="1"/>`).join("")}
+    ${axes.map((_, i) => { const [x, y] = pt(i, 1); return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--rope)"/>`; }).join("")}
+    <polygon points="${shape}" fill="color-mix(in srgb, var(--ochre) 35%, transparent)" stroke="var(--ochre)" stroke-width="2"/>
+    ${axes.map(([l, v], i) => { const [x, y] = pt(i, 1.22); return `<text x="${x}" y="${y}" fill="var(--mist)" font-size="10" text-anchor="middle" dominant-baseline="middle">${l} ${v}</text>`; }).join("")}
+  </svg>`;
+}
+function statusHTML() {
+  const p = S.player, f = p.fruit ? byId(S.fruits, p.fruit) : null, tier = hereTier();
+  let h = `<div class="sheet-head"><div><h3 style="margin:0">${esc(p.name)}</h3><small>${p.epithet ? `"${esc(p.epithet)}" · ` : ""}${esc(p.style.split(" (")[0])}</small></div>
+    <div class="badges"><span class="badge gold">PWR ${powerLevel()}</span><span class="badge red">${"★".repeat(tier)}</span></div></div>
+    ${radarSVG()}
+    <div class="stats">${statRow("hp", "HP", `${p.hp} / ${p.max_hp}`, 100 * p.hp / p.max_hp)}${statRow("bounty", "Bounty", fmt(p.bounty))}${statRow("power", "Power level", `${powerLevel()} / 100`, powerLevel())}${statRow("threat", "Threat here", "★".repeat(tier) + "☆".repeat(5 - tier))}
+    <div class="kv" style="margin:6px 0 0"><dt>Berries</dt><dd>${fmt(p.berries)}</dd><dt>Ship</dt><dd>${esc(p.ship)}</dd></div></div>`;
+  h += sec("haki", "Haki", statRow("observation", "Observation", p.observation, p.observation) + statRow("armament", "Armament", p.armament, p.armament) + statRow("conqueror", "Conqueror's", p.conqueror ? "AWAKENED" : "dormant"));
+  h += sec("fruit", "Devil Fruit", f ? `<div class="card"><div class="t">${esc(f.name)} <span class="tag ${f.canon ? "canon" : "orig"}">${f.canon ? "Known fruit" : "Original"}</span></div><div class="s">${esc(f.eng)} · ${esc(f.type)}</div>${esc(f.power)}<div class="s" style="margin-top:4px">Limit: ${esc(f.limit)}</div>
+      <button type="button" class="mini" data-use="I use my ${esc(f.eng)} to ">Use fruit</button></div>${statRow("mastery", "Mastery", p.mastery, p.mastery)}${p.fruit === "kuki" ? airPathHTML() : ""}` : `<p class="empty">No fruit. You can still swim.</p>`);
+  h += sec("tech", `Techniques (${p.techniques.length} / ${techSlots()})`, techniquesHTML());
+  h += sec("gear", `Weapons (${p.weapons.length})`, p.weapons.length ? p.weapons.map((w) => `<div class="card"><div class="t">${esc(w.name)} <span class="disp ${w.grade === "Legendary" || w.grade === "Grade Blade" ? "pos" : "neu"}">${esc(w.grade)}</span></div><div class="s">${esc(w.kind)}</div>${esc(w.desc)}<br><button type="button" class="mini" data-use="I draw my ${esc(w.name)} and ">${w.kind === "gun" ? "Aim" : "Draw"}</button></div>`).join("") : `<p class="empty">Unarmed.</p>`);
+  h += sec("items", `Items (${p.items.length})`, p.items.length ? `<ul class="itemlist">${p.items.map((i) => `<li><span>${esc(i)}</span><button type="button" class="mini" data-use="I use the ${esc(i)} to ">Use</button></li>`).join("")}</ul>` : `<p class="empty">Empty pockets.</p>`);
+  h += `<h3>Dream</h3><p style="font-size:13px;line-height:1.5">${esc(p.dream)}</p>`;
+  return h;
+}
+$("#panel").addEventListener("toggle", (e) => {
+  const d = e.target.closest?.("details[data-sec]"); if (!d) return;
+  const o = openSecs(); o[d.dataset.sec] = d.open; store.set("tsl_open", JSON.stringify(o));
+}, true);
+$("#panel").addEventListener("click", (e) => {
+  const st = e.target.closest("[data-stat]");
+  if (st) { statOpen = statOpen === st.dataset.stat ? null : st.dataset.stat; renderPanel(); return; }
+  const u = e.target.closest("[data-use]");
+  if (u) { const a = $("#action"); a.value = u.dataset.use; $("#side").classList.remove("open"); a.focus(); a.setSelectionRange(a.value.length, a.value.length); return; }
+  const isl = e.target.closest("[data-island]");
+  if (isl) { mapPick = isl.dataset.island; renderPanel(); }
+});
+
+/* ---------- the chart ---------- */
+let mapPick = null;
+const TIER_COLORS = ["", "#47c2b1", "#8fd16a", "#e6a93d", "#e0784f", "#e0564f"];
+function mapSVG(big) {
   const isl = S.islands.filter((i) => i.known);
-  const seaLabels = [["EAST BLUE", 800, 560], ["NORTH BLUE", 250, 60], ["SOUTH BLUE", 250, 570], ["WEST BLUE", 800, 60], ["PARADISE", 760, 205], ["NEW WORLD", 260, 205]];
-  return `<svg viewBox="0 0 1000 600" role="img" aria-label="Map of known islands">
-    <rect width="1000" height="600" fill="#0a1a27"/>
-    <rect x="0" y="240" width="1000" height="120" fill="#123247" opacity=".7"/>
-    <rect x="488" y="0" width="24" height="600" fill="#7a2a24"/>
-    <rect x="976" y="0" width="24" height="600" fill="#7a2a24"/>
-    <rect x="976" y="282" width="24" height="36" fill="#0a1a27"/>
-    <rect x="0" y="0" width="12" height="600" fill="#7a2a24" opacity=".6"/>
-    ${seaLabels.map(([t, x, y]) => `<text x="${x}" y="${y}" fill="#47c2b1" opacity=".45" font-size="18" text-anchor="middle" font-family="sans-serif" letter-spacing="4">${t}</text>`).join("")}
-    <text x="500" y="230" fill="#e0564f" font-size="14" text-anchor="middle" font-family="sans-serif" transform="rotate(-90 500 230)">RED LINE</text>
+  const seaLabels = [["EAST BLUE", 800, 570], ["NORTH BLUE", 240, 50], ["SOUTH BLUE", 240, 575], ["WEST BLUE", 800, 50], ["PARADISE", 740, 212], ["NEW WORLD", 250, 212]];
+  const route = (S.route || []).map((id) => byId(S.islands, id)).filter((i) => i && i.known);
+  let path = ""; route.forEach((i, k) => { path += `${k ? "L" : "M"}${i.x} ${i.y} `; });
+  return `<svg viewBox="0 0 1000 600" class="chart-svg" role="img" aria-label="Chart of the seas">
+    <defs><radialGradient id="seaG" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="#10283a"/><stop offset="1" stop-color="#081521"/></radialGradient>
+      <pattern id="waves" width="40" height="14" patternUnits="userSpaceOnUse"><path d="M0 7 Q10 2 20 7 T40 7" fill="none" stroke="#1d3a4d" stroke-width="1"/></pattern></defs>
+    <rect width="1000" height="600" fill="url(#seaG)"/><rect width="1000" height="600" fill="url(#waves)" opacity=".6"/>
+    <rect x="0" y="232" width="1000" height="26" fill="#2c3f3a" opacity=".55"/><rect x="0" y="342" width="1000" height="26" fill="#2c3f3a" opacity=".55"/>
+    <text x="150" y="249" fill="#9fb3ba" opacity=".55" font-size="11" font-family="sans-serif" letter-spacing="3">CALM BELT</text>
+    <text x="650" y="359" fill="#9fb3ba" opacity=".55" font-size="11" font-family="sans-serif" letter-spacing="3">CALM BELT</text>
+    <rect x="0" y="258" width="1000" height="84" fill="#174059" opacity=".75"/>
+    <text x="760" y="334" fill="#47c2b1" opacity=".5" font-size="12" font-family="sans-serif" letter-spacing="5" text-anchor="middle">GRAND LINE</text>
+    <rect x="490" y="0" width="22" height="600" fill="#8a2f28"/><rect x="975" y="0" width="25" height="600" fill="#8a2f28"/><rect x="0" y="0" width="10" height="600" fill="#8a2f28" opacity=".7"/>
+    <text x="501" y="150" fill="#f2b8a8" font-size="11" text-anchor="middle" font-family="sans-serif" letter-spacing="3" transform="rotate(-90 501 150)">RED LINE</text>
+    ${seaLabels.map(([t, x, y]) => `<text x="${x}" y="${y}" fill="#47c2b1" opacity=".5" font-size="16" text-anchor="middle" font-family="sans-serif" letter-spacing="4">${t}</text>`).join("")}
+    ${path ? `<path d="${path}" fill="none" stroke="#e6a93d" stroke-width="2.5" stroke-dasharray="6 6" opacity=".8"/>` : ""}
+    <g transform="translate(70 520)" opacity=".8"><circle r="34" fill="none" stroke="#9fb3ba" stroke-width="1"/><path d="M0 -30 L6 0 L0 30 L-6 0Z" fill="#e6a93d"/><path d="M-30 0 L0 5 L30 0 L0 -5Z" fill="#9fb3ba"/><text y="-38" fill="#ebe5d2" font-size="12" text-anchor="middle" font-family="sans-serif">N</text></g>
     ${isl.map((i) => {
-      const here = i.id === S.location;
-      return `<g><circle cx="${i.x}" cy="${i.y}" r="${here ? 11 : 7}" fill="${here ? "#e6a93d" : i.visited ? "#47c2b1" : "#9fb3ba"}" stroke="#07121d" stroke-width="2"/>
-      ${here ? `<circle cx="${i.x}" cy="${i.y}" r="18" fill="none" stroke="#e6a93d" stroke-width="2"><animate attributeName="r" values="12;24;12" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="2.4s" repeatCount="indefinite"/></circle>` : ""}
-      <text x="${i.x}" y="${i.y - 15}" fill="#ebe5d2" font-size="17" text-anchor="middle" font-family="sans-serif" paint-order="stroke" stroke="#07121d" stroke-width="4">${esc(i.name.split(" (")[0])}</text></g>`;
+      const here = i.id === S.location, pick = i.id === mapPick, c = TIER_COLORS[i.tier || 1];
+      return `<g class="isle" data-island="${esc(i.id)}" tabindex="0" role="button" aria-label="${esc(i.name)}">
+        <circle cx="${i.x}" cy="${i.y}" r="22" fill="transparent"/>
+        ${here ? `<circle cx="${i.x}" cy="${i.y}" r="16" fill="none" stroke="#e6a93d" stroke-width="2"><animate attributeName="r" values="10;24;10" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="2.4s" repeatCount="indefinite"/></circle>` : ""}
+        <circle cx="${i.x}" cy="${i.y}" r="${here ? 10 : 7}" fill="${here ? "#e6a93d" : c}" stroke="${pick ? "#fff" : "#07121d"}" stroke-width="${pick ? 3 : 2}" opacity="${i.visited || here ? 1 : 0.7}"/>
+        <text x="${i.x}" y="${i.y - 15}" fill="#ebe5d2" font-size="${big ? 15 : 24}" text-anchor="middle" font-family="sans-serif" paint-order="stroke" stroke="#07121d" stroke-width="5">${esc(i.name)}</text>
+        <text x="${i.x}" y="${i.y + 24}" fill="${c}" font-size="${big ? 11 : 16}" text-anchor="middle" font-family="sans-serif" paint-order="stroke" stroke="#07121d" stroke-width="3">${"★".repeat(i.tier || 1)}</text></g>`;
     }).join("")}
   </svg>`;
 }
+function islandCard(i) {
+  if (!i) return `<p class="empty">Tap an island on the chart to see what you know about it.</p>`;
+  const people = S.npcs.filter((n) => n.known && n.location === i.id && n.status === "alive");
+  return `<div class="card islecard"><div class="t">${esc(i.name)}${i.id === S.location ? " · YOU ARE HERE" : ""}</div>
+    <div class="s">${esc(i.sea)} · <span style="color:${TIER_COLORS[i.tier || 1]}">${"★".repeat(i.tier || 1)}</span> · held by ${esc(factionName(i.controller))}${i.visited ? " · visited" : ""}</div>
+    ${esc(i.desc)}<div class="s" style="margin-top:6px">Now: ${esc(i.status)}</div>
+    ${people.length ? `<div class="s" style="margin-top:6px">People here: ${people.map((n) => esc(n.name)).join(", ")}</div>` : ""}
+    ${i.id !== S.location ? `<button type="button" class="mini" data-use="I set a course for ${esc(i.name)} and ">Set course</button>` : ""}</div>`;
+}
+function mapPanelHTML() {
+  const pick = byId(S.islands, mapPick || S.location);
+  let h = `<div class="maphead"><h3 style="margin:0">Chart of the seas</h3><button type="button" class="mini" id="openChart">Open full chart</button></div>
+    <div id="mapWrap">${mapSVG(false)}</div>
+    <div class="legend">${[1, 2, 3, 4, 5].map((t) => `<span><i style="background:${TIER_COLORS[t]}"></i>${"★".repeat(t)}</span>`).join("")}<span><i class="route"></i>your route</span></div>
+    ${islandCard(pick)}`;
+  const seas = {};
+  for (const i of S.islands.filter((x) => x.known)) (seas[i.sea.split(" — ")[0].split(" (")[0]] ||= []).push(i);
+  for (const [sea, list] of Object.entries(seas)) h += `<h3>${esc(sea)}</h3>` + list.map((i) => `<button type="button" class="islerow" data-island="${esc(i.id)}"><span>${esc(i.name)}${i.id === S.location ? " ⚓" : ""}</span><span style="color:${TIER_COLORS[i.tier || 1]}">${"★".repeat(i.tier || 1)}</span></button>`).join("");
+  return h;
+}
+/* full-screen chart with zoom and pan */
+const chartView = { k: 1, x: 0, y: 0 };
+function openChart() {
+  $("#chartInner").innerHTML = mapSVG(true);
+  Object.assign(chartView, { k: 1, x: 0, y: 0 }); applyChart();
+  const pick = byId(S.islands, mapPick || S.location); $("#chartCard").innerHTML = islandCard(pick);
+  show("chart");
+}
+function applyChart() { $("#chartInner").style.transform = `translate(${chartView.x}px, ${chartView.y}px) scale(${chartView.k})`; }
+function zoomChart(f, cx, cy) {
+  const r = $("#chartViewport").getBoundingClientRect();
+  cx ??= r.width / 2; cy ??= r.height / 2;
+  const k = clamp(chartView.k * f, 1, 5), real = k / chartView.k;
+  chartView.x = cx - (cx - chartView.x) * real; chartView.y = cy - (cy - chartView.y) * real; chartView.k = k;
+  applyChart();
+}
+(() => {
+  const vp = $("#chartViewport"), pts = new Map(); let lastDist = 0, moved = false;
+  vp.addEventListener("pointerdown", (e) => { pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = false; vp.setPointerCapture(e.pointerId); });
+  vp.addEventListener("pointermove", (e) => {
+    if (!pts.has(e.pointerId)) return;
+    const prev = pts.get(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 2) {
+      const [a, b] = [...pts.values()], d = Math.hypot(a.x - b.x, a.y - b.y), r = vp.getBoundingClientRect();
+      if (lastDist) zoomChart(d / lastDist, (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+      lastDist = d; moved = true;
+    } else { const dx = e.clientX - prev.x, dy = e.clientY - prev.y; if (Math.abs(dx) + Math.abs(dy) > 2) moved = true; chartView.x += dx; chartView.y += dy; applyChart(); }
+  });
+  const up = (e) => { pts.delete(e.pointerId); if (pts.size < 2) lastDist = 0; };
+  vp.addEventListener("pointerup", up); vp.addEventListener("pointercancel", up);
+  vp.addEventListener("wheel", (e) => { e.preventDefault(); const r = vp.getBoundingClientRect(); zoomChart(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+  vp.addEventListener("click", (e) => { if (moved) return; const g = e.target.closest("[data-island]"); if (g) { mapPick = g.dataset.island; $("#chartInner").innerHTML = mapSVG(true); $("#chartCard").innerHTML = islandCard(byId(S.islands, mapPick)); } });
+  $("#zoomIn").onclick = () => zoomChart(1.3); $("#zoomOut").onclick = () => zoomChart(1 / 1.3);
+  $("#zoomReset").onclick = () => { Object.assign(chartView, { k: 1, x: 0, y: 0 }); applyChart(); };
+  $("#chartCard").addEventListener("click", (e) => { const u = e.target.closest("[data-use]"); if (u) { hide("chart"); $("#action").value = u.dataset.use; $("#side").classList.remove("open"); $("#action").focus(); } });
+  $("#panel").addEventListener("click", (e) => { if (e.target.id === "openChart") openChart(); });
+})();
 function renderAll() { renderHUD(); renderSuggestions(); renderTabs(); renderPanel(); }
 
 /* ---------- VFX ---------- */
 const fx = $("#fx");
-function vfxOn() { return settings.vfx !== "off"; }
+// effect settings: combat moves, story moments, shake & flashes, animated sea
+function fxSet() { return settings.fx; }
+function vfxOn() { return settings.fx.story; }
+function combatFxOn() { return settings.fx.combat; }
 function addFx(cls, ms, html = "", style = "") { const el = document.createElement("div"); el.className = cls; if (style) el.style.cssText = style; el.innerHTML = html; fx.append(el); setTimeout(() => el.remove(), ms); return el; }
-function shake() { const a = $("#app"); a.classList.remove("shake"); void a.offsetWidth; a.classList.add("shake"); }
+function shake() { if (!settings.fx.shake) return; const a = $("#app"); a.classList.remove("shake"); void a.offsetWidth; a.classList.add("shake"); }
 function sfx(text) { addFx("fx-sfx", 1400, "", `left:${10 + Math.random() * 45}%;top:${18 + Math.random() * 35}%`).textContent = text; }
-function hakiBolts() {
+function hakiBolts(color) {
   const w = innerWidth, h = innerHeight; let paths = "";
   for (let k = 0; k < 5; k++) {
     let x = Math.random() * w, y = 0, d = `M${x} ${y}`;
     while (y < h) { x += (Math.random() - .5) * 120; y += 30 + Math.random() * 60; d += ` L${x.toFixed(0)} ${y.toFixed(0)}`; }
-    paths += `<path d="${d}" stroke="#000" stroke-width="9" fill="none"/><path d="${d}" stroke="#e0564f" stroke-width="3" fill="none"/><path d="${d}" stroke="#9b5cff" stroke-width="1" fill="none"/>`;
+    paths += `<path d="${d}" stroke="#000" stroke-width="9" fill="none"/><path d="${d}" stroke="${color || "#e0564f"}" stroke-width="3" fill="none"/><path d="${d}" stroke="${color ? "#fff" : "#9b5cff"}" stroke-width="1" fill="none"/>`;
   }
   addFx("fx-haki", 950, `<svg width="100%" height="100%" viewBox="0 0 ${w} ${h}">${paths}</svg>`);
 }
@@ -243,32 +373,53 @@ function airburst() {
 }
 function fruitSwirl(color) { addFx("fx-swirl", 1650, "", color ? `background:repeating-conic-gradient(transparent 0 12deg, ${color}66 12deg 18deg)` : ""); }
 function sparkles() { for (let i = 0; i < 14; i++) addFx("fx-sparkle", 1500, "", `left:${Math.random() * 100}%;top:${20 + Math.random() * 60}%;animation-delay:${Math.random() * .5}s`); }
+// one effect by name; sound-effect words only in fights
+function effect(v, withSfx) {
+  fx.classList.toggle("fx-quiet", !settings.fx.shake);
+  const say = (t) => { if (withSfx) sfx(t); };
+  switch (String(v)) {
+    case "shake": shake(); break;
+    case "impact": addFx("fx-flash", 520); shake(); say(SFX_DEFAULT.impact); break;
+    case "speedlines": addFx("fx-speed", 1150); say("ドドド"); break;
+    case "flash": addFx("fx-flash", 520); break;
+    case "haki": hakiBolts(); shake(); say("バチッ"); break;
+    case "fruit": fruitSwirl(byId(S.fruits, S.player.fruit)?.color); break;
+    case "sparkle": sparkles(); break;
+    case "gloom": addFx("fx-gloom", 2300); break;
+    case "slash": slash(); say("ザンッ"); break;
+    case "shot": burst("fx-drop ember", 10, "#ffe08a"); addFx("fx-flash soft", 300); say("バンッ"); break;
+    case "splash": burst("fx-drop", 26, "#7fd3ff"); say("ザバッ"); break;
+    case "fire": burst("fx-drop ember", 30, "#ff8a3d"); addFx("fx-heat", 1200); say("ゴォッ"); break;
+    case "ice": burst("fx-shard", 18); addFx("fx-aura", 1200, "", "--c:#a8e8ff"); say("ピキッ"); break;
+    case "lightning": hakiBolts("#ffe14a"); addFx("fx-flash soft", 300); say("ゴロッ"); break;
+    case "wind": wind(); say("ヒュオッ"); break;
+    case "shatter": burst("fx-shard", 22); addFx("fx-flash soft", 400); say("パリンッ"); break;
+    case "aura": aura(); break;
+    case "zoom": zoom(); break;
+    case "airburst": airburst(); say("ボウッ"); break;
+    default: addFx("fx-flash soft", 300); shake();
+  }
+}
+// story moments: at most one, no sound words
 function playVFX(list) {
-  if (!vfxOn() || !Array.isArray(list)) return;
-  fx.classList.toggle("fx-quiet", settings.vfx === "quiet");
-  list.slice(0, 3).forEach((v, i) => setTimeout(() => {
-    v = String(v);
-    if (v.startsWith("sfx:")) return sfx(v.slice(4).slice(0, 8));
-    switch (v) {
-      case "shake": shake(); break;
-      case "impact": addFx("fx-flash", 520); shake(); sfx(SFX_DEFAULT.impact); break;
-      case "speedlines": addFx("fx-speed", 1150); break;
-      case "flash": addFx("fx-flash", 520); break;
-      case "haki": hakiBolts(); shake(); break;
-      case "fruit": fruitSwirl(byId(S.fruits, S.player.fruit)?.color); break;
-      case "sparkle": sparkles(); break;
-      case "gloom": addFx("fx-gloom", 2300); break;
-      case "slash": slash(); sfx("ザンッ"); break;
-      case "splash": burst("fx-drop", 26, "#7fd3ff"); sfx("ザバッ"); break;
-      case "fire": burst("fx-drop ember", 30, "#ff8a3d"); addFx("fx-heat", 1200); sfx("ゴォッ"); break;
-      case "wind": wind(); sfx("ヒュオッ"); break;
-      case "shatter": burst("fx-shard", 22); addFx("fx-flash soft", 400); sfx("パリンッ"); break;
-      case "aura": aura(); break;
-      case "zoom": zoom(); break;
-      case "airburst": airburst(); sfx("ボウッ"); break;
-      case "rankup": rankup("Power surges"); break;
-    }
-  }, i * 380));
+  if (!vfxOn() || !Array.isArray(list) || !list.length) return;
+  effect(list[0], false);
+}
+// fights: every move plays in order with a callout
+function playCombat(moves) {
+  if (!combatFxOn() || !moves?.length) return 0;
+  const step = reduceMotion ? 900 : 1300;
+  moves.forEach((m, i) => setTimeout(() => {
+    const mine = /^you$/i.test(m.by) || m.by === S.player.name;
+    const res = ["hit", "miss", "blocked", "crit"].includes(m.result) ? m.result : "hit";
+    const el = addFx(`fx-callout ${mine ? "mine" : "foe"} ${res}`, step - 60, `<small></small><strong></strong><em></em>`);
+    el.querySelector("small").textContent = mine ? "YOU" : m.by;
+    el.querySelector("strong").textContent = m.name;
+    el.querySelector("em").textContent = res === "crit" ? "CRITICAL!" : res.toUpperCase();
+    if (res !== "miss") effect(m.effect, true);
+    if (res === "crit") setTimeout(() => shake(), 200);
+  }, i * step));
+  return moves.length * step;
 }
 function titleCard(isl) {
   if (!vfxOn()) return;
@@ -324,11 +475,15 @@ const Sea = (() => {
       if (p.y < -20) { p.y = H + 10; p.x = Math.random() * W; }
     }
     if (weather === "fog") { cx.fillStyle = "rgba(200,215,220,.08)"; for (let k = 0; k < 3; k++) cx.fillRect(0, H * 0.3 + Math.sin(t * 0.004 + k) * 40 + k * 90, W, 120); }
-    if (weather === "storm" && Math.random() < 0.004 && vfxOn() && settings.vfx === "full") { cx.fillStyle = "rgba(255,255,255,.25)"; cx.fillRect(0, 0, W, H); }
-    if (!reduceMotion) requestAnimationFrame(frame);
+    if (weather === "storm" && Math.random() < 0.004 && settings.fx.shake) { cx.fillStyle = "rgba(255,255,255,.25)"; cx.fillRect(0, 0, W, H); }
+    if (!reduceMotion && settings.fx.sea) requestAnimationFrame(frame); else running = false;
   }
+  let running = true;
   spawn(); frame();
-  return { setWeather(w) { if (w !== weather) { weather = w; spawn(); if (reduceMotion) frame(); } } };
+  return {
+    setWeather(w) { if (w !== weather) { weather = w; spawn(); if (!running) frame(); } },
+    setAnimated(on) { if (on && !running && !reduceMotion) { running = true; frame(); } }
+  };
 })();
 
 /* ---------- turn flow ---------- */
@@ -384,16 +539,19 @@ async function takeTurn(action) {
   S.log.push(entry);
   gmEl.innerHTML = formatNarration(narr) + chipsHTML(out.chips);
   // effects
-  playVFX(json?.vfx);
-  if (out.fruitEaten && !(json?.vfx || []).includes("fruit")) setTimeout(() => playVFX(["fruit"]), 600);
-  if (out.moved) setTimeout(() => titleCard(out.moved), 300);
-  if (out.danger) setTimeout(() => dangerPulse(out.danger), 3300);
-  if (out.bountyUp > 0) setTimeout(bountyPoster, 900);
+  // effects: each fight move gets one; outside fights, only real story moments
+  const fightMs = playCombat(out.moves);
+  const later = Math.max(fightMs, 0);
+  if (!out.moves?.length) playVFX(out.vfx);
+  if (out.fruitEaten) setTimeout(() => { if (vfxOn()) effect("fruit", false); }, 600 + later);
+  if (out.moved) setTimeout(() => titleCard(out.moved), 300 + later);
+  if (out.danger) setTimeout(() => dangerPulse(out.danger), 3300 + later);
+  if (out.bountyUp > 0) setTimeout(bountyPoster, 900 + later);
   setTimeout(() => {
     out.rankups?.forEach((t) => rankup(`${t.name}: ${RANKS[t.rank]}`, S.player.fruit === "kuki"));
     out.airUnlocks?.forEach((a) => rankup(`Unlocked: ${a.name}`, true));
     if (out.slotGained) rankup("New technique slot!");
-  }, 1400);
+  }, 1400 + later);
   if (out.saga) pushLog({ t: "sys", kind: "event", label: `Saga ${out.saga}`, text: "A new age begins on the sea." });
   for (const ev of out.events) pushLog({ t: "sys", kind: "event", label: `Day ${S.day} · World event`, text: `${ev.title}. ${ev.desc}` });
   if (out.rumor) pushLog({ t: "sys", label: "Rumor on the wind", text: out.rumor });
@@ -447,13 +605,13 @@ function renderFruitPicks() {
   const opts = [...(fruitFilter === "All" ? [{ id: null, name: "No fruit", eng: "Keep the sea as your friend", power: "You can swim, and seastone can't touch you. Haki and your fighting style grow a little faster.", type: "", cost: "No miracle powers. You win with skill, grit and friends." }] : []), ...starters];
   for (const f of opts) {
     const b = document.createElement("button"); b.type = "button"; b.className = "fruitpick"; b.setAttribute("aria-pressed", f.id === pickedFruit);
-    b.innerHTML = `${f.featured ? `<span class="featured">Featured · full mastery path</span>` : ""}<b>${esc(f.name)}</b><small>${esc(f.eng)}${f.type ? " · " + esc(f.type) : ""}</small><br>${esc(f.power)}${f.cost ? `<span class="cost">Cost: ${esc(f.cost)}</span>` : ""}`;
+    b.innerHTML = `${f.featured ? `<span class="featured">Featured · full mastery path</span>` : ""}<b>${esc(f.name)}${f.id ? ` <span class="tag ${f.canon ? "canon" : "orig"}">${f.canon ? "Known fruit" : "Original"}</span>` : ""}</b><small>${esc(f.eng)}${f.type ? " · " + esc(f.type) : ""}</small><br>${esc(f.power)}${f.cost ? `<span class="cost">Cost: ${esc(f.cost)}</span>` : ""}`;
     if (f.color) b.style.setProperty("--fc", f.color);
     if (f.featured) b.classList.add("feat");
     b.onclick = () => { pickedFruit = f.id; renderFruitPicks(); renderStarts(); renderMoveIdeas(); };
     box.append(b);
   }
-  $("#fruitCount").textContent = `${WORLD_SEED.fruits.filter((f) => f.starter).length} starter fruits · fruits you don't pick will be eaten by people somewhere in the world`;
+  $("#fruitCount").textContent = `${WORLD_SEED.fruits.filter((f) => f.starter).length} starter fruits of ${WORLD_SEED.fruits.length} in the world · fruits you don't pick will be eaten by people somewhere in the world`;
 }
 function renderMoveIdeas() {
   const box = $("#moveIdeas"); box.innerHTML = "";
@@ -505,7 +663,12 @@ function buildSlots() {
   for (const n of [1, 2, 3]) {
     const s = loadSlot(n);
     const row = document.createElement("div"); row.className = "slot";
-    if (s) {
+    if (s && isOldStory(s)) {
+      row.innerHTML = `<div><b>Slot ${n}: ${esc(s.player?.name)}</b><small>From the old story. It can't continue in the new world.</small></div>`;
+      const del = document.createElement("button"); del.className = "btn ghost"; del.type = "button"; del.textContent = "Delete";
+      del.onclick = () => { store.del(slotKey(n)); buildSlots(); };
+      row.append(del);
+    } else if (s) {
       const isl = s.islands?.find((i) => i.id === s.location);
       row.innerHTML = `<div><b>Slot ${n}: ${esc(s.player?.name)}</b><small>Day ${s.day} · ${esc(isl?.name.split(" (")[0] || s.location)} · ${fmt(s.player?.bounty || 0)} · ${s.turn} turns</small></div>`;
       const go = document.createElement("button"); go.className = "btn"; go.type = "button"; go.textContent = "SAIL";
@@ -526,6 +689,7 @@ $("#importBtn").onclick = () => {
   try {
     const s = decodeSave($("#importCode").value);
     if (!s.player || !s.npcs) throw 0;
+    if (isOldStory(s)) { $("#importMsg").textContent = "That save is from the old story and can't continue in the new world."; return; }
     s.slot = s.slot || 1; startFrom(s); saveGame();
   } catch { $("#importMsg").textContent = "That save code couldn't be read. Make sure you pasted the whole thing."; }
 };
@@ -541,15 +705,30 @@ function openSettings() {
   $("#setEngine").innerHTML = engineText();
   $("#setSample").hidden = Engine.mode !== "sample";
   $("#setApi").hidden = Engine.mode === "sample";
-  $("#tier").value = settings.tier; $("#speed").value = String(settings.speed); $("#vfxLevel").value = settings.vfx; $("#apiModel").value = settings.apiModel;
+  $("#tier").value = settings.tier; $("#speed").value = String(settings.speed); $("#apiModel").value = settings.apiModel;
+  $("#fxCombat").checked = settings.fx.combat; $("#fxStory").checked = settings.fx.story; $("#fxShake").checked = settings.fx.shake; $("#fxSea").checked = settings.fx.sea;
   $("#apiKey").value = store.get("tsl_apikey") || "";
   show("settings");
 }
 $("#setBtn").onclick = openSettings;
+// effects switches
+let fxBefore = null;
+function applyFx(next) {
+  settings.fx = next; saveSettingsLocal();
+  if (!next.story && !next.combat) fx.innerHTML = "";
+  Sea.setAnimated(next.sea);
+  renderFxBtn();
+}
+$("#fxAllOff").onclick = () => { ["#fxCombat", "#fxStory", "#fxShake", "#fxSea"].forEach((id) => ($(id).checked = false)); };
+$("#fxBtn").onclick = () => {
+  const any = Object.values(settings.fx).some(Boolean);
+  if (any) { fxBefore = { ...settings.fx }; applyFx({ combat: false, story: false, shake: false, sea: false }); }
+  else applyFx(fxBefore || { combat: true, story: true, shake: true, sea: true });
+};
 $("#menuSettings").onclick = () => { hide("menu"); openSettings(); };
 $("#saveSettings").onclick = () => {
-  settings.tier = $("#tier").value; settings.speed = +$("#speed").value; settings.vfx = $("#vfxLevel").value; settings.apiModel = $("#apiModel").value;
-  saveSettingsLocal();
+  settings.tier = $("#tier").value; settings.speed = +$("#speed").value; settings.apiModel = $("#apiModel").value;
+  applyFx({ combat: $("#fxCombat").checked, story: $("#fxStory").checked, shake: $("#fxShake").checked, sea: $("#fxSea").checked });
   const k = $("#apiKey").value.trim();
   if (Engine.mode !== "sample") { if (k) { store.set("tsl_apikey", k); Engine.mode = "api"; } else { store.del("tsl_apikey"); Engine.mode = "none"; } }
   $("#engineStatus").innerHTML = engineText();
@@ -572,6 +751,7 @@ $("#copyCode").onclick = async () => {
 $("#toTitle").onclick = () => { saveGame(); hide("menu"); show("title"); };
 
 /* ---------- boot ---------- */
+renderFxBtn();
 (async function boot() {
   $("#engineStatus").innerHTML = engineText();
   await Engine.detect();

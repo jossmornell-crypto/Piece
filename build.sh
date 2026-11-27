@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 {
-  echo '<title>Tides of the Sundered Line</title>'
+  echo '<title>Tides of the Grand Line</title>'
   echo '<meta name="claude:viewport-fit-sides" content="cover">'
   echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
   echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Literata:opsz,wght@7..72,400;7..72,600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">'

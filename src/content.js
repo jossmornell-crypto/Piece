@@ -1,105 +1,50 @@
 /* ============================================================
-   EXPANSION CONTENT: fruits, fruit-bearers, weapons, styles,
-   starting paths, threat tiers, hidden mission seeds.
+   CONTENT: fruit-bearers, weapons, styles, starting paths,
+   hidden mission seeds, and the Air-Air Fruit showcase.
    ============================================================ */
 
-/* ---- 13 new fruits (brings the world to 30) ---- */
-WORLD_SEED.fruits.push(
-  { id: "kuki", name: "Kuki Kuki no Mi", eng: "Air-Air Fruit", type: "Paramecia", holder: "none", location: "frostmark", known: false, starter: true, color: "#bfe6ff",
-    power: "Shape the air you touch or breathe out: air-steps to run on the sky, pressure cannons, vacuum fists that suck the breath from lungs, invisible air shields, and pops that burst eardrums.",
-    limit: "No body transformation. Needs breath or touch to shape air; a seastone gag or a sealed room shuts it down.", cost: "Your pressure bursts ping Iron Tide barometer-snails. Patrols can track big uses." },
-  { id: "doro", name: "Doro Doro no Mi", eng: "Mud-Mud Fruit", type: "Logia", holder: "none", location: "galeharrow", known: false, starter: true, color: "#8a6a3f",
-    power: "Become and control mud: swamp traps that swallow enemies, mud golems, mud-slide travel, and a body that absorbs blows like a bog.",
-    limit: "Sun and fire bake the mud brittle. Dried out, it cracks and hurts.", cost: "You leave a muddy trail anywhere you rest. You are easy to track." },
-  { id: "kessho", name: "Kesshō Kesshō no Mi", eng: "Crystal-Crystal Fruit", type: "Logia", holder: "none", location: "hundred_bells", known: false, starter: true, color: "#9fe8ff",
-    power: "Become living crystal: diamond-hard armor, crystal spears, and prisms that bend sunlight into cutting lasers.",
-    limit: "Sound and vibration shatter crystal. Bells, shouts, and drums hurt.", cost: "Loud noises make you flinch. Monks of Hundred Bells see you as an omen." },
-  { id: "chi", name: "Chi Chi no Mi", eng: "Blood-Blood Fruit", type: "Paramecia", holder: "none", location: "undertow", known: false, starter: true, color: "#c0303a",
-    power: "Control your own blood and any blood you touch: blood whips, instant clotting, blood-armor, and a blood-sense that feels every heartbeat nearby.",
-    limit: "Every technique costs your own blood. Push too far and you faint.", cost: "Start with 10 less max HP." },
-  { id: "nami", name: "Nami Nami no Mi", eng: "Wave-Wave Fruit", type: "Paramecia", holder: "none", location: "moonmaw", known: false, starter: true, color: "#3fa0e0",
-    power: "Send waves through anything: ripple the ground into tidal waves of stone, shake bodies from inside, ride wave-pulses across the air.",
-    limit: "A wave that hits something denser than its medium rebounds into you.", cost: "Your heartbeat sends faint ripples through water. Sea Kings notice you." },
-  { id: "inu_fenrir", name: "Inu Inu no Mi, Model: Fenrir", eng: "Dog-Dog Fruit, Model: Fenrir", type: "Mythical Zoan", holder: "none", location: "emberwake", known: false, starter: true, color: "#9aa4b8",
-    power: "Become the world-devouring wolf: huge strength, a howl that shakes Haki, and jaws that bite through Logia bodies as if they were solid.",
-    limit: "When badly hurt, the wolf's rage takes over and you can't tell friend from foe.", cost: "The rage is already in you. Losing your temper risks a partial transformation." },
-  { id: "kagero", name: "Kagerō Kagerō no Mi", eng: "Mirage-Mirage Fruit", type: "Logia", holder: "none", location: "galeharrow", known: false, starter: true, color: "#ffb36b",
-    power: "Become heat-haze: mirage doubles, false landscapes, a shimmering body attacks pass through, and burning heat-shimmer blades.",
-    limit: "Rain and cold break the illusion. Observation Haki sees through mirages.", cost: "Your body runs hot. Cold seas sap your strength." },
-  { id: "hari", name: "Hari Hari no Mi", eng: "Needle-Needle Fruit", type: "Paramecia", holder: "none", location: "ironhold", known: false, starter: true, color: "#c9c9d6",
-    power: "Grow and launch needles from anywhere on your body: needle storms, needle armor, and stitching wounds shut in seconds.",
-    limit: "Each volley draws on your body's iron. Too many leave you pale and weak.", cost: "Needles sometimes poke through your skin when you're scared." },
-  { id: "uzu", name: "Uzu Uzu no Mi", eng: "Whirlpool-Whirlpool Fruit", type: "Paramecia", holder: "none", location: "corsairs_rest", known: false, starter: true, color: "#2fc4c4",
-    power: "Create whirlpools in water, air, or the ground: drag ships under, spin tornado-kicks, and twist enemies into vortex prisons.",
-    limit: "You get dizzy; big whirlpools leave you vomiting and dazed.", cost: "Seasickness. Every voyage starts rough for you." },
-  { id: "kumo_jorogumo", name: "Kumo Kumo no Mi, Model: Jorōgumo", eng: "Spider-Spider Fruit, Model: Jorōgumo", type: "Mythical Zoan", holder: "none", location: "sunken_reach", known: false, starter: true, color: "#ff6a3d",
-    power: "Become the spider-yokai: six extra limbs, burning fire-silk webs, wall-walking, and a beguiling voice that confuses the weak-willed.",
-    limit: "The fire-silk is hard to control. It burns allies and ships if you panic.", cost: "People who see your hybrid form panic. Villages may drive you out." },
-  { id: "tora_byakko", name: "Tora Tora no Mi, Model: Byakko", eng: "Tiger-Tiger Fruit, Model: Byakko", type: "Mythical Zoan", holder: "none", location: "hundred_bells", known: false, starter: true, color: "#f2f2f2",
-    power: "Become the white tiger of the west: a roar that becomes cutting wind, claws of metal-hard Haki affinity, and blinding speed.",
-    limit: "Panics in tight enclosed spaces. Hates water more than other users.", cost: "Hundred Bells monks consider Byakko holy. They want it back." },
-  { id: "hoshi", name: "Hoshi Hoshi no Mi", eng: "Star-Star Fruit", type: "Logia", holder: "none", location: "aurelion (Gilded Vault)", known: false, color: "#fff2a8",
-    power: "Become starlight: blinding speed of light-motion, star-fire, and at full mastery calling meteors from the sky.",
-    limit: "Legendary. Draining beyond belief; the previous user burned out in a year." },
-  { id: "shika_kirin", name: "Shika Shika no Mi, Model: Kirin", eng: "Deer-Deer Fruit, Model: Kirin", type: "Mythical Zoan", holder: "none", location: "hundred_bells (Cloud Shrine)", known: false, color: "#a8ffcf",
-    power: "Become the Kirin: walk on clouds, judge the guilty with lightning, and sense lies.",
-    limit: "Cannot strike someone it judges innocent." }
-);
-// the Archelon becomes a starter fruit too, and the auction now sells something else
-(() => {
-  const k = WORLD_SEED.fruits.find((f) => f.id === "kame_archelon");
-  k.starter = true; k.limit = "Slow on land, and the shell makes you a target for collectors."; k.cost = "Collectors from the Cinder Exchange want your shell.";
-  const a = WORLD_SEED.events.find((e) => e.id === "cinder_auction");
-  a.desc = "The Cinder Exchange auctions an Echo Stone, a Grade Blade, and 'living lots' at Galeharrow.";
-  a.effects = { threads: [{ id: "hollow_crown", stage: 1 }] };
-})();
-// costs for the original starters
-Object.assign(WORLD_SEED.fruits.find((f) => f.id === "hibi"), { cost: "Hairline cracks run up your arms after every big move.", color: "#d9d2c0" });
-Object.assign(WORLD_SEED.fruits.find((f) => f.id === "sumi"), { cost: "Your fingertips are permanently ink-black. Easy to identify.", color: "#30304a" });
-Object.assign(WORLD_SEED.fruits.find((f) => f.id === "koku"), { cost: "You already lost a year of your life eating it. A grey streak marks your hair.", color: "#e6a93d" });
-Object.assign(WORLD_SEED.fruits.find((f) => f.id === "tenbin"), { cost: "Every unfair trade you witness makes your head throb.", color: "#e0c46a" });
-Object.assign(WORLD_SEED.fruits.find((f) => f.id === "fuin"), { cost: "You must carry paper everywhere. Rain is your enemy.", color: "#f0e6c8" });
-Object.assign(WORLD_SEED.fruits.find((f) => f.id === "neko_bakeneko"), { cost: "Salt circles and shrine wards burn you. Superstitious villagers fear you.", color: "#7a5cff" });
-Object.assign(WORLD_SEED.fruits.find((f) => f.id === "kame_archelon"), { color: "#4f9a6a" });
-
-/* ---- fruit-bearers: if you don't pick a starter fruit, its bearer ate it ---- */
+/* ---- fruit-bearers: every starter fruit you don't pick is eaten by its bearer ---- */
 const BEARERS = [
-  { fruit: "hibi", id: "dax_hollin", name: "Dax Hollin", epithet: "Faultline", role: "dockside brawler", location: "corsairs_rest",
-    desc: "A huge, quiet bruiser who works the gambling barges as a debt-breaker and hates every second of it.", goal: "Pay off his mother's debt to the Cinder Exchange.", secret: "He breaks legs for the house but secretly warns marks the night before.", join: "Free his mother from the barge debt." },
-  { fruit: "sumi", id: "lio_penwright", name: "Lio Penwright", epithet: "the Inkblot", role: "forger and artist", location: "galeharrow",
-    desc: "A jittery genius forger with ink up to the elbows and a joke for every occasion.", goal: "Draw the first true map of the Wound.", secret: "He forges Concord pardons for refugees and is one mistake from the gallows.", join: "Promise him a voyage through the Wound." },
-  { fruit: "koku", id: "mother_sable", name: "Mother Sable", epithet: "the Borrowed Years", role: "fortune teller", location: "moonmaw",
-    desc: "An old woman with a young woman's laugh who reads tides for coins.", goal: "Win back the years she lost.", secret: "She is only nineteen. Using her powers to save the cult's children aged her.", join: "Find a way to return stolen time." },
-  { fruit: "tenbin", id: "orrin_vale", name: "Judge Orrin Vale", epithet: "the Last Fair Scale", role: "disgraced Concord magistrate", location: "lanterngate",
-    desc: "A grey, stern man in a threadbare robe who settles refugee disputes for free.", goal: "Put Ysolde on trial for the Refugee Purge.", secret: "He signed the Purge order before he understood it. He has the original document.", join: "Show him real proof you fight for justice." },
-  { fruit: "fuin", id: "pip_talisman", name: "Pip", epithet: "Talisman", role: "street kid paper-seller", location: "corsairs_rest",
-    desc: "A tiny, fast-talking kid who sells lucky paper charms and seals stolen goods into them.", goal: "See a sky island before growing up.", secret: "Pip has sealed a stolen Echo Stone fragment inside a charm and doesn't know what it is.", join: "Protect Pip from the barge bosses." },
-  { fruit: "neko_bakeneko", id: "shiori_kurobane", name: "Shiori Kurobane", epithet: "Two-Tail", role: "ghost-cat thief", location: "frostmark",
-    desc: "A lazy, smug cat-burglar who steals only from the rich and naps on rooftops.", goal: "Rob the Gilded Vault of Aurelion.", secret: "She already stole a vault key once and lost it in a card game.", join: "Offer her a shot at Aurelion's vault." },
-  { fruit: "kuki", id: "aiko_nakaze", name: "Aiko Nakaze", epithet: "Pressure Drop", role: "sky-courier kid", location: "frostmark",
-    desc: "A breathless fourteen-year-old courier who runs letters across the sky on air-steps.", goal: "Fly over the Red Line on her own breath.", secret: "She carries Unchained Dawn messages without knowing what they say.", join: "Take her somewhere higher than she's ever been." },
-  { fruit: "doro", id: "mags_mudlark", name: "Mags", epithet: "the Mudlark", role: "harbor thief", location: "galeharrow",
-    desc: "A grinning harbor thief who sinks into the mud to escape and smells faintly of swamp.", goal: "Find a crew that won't sell her out.", secret: "Her last crew sold her to the Cinder Exchange. She escaped and they still hunt her.", join: "Stand by her when her old crew comes calling." },
-  { fruit: "kessho", id: "brother_calix", name: "Brother Calix", epithet: "the Prism Monk", role: "crystal-carver monk", location: "hundred_bells",
-    desc: "A gentle monk who carves prayer crystals and talks to light.", goal: "Stop the war between the Storm Thrones.", secret: "He knows Jun Kagari started the provocations.", join: "Help him expose the war's lie." },
-  { fruit: "chi", id: "vesper_lune", name: "Doctor Vesper Lune", epithet: "the Red Surgeon", role: "Undertow prison medic", location: "undertow",
-    desc: "A cold, brilliant surgeon in a blood-red coat who treats prisoners nobody else will.", goal: "Empty the Undertow, one 'dead' prisoner at a time.", secret: "She fakes prisoners' deaths and smuggles them out in body bags.", join: "Break the Undertow open with her." },
-  { fruit: "nami", id: "kai_ressac", name: "Kai Ressac", epithet: "Tidebreaker", role: "surfer-pirate", location: "moonmaw",
-    desc: "A loud, sunburned surfer-pirate who challenges everyone to wave races.", goal: "Ride the current through the Wound.", secret: "He is the runaway heir of a Concord noble house.", join: "Beat him in a wave race, or save his board." },
-  { fruit: "inu_fenrir", id: "varga_holt", name: "Varga Holt", epithet: "the Chained Wolf", role: "Cinder Exchange pit fighter", location: "emberwake",
-    desc: "A chained, silent fighter who has never lost a pit match.", goal: "Freedom. Then revenge on whoever sold him.", secret: "Old Ash keeps him in seastone chains between fights.", join: "Break his chains." },
-  { fruit: "kagero", id: "selene_ashar", name: "Selene Ashar", epithet: "the Mirage Dancer", role: "stage performer", location: "galeharrow",
-    desc: "A dazzling dancer whose shows end with the whole audience seeing different stories.", goal: "Be free of every master she's ever had.", secret: "She is an Unchained Dawn spy reporting to the Cartographer.", join: "Help the Dawn, or protect her cover." },
-  { fruit: "hari", id: "tailor_brisk", name: "Old Brisk", epithet: "Pincushion", role: "Iron Tide uniform tailor", location: "ironhold",
-    desc: "A tiny, sharp-tongued old tailor who has stitched every Admiral's coat.", goal: "Get his apprentices out of Ironhold alive.", secret: "He sews Tidewall blueprints into coat linings and leaks them to the Dawn.", join: "Protect his apprentices." },
-  { fruit: "uzu", id: "mara_gyre", name: "Captain Mara Gyre", epithet: "Maelstrom", role: "smuggler captain", location: "corsairs_rest",
-    desc: "A smirking smuggler captain who never pays a toll and always pays her crew.", goal: "Break the Cinder Exchange's grip on the South Blue.", secret: "She owes Old Ash a single favor, and he hasn't called it in yet.", join: "Win her respect in a deal or a duel." },
-  { fruit: "kumo_jorogumo", id: "itzel_silkfire", name: "Itzel", epithet: "Silkfire", role: "exile weaver", location: "sunken_reach",
-    desc: "A soft-spoken exile who weaves burning silk lanterns at the edge of the Matriarch's domain.", goal: "Revenge on Warden Grail, who cursed her sister.", secret: "She knows a secret tunnel into the Undertow.", join: "Promise to help her reach Grail." },
-  { fruit: "tora_byakko", id: "hakuen", name: "Hakuen", epithet: "White Roar", role: "Hundred Bells sky monk", location: "hundred_bells",
-    desc: "A proud young monk who believes he is the Abbot's chosen successor.", goal: "Prove himself to the Thunder Abbot.", secret: "He doubts the war and hates himself for it.", join: "Defeat him honorably, then show him a better cause." },
-  { fruit: "kame_archelon", id: "moe_turtleback", name: "Big Moe", epithet: "Turtleback", role: "auction-house porter", location: "galeharrow",
-    desc: "A huge, gentle porter who carries auction lots and apologizes to furniture.", goal: "See the bottom of the ocean.", secret: "He ate the Archelon fruit by accident while guarding it. The Cinder Exchange wants it back from his corpse.", join: "Protect him from the Exchange's collectors." }
+  { fruit: "kuki", id: "skye", name: "Skye", epithet: "Puff", role: "mail courier kid", location: "frostvale",
+    desc: "A breathless fourteen-year-old who runs mail across Frostvale's frozen bay faster than anyone.", goal: "See the world from higher than anyone has.", secret: "She has been carrying Revolutionary letters without knowing it.", join: "Take her somewhere she's never been." },
+  { fruit: "hibi", id: "dax", name: "Dax", epithet: "Fault", role: "dock brawler", location: "dunmore",
+    desc: "A huge, quiet bruiser who breaks legs for a gambling boss and hates every second of it.", goal: "Pay off his mother's debt.", secret: "He warns his targets the night before.", join: "Free his mother from the debt." },
+  { fruit: "koku", id: "tess", name: "Tess", epithet: "Granny", role: "fortune teller", location: "fogtown",
+    desc: "An old woman with a young woman's laugh who tells fortunes for coins.", goal: "Win back the years she lost.", secret: "She is only nineteen. Saving children with her power aged her.", join: "Find a way to return stolen time." },
+  { fruit: "tenbin", id: "owen", name: "Owen", epithet: "the Fair Judge", role: "former Marine judge", location: "rivetport",
+    desc: "A grey, stern man who settles shipyard disputes for free.", goal: "Put Captain-level corruption on trial, all the way up.", secret: "He sentenced innocent people at Justice Isle and kept copies of the orders.", join: "Show him you fight for real justice." },
+  { fruit: "fuin", id: "pip", name: "Pip", epithet: "Lucky", role: "street kid charm-seller", location: "loguetown",
+    desc: "A tiny, fast-talking kid who sells lucky paper charms.", goal: "See the Grand Line.", secret: "Pip sealed a stolen Marine report into a charm without reading it.", join: "Protect Pip from the gang that runs the market." },
+  { fruit: "chi", id: "ruby", name: "Doctor Ruby", epithet: "Red Coat", role: "prison medic", location: "impel_down",
+    desc: "A cold, brilliant doctor who treats prisoners nobody else will.", goal: "Get as many prisoners out alive as she can.", secret: "She fakes deaths and smuggles prisoners out in body bags.", join: "Break Impel Down open with her." },
+  { fruit: "nami", id: "kai", name: "Kai", epithet: "Wave Rider", role: "surfer and fisherman", location: "crane_town",
+    desc: "A loud, sunburned surfer who challenges everyone to wave races.", goal: "Ride the biggest wave in the world.", secret: "He is the runaway son of a noble family.", join: "Beat him in a wave race." },
+  { fruit: "hari", id: "brisk", name: "Old Brisk", epithet: "Pins", role: "Marine uniform tailor", location: "marineford",
+    desc: "A tiny, sharp-tongued old tailor who has stitched every Admiral's coat.", goal: "Get his apprentices out of Marineford.", secret: "He leaks Marine plans to the Revolutionaries in coat linings.", join: "Protect his apprentices." },
+  { fruit: "uzu", id: "mara", name: "Captain Mara", epithet: "Whirlpool", role: "smuggler captain", location: "dunmore",
+    desc: "A smirking smuggler who never pays a toll and always pays her crew.", goal: "Break the gambling bosses' hold on Dunmore.", secret: "She owes Sly Dutch one favor, not yet called in.", join: "Win her respect in a deal or a duel." },
+  { fruit: "sumi", id: "leo", name: "Leo", epithet: "Inky", role: "forger", location: "bubble_grove",
+    desc: "A jittery forger with ink up to his elbows and a joke for everything.", goal: "Draw a true map of the whole world.", secret: "He forges freedom papers for slaves.", join: "Promise him a voyage to the New World." },
+  { fruit: "doro", id: "mags", name: "Mags", epithet: "Mudlark", role: "harbor thief", location: "fogtown",
+    desc: "A grinning thief who sinks into the mud to escape.", goal: "Find a crew that won't sell her out.", secret: "Her last crew sold her to slavers. They still hunt her.", join: "Stand by her when her old crew comes." },
+  { fruit: "kessho", id: "cal", name: "Cal", epithet: "Prism", role: "glassblower", location: "westwind",
+    desc: "A gentle glassblower who makes lenses for the scholars of Westwind.", goal: "Protect the library tree.", secret: "He knows about the coming Buster Call.", join: "Help him save Westwind." },
+  { fruit: "bara", id: "bram", name: "Bram", epithet: "Pieces", role: "casino knife-juggler", location: "sundial",
+    desc: "A showman who juggles his own hands for tips at the Sundial casino.", goal: "Leave the casino with his debts cleared.", secret: "He knows where Dutch keeps his secret vault.", join: "Get him out of Dutch's contract." },
+  { fruit: "hana", id: "lily", name: "Lily", epithet: "Bloom", role: "scholar's apprentice", location: "westwind",
+    desc: "A quiet bookworm who sprouts extra hands to read three books at once.", goal: "Read every Poneglyph in the world.", secret: "Professor Lin is teaching her to read the forbidden text.", join: "Prove you will protect the truth." },
+  { fruit: "bomu", id: "joe", name: "Boomer Joe", epithet: "", role: "demolition worker", location: "rivetport",
+    desc: "A cheerful demolition worker who sneezes explosions.", goal: "Build something instead of blowing it up.", secret: "He blew up a Marine ship by accident and has a secret bounty.", join: "Give him a ship to build, not destroy." },
+  { fruit: "supa", id: "spike", name: "Spike", epithet: "Razor", role: "bounty hunter", location: "fogtown",
+    desc: "A grim bounty hunter whose arms turn into blades.", goal: "Earn enough to buy his village back.", secret: "He has never actually killed a target.", join: "Show him a better way to save his village." },
+  { fruit: "sube", id: "sasha", name: "Sasha", epithet: "Silk", role: "dancer and pickpocket", location: "bubble_grove",
+    desc: "A dancer that nothing can hold, who picks pockets during her shows.", goal: "Buy her sister out of the human auction.", secret: "Her sister is already sold to Saint Corvus.", join: "Help free her sister." },
+  { fruit: "bane", id: "hopper", name: "Hopper", epithet: "Bounce", role: "mailman", location: "loguetown",
+    desc: "A hyper mailman who bounces over rooftops.", goal: "Deliver a letter to the New World.", secret: "The letter is for the Old Fox, from a son he doesn't know he has.", join: "Promise to deliver his letter with him." },
+  { fruit: "bari", id: "wally", name: "Wally", epithet: "the Wall", role: "ex-bodyguard", location: "sundial",
+    desc: "A huge, gentle ex-bodyguard who crosses his fingers to make walls.", goal: "Protect someone worth protecting.", secret: "He was fired for refusing to hurt a child.", join: "Give him someone worth protecting." },
+  { fruit: "moku", id: "sam", name: "Smokey Sam", epithet: "", role: "Marine deserter", location: "crane_town",
+    desc: "A lazy ex-Marine sergeant who drinks and smokes in the Crane Town bar.", goal: "Hide from his old unit.", secret: "He deserted after refusing to burn a village.", join: "Prove the Marines are wrong about you." }
 ];
 
 /* ---- weapons ---- */
@@ -124,7 +69,7 @@ const WEAPONS = [
   { id: "hook_swords", name: "Twin hook swords", kind: "sword", grade: "Common", desc: "Hooked blades that lock together." },
   { id: "cane_sword", name: "Cane sword", kind: "sword", grade: "Fine", desc: "A gentleman's walking stick hiding a blade." },
   { id: "cleaver_blade", name: "Giant cleaver-blade", kind: "sword", grade: "Common", desc: "A butcher's cleaver the size of a door." },
-  { id: "saltsteel", name: "Saltsteel blade", kind: "sword", grade: "Fine", desc: "Forged on Brinemoor; never rusts in seawater." },
+  { id: "saltsteel", name: "Saltsteel blade", kind: "sword", grade: "Fine", desc: "Forged in an East Blue salt-smithy; never rusts in seawater." },
   // 8 guns
   { id: "flintlock_pair", name: "Flintlock pair", kind: "gun", grade: "Common", desc: "Two single-shot pistols. Reload drills matter." },
   { id: "long_rifle", name: "Long rifle", kind: "gun", grade: "Fine", desc: "Accurate at a mast's length and beyond." },
@@ -142,16 +87,130 @@ const WEAPONS = [
   { id: "anchor_chain", name: "Anchor-chain", kind: "other", grade: "Common", desc: "A small anchor swung on chain." },
   { id: "boarding_axe", name: "Boarding axe", kind: "other", grade: "Common", desc: "Hooks rails, splits doors and skulls." }
 ];
-// named blades hidden in the world (the GM knows where they are)
+
+/* ---- named blades hidden in the world (the GM knows where they are) ---- */
 const NAMED_WEAPONS = [
-  { id: "tidecutter", name: "Tidecutter", kind: "sword", grade: "Legendary", location: "the_wound", holder: "none", desc: "A katana said to have cut the first ship through the Wound. Lies in the wreck of a Mariejois palace." },
-  { id: "lanterns_vow", name: "Lantern's Vow", kind: "sword", grade: "Grade Blade", location: "lanterngate", holder: "mireille_osei", desc: "A Marine officer's sabre that burns blue with its wielder's Haki." },
-  { id: "bell_breaker", name: "Bell-Breaker", kind: "sword", grade: "Grade Blade", location: "hundred_bells", holder: "jun_kagari", desc: "A black nodachi that cuts without sound." },
-  { id: "cinderfang", name: "Cinderfang", kind: "sword", grade: "Grade Blade", location: "galeharrow", holder: "none", desc: "A smoldering scimitar up for auction at the Cinder Auction." },
-  { id: "gravemoon", name: "Gravemoon", kind: "sword", grade: "Legendary", location: "moonmaw", holder: "none", desc: "A pale crescent blade sealed in the drowned shrine, said to cut eclipses." },
-  { id: "judgment_rifle", name: "Verdict", kind: "gun", grade: "Grade Blade", location: "ironhold", holder: "tamsin_vey", desc: "Admiral Vey's frost-engraved long rifle." },
-  { id: "salt_kings_saber", name: "Salt King's Saber", kind: "sword", grade: "Grade Blade", location: "brinemoor", holder: "rook_danvers", desc: "A saltsteel saber Danvers took from Saltcradle's founder. The village wants it back." },
-  { id: "starless", name: "Starless", kind: "sword", grade: "Legendary", location: "aurelion", holder: "ysolde", desc: "A blade of black meteor iron mounted above the Regent's throne." }
+  { id: "sea_splitter", name: "Sea Splitter", kind: "sword", grade: "Legendary", location: "laugh_tale", holder: "none", desc: "A katana said to have belonged to the Pirate King's first mate. Nobody knows where it went." },
+  { id: "gull_king", name: "Gull King", kind: "sword", grade: "Grade Blade", location: "gullport", holder: "captain_hale", desc: "A sabre Captain Hale took from Gullport's town hall. The town wants it back." },
+  { id: "red_wind", name: "Red Wind", kind: "sword", grade: "Grade Blade", location: "loguetown", holder: "ben_cole", desc: "Redcap's curved sword that whistles when swung." },
+  { id: "mirage_saber", name: "Mirage Saber", kind: "sword", grade: "Grade Blade", location: "sundial", holder: "none", desc: "A scimitar up for auction at the Sundial casino." },
+  { id: "foxfire", name: "Foxfire", kind: "sword", grade: "Legendary", location: "foxhollow", holder: "old_fox", desc: "The Old Fox's giant naginata-blade." },
+  { id: "black_justice", name: "Black Justice", kind: "sword", grade: "Grade Blade", location: "marineford", holder: "admiral_kane", desc: "A Marine officer's sword never once sheathed clean." },
+  { id: "silver_verdict", name: "Silver Verdict", kind: "gun", grade: "Grade Blade", location: "loguetown", holder: "vice_admiral_june", desc: "Vice Admiral June's engraved rifle." },
+  { id: "wreck_cleaver", name: "Wreck Cleaver", kind: "sword", grade: "Grade Blade", location: "rivetport", holder: "none", desc: "A giant blade forged from a ship's keel, hanging in a shipyard as decoration." }
+];
+
+/* ---- starting paths with consequences ---- */
+const STARTS = [
+  { id: "stolen", req: "fruit", title: "Stole it from Captain Hale",
+    text: "You broke into the Marine outpost's strongbox and ate what was inside. You barely escaped.",
+    cons: "Hale hates you. Marines suspicious. Start hurt, ฿3,000,000 bounty. Bounty Day comes a day early.",
+    effects: { player: { hp: -20, bounty: 3000000 }, npcs: [{ id: "captain_hale", disposition: -40, note: "Hunting the thief who robbed his strongbox." }], factions: [{ id: "marines", attitude: -15 }], events: [{ id: "bounty_day", action: "accelerate", day: 2 }] },
+    hook: "The player stole and ate a Devil Fruit from Captain Hale's strongbox last night and barely escaped, wounded. Marines are searching Gullport house to house." },
+  { id: "credit", req: "fruit", title: "Bought it on credit from a casino broker",
+    text: "A smiling broker from Sly Dutch's casino sold you the fruit for a signature. You should have read the fine print.",
+    cons: "No money. You owe ฿50,000,000 to a Warlord's casino. A debt collector arrives on Day 6.",
+    effects: { player: { berries: -3000, add_items: ["Sundial casino debt note: ฿50,000,000 owed"] }, factions: [{ id: "warlords", attitude: -10, note: "The player owes Sly Dutch's casino 50 million." }],
+      new_events: [{ id: "debt_collector", day: 6, title: "The debt collector arrives", desc: "A Sundial casino collector (or Scar Nell on contract) comes to Gullport to take payment in berries, service, or blood.", public: false }] },
+    hook: "The player bought their Devil Fruit on credit from Sly Dutch's casino and owes 50,000,000 berries. A collector is coming." },
+  { id: "washed", req: "fruit", title: "Found it in a pirate wreck",
+    text: "A wrecked pirate ship drifted into the bay. In the captain's cabin was a chest with a strange fruit. You ate it.",
+    cons: "The fruit belonged to Captain Rook's crew. A Rook Pirates search party is coming.",
+    effects: { factions: [{ id: "rook_pirates", attitude: -15, note: "One of their fruits was eaten by a kid in Gullport." }],
+      new_events: [{ id: "rook_search", day: 5, title: "Rook Pirates search Gullport", desc: "A Rook Pirates search party lands in Gullport looking for whoever ate their captain's fruit.", public: false }] },
+    hook: "The player ate a Devil Fruit from the wreck of a Rook Pirates ship. The Emperor Captain Rook's men want it back, even if they have to cut it out." },
+  { id: "childhood", req: "fruit", title: "Ate it as a child",
+    text: "You ate it at age six, thinking it was a weird melon. Gullport grew up with your power.",
+    cons: "The town trusts you. Hale watches you closely. You start with real control.",
+    effects: { player: { mastery: 10 }, npcs: [{ id: "gus", disposition: 10 }, { id: "captain_hale", disposition: -10, note: "Keeps a file on the town's fruit user." }] },
+    hook: "The player has had their Devil Fruit since childhood. All of Gullport knows. Captain Hale sees them as a threat or a tool." },
+  { id: "skyfall", req: "kuki", title: "Fell from the sky",
+    text: "You were a balloon courier until a Marine patrol shot you down. You ate the Air fruit from the cargo as you fell, and your first breath of power broke your fall into Gullport's bay.",
+    cons: "Air mastery starts higher. You carry a sealed World Government letter, and a Cipher Pol agent is coming for it.",
+    effects: { player: { mastery: 10, hp: -10, add_items: ["Sealed World Government letter from the crashed balloon"] }, factions: [{ id: "marines", attitude: -10 }, { id: "cipher_pol", attitude: -15, note: "Wants the letter back." }],
+      new_events: [{ id: "cp_agent_arrives", day: 4, title: "A Cipher Pol agent comes to Gullport", desc: "Agent Grey (or one of his agents) arrives quietly to recover the sealed letter and silence whoever read it.", public: false }] },
+    hook: "The player was a balloon courier shot down by a Marine patrol. While falling they ate the Air-Air Fruit (Kuki Kuki no Mi) from the cargo and caught themselves on a cushion of their own breath. They still carry a sealed World Government letter. Cipher Pol is coming." },
+  { id: "apprentice", req: "nofruit", title: "Haki apprentice to Old Gus",
+    text: "Gus has been beating Haki into you since you could walk, without explaining how an old fisherman knows it.",
+    cons: "Start with real Observation and Armament Haki. Gus trusts you deeply.",
+    effects: { player: { observation: 8, armament: 4 }, npcs: [{ id: "gus", disposition: 20, note: "Trained the player in Haki for years." }] },
+    hook: "The player is Old Gus's secret Haki apprentice, with basic Observation and Armament Haki that no fisher kid should know." },
+  { id: "deserter", req: "nofruit", title: "Marine cadet who walked away",
+    text: "You were a Marine cadet until you refused an order to burn a fishing village. You came home with nothing but your training.",
+    cons: "Marines hostile, ฿1,000,000 bounty for desertion. Lieutenant Pike knows who you are.",
+    effects: { player: { bounty: 1000000, armament: 3, add_items: ["Torn Marine cadet coat"] }, factions: [{ id: "marines", attitude: -20 }, { id: "revolutionary_army", attitude: 10 }], npcs: [{ id: "lt_pike", disposition: 15, note: "Recognizes the player as the cadet who refused the order." }] },
+    hook: "The player is a Marine cadet who deserted after refusing to burn a village. There's a small bounty for desertion. Lieutenant Pike in Gullport recognizes them." },
+  { id: "partner", req: "nofruit", title: "Mia's partner",
+    text: "You and Mia have spent two years building a ship out of wreck timber. It almost floats.",
+    cons: "Start with a small boat and Mia on your crew. Hale wants the boat as 'payment'.",
+    effects: { player: { ship: "The Gull's Luck: a patched one-mast sloop (barely seaworthy)", add_crew: [{ name: "Mia Hart", role: "Shipwright", npc_id: "mia" }] }, npcs: [{ id: "mia", disposition: 30 }, { id: "captain_hale", note: "Plans to take the kids' boat as Bounty Day payment." }] },
+    hook: "The player and Mia Hart have built a small sloop together; Mia is already their crewmate. Captain Hale plans to seize it on Bounty Day." },
+  { id: "framed", req: "any", title: "Framed",
+    text: "Someone sank a Marine supply boat last night, and the wanted posters already have your face on them.",
+    cons: "฿15,000,000 bounty for a crime you didn't commit. Marines hostile. Bounty hunters come early.",
+    effects: { player: { bounty: 15000000 }, factions: [{ id: "marines", attitude: -20 }, { id: "revolutionary_army", attitude: 10 }], events: [{ id: "hunter_season", action: "accelerate", day: 5 }] },
+    hook: "The player has been framed for sinking a Marine supply boat (Revolutionaries really did it). A 15,000,000 wanted poster with their face went up this morning." }
+];
+
+/* ---- hidden mission seeds (never shown to the player) ---- */
+const SEEDS = [
+  // main beats
+  { id: "m_gus_rubbing", kind: "main", where: "gullport", npc: "gus", text: "Old Gus's boat hides a Road Poneglyph rubbing. Cipher Pol is getting close to it." },
+  { id: "m_hale_ledger", kind: "main", where: "gullport", npc: "captain_hale", text: "Hale's ledger proves he sells townspeople to slavers. Exposing it could free Gullport." },
+  { id: "m_slave_ship", kind: "main", where: "gullport", text: "A ship of 'sympathizers' from Gullport is leaving for the Bubble Grove auction." },
+  { id: "m_pike_defect", kind: "main", where: "gullport", npc: "lt_pike", text: "Lieutenant Pike will turn on Hale if someone gives him the courage." },
+  { id: "m_redcap_rival", kind: "main", where: "any", npc: "ben_cole", text: "Redcap Cole races the player for every lead on the One Piece and shows up at the worst moments." },
+  { id: "m_loguetown_gate", kind: "main", where: "loguetown", npc: "vice_admiral_june", text: "Vice Admiral June blocks Loguetown's harbor to stop rookies from leaving for the Grand Line." },
+  { id: "m_auction_rubbing", kind: "main", where: "sundial", npc: "sly_dutch", text: "A Road Poneglyph rubbing is the secret top lot at Dutch's casino auction." },
+  { id: "m_dutch_weapon", kind: "main", where: "sundial", npc: "sly_dutch", text: "Dutch is digging for an ancient weapon under Sundial. Exposing him could break the Warlord system." },
+  { id: "m_westwind_warning", kind: "main", where: "westwind", npc: "professor_lin", text: "Professor Lin must be warned about the Buster Call. She is the only one who can read Road Poneglyphs." },
+  { id: "m_justice_vault", kind: "main", where: "justice_isle", text: "The Op-Op Fruit sits in Justice Isle's evidence vault. Iron Jack would pay anything for it." },
+  { id: "m_buster_order", kind: "main", where: "justice_isle", npc: "admiral_kane", text: "The Buster Call order on Westwind can be stopped only by stealing or forging the order." },
+  { id: "m_corvus_slaves", kind: "main", where: "bubble_grove", npc: "saint_corvus", text: "Saint Corvus's slaves know secrets about the Five Elders. Punching a Celestial Dragon brings an Admiral." },
+  { id: "m_vera_freedom", kind: "main", where: "bubble_grove", npc: "lady_vera", text: "Lady Vera secretly frees slaves. She needs help with something big." },
+  { id: "m_marineford_secret", kind: "main", where: "marineford", npc: "fleet_admiral_stone", text: "Fleet Admiral Stone is losing faith. Proof of the Buster Call's real purpose could turn him." },
+  { id: "m_impel_break", kind: "main", where: "impel_down", npc: "warden_mort", text: "Killing or beating Warden Mort breaks his curses, including the one killing the Old Fox." },
+  { id: "m_fishman_passage", kind: "main", where: "fishman_island", npc: "jet", text: "The way to the New World goes through Fish-Man Island, where pirates are bullying the citizens." },
+  { id: "m_mae_poneglyph", kind: "main", where: "honeycomb", npc: "big_mae", text: "Big Mae has a Road Poneglyph in her palace and wants someone who can read it." },
+  { id: "m_jack_ope", kind: "main", where: "anvil_rock", npc: "iron_jack", text: "Iron Jack hunts the Op-Op Fruit to heal himself, and will start a war for it." },
+  { id: "m_rook_deal", kind: "main", where: "rookery", npc: "captain_rook", text: "Captain Rook made a deal with Cipher Pol to betray other pirates." },
+  { id: "m_fox_successor", kind: "main", where: "foxhollow", npc: "old_fox", text: "The dying Old Fox is quietly looking for a successor worthy of his flag." },
+  { id: "m_revolution_call", kind: "main", where: "any", npc: "nora", text: "The Revolutionary Army sends an invitation once the player openly defies the Government." },
+  { id: "m_admiral_hunt", kind: "main", where: "any", npc: "admiral_ray", text: "Admiral Ray adds the player to his 'interesting' list once their bounty passes 100M." },
+  { id: "m_laugh_tale", kind: "main", where: "laugh_tale", text: "With all four Road Poneglyphs read, the way to Laugh Tale opens." },
+  // side seeds
+  { id: "s_gullport_ghost", kind: "side", where: "gullport", text: "Kids say a drowned fisherman walks the piers at night, looking for his ring." },
+  { id: "s_mia_wood", kind: "side", where: "gullport", npc: "mia", text: "Mia needs Adam-grade wood scraps from the Marine yard to finish her hull." },
+  { id: "s_levy_widow", kind: "side", where: "gullport", text: "A widow is short on Bounty Day money and her son is on the list." },
+  { id: "s_crane_bar", kind: "side", where: "crane_town", text: "A bar fight with a rookie crew turns into a bet over a ship." },
+  { id: "s_crane_shipwright", kind: "side", where: "crane_town", text: "The Crane Town shipyard will build a ship for anyone who beats its foreman at arm-wrestling." },
+  { id: "s_loguetown_execution", kind: "side", where: "loguetown", text: "A pirate is about to be executed on the same platform as the Pirate King. His crew plans a hopeless rescue." },
+  { id: "s_frost_doctor", kind: "side", where: "frostvale", npc: "patch", text: "Frostvale's old doctor is dying, and his dog Patch is trying to save him." },
+  { id: "s_dunmore_cards", kind: "side", where: "dunmore", text: "A legendary card shark challenges anyone to a game for a Log Pose to the New World." },
+  { id: "s_fogtown_party", kind: "side", where: "fogtown", text: "Fogtown throws the player a welcome party. Everyone at the party is a bounty hunter." },
+  { id: "s_reverse_whale", kind: "side", where: "reverse_mountain", text: "A giant whale keeps ramming the Red Line at Twin Cape, waiting for a crew that never came back." },
+  { id: "s_sundial_rebels", kind: "side", where: "sundial", text: "Sundial's rebels plan to storm the casino, not knowing Dutch has set a trap." },
+  { id: "s_rivet_guild", kind: "side", where: "rivetport", text: "The shipwrights' guild is being forced to build warships for someone powerful." },
+  { id: "s_rivet_race", kind: "side", where: "rivetport", text: "A canal boat race through Rivetport with a prize ship." },
+  { id: "s_justice_trial", kind: "side", where: "justice_isle", text: "An innocent sailor is on trial for 'reading'. The verdict is decided before the trial starts." },
+  { id: "s_bubble_coating", kind: "side", where: "bubble_grove", text: "The best ship-coater in Bubble Grove is drunk, broke, and in debt to slavers." },
+  { id: "s_marine_cadet", kind: "side", where: "marineford", text: "A cadet is about to be executed for refusing an order; his squad plans a rescue." },
+  { id: "s_impel_letter", kind: "side", where: "impel_down", text: "A prisoner's last letter needs to reach his daughter in the East Blue." },
+  { id: "s_fishman_bullies", kind: "side", where: "fishman_island", text: "A pirate crew is shaking down a fish-man café." },
+  { id: "s_honey_party", kind: "side", where: "honeycomb", text: "Big Mae's tea party: refusing the invitation is an insult, and accepting it is a trap." },
+  { id: "s_anvil_prison", kind: "side", where: "anvil_rock", text: "Iron Jack's forges run on prisoners. One of them used to be famous." },
+  { id: "s_rook_poison", kind: "side", where: "rookery", text: "A village on Rook's island is dying from a poisoned well." },
+  { id: "s_any_rival", kind: "side", where: "any", text: "A rookie crew with a grudge (invent them, scaled to the region) challenges the player in public." },
+  { id: "s_any_stowaway", kind: "side", where: "any", text: "A stowaway is found aboard with a secret that puts the crew in danger." },
+  { id: "s_any_storm", kind: "side", where: "any", text: "A freak storm strands the player with an unlikely enemy." },
+  { id: "s_any_merchant", kind: "side", where: "any", text: "A traveling merchant sells a map, a cursed item, or a fruit rumor. Some of it is real." },
+  { id: "s_any_ghostship", kind: "side", where: "any", text: "A ghost ship appears in the fog with a skeleton crew that still talks." },
+  { id: "s_any_hunter", kind: "side", where: "any", text: "A bounty hunter (invent one, scaled to the region) comes for the player's head." },
+  { id: "s_any_marines", kind: "side", where: "any", text: "A Marine patrol (scaled to the region) spots the player's ship." },
+  { id: "s_any_festival", kind: "side", where: "any", text: "A local festival or tournament with a hidden danger." },
+  { id: "s_any_old_friend", kind: "side", where: "any", text: "Someone from the player's origin turns up, needing help or wanting payback." },
+  { id: "s_any_seaking", kind: "side", where: "any", text: "A Sea King blocks the route, and something about it is strange." },
+  { id: "s_any_bearer", kind: "side", where: "any", text: "A Devil Fruit user from the recruitable list crosses the player's path in an interesting situation." }
 ];
 
 /* ---- fighting styles (replaces the original short list) ---- */
@@ -175,136 +234,8 @@ STYLES.push(
   { name: "Scholar's Hidden Blade", note: "Analysis first, one precise cut. Weak in a chaotic melee." }
 );
 
-/* ---- starting paths with consequences ---- */
-const STARTS = [
-  { id: "stolen", req: "fruit", title: "Stole it from Danvers' strongbox",
-    text: "You broke into the garrison strongbox and ate what was inside before you were caught. You barely escaped.",
-    cons: "Danvers hates you. Iron Tide suspicious. Start hurt, ฿3,000,000 bounty. Tithe Day comes a day early.",
-    effects: { player: { hp: -20, bounty: 3000000 }, npcs: [{ id: "rook_danvers", disposition: -40, note: "Hunting the thief who stole from his strongbox." }], factions: [{ id: "iron_tide", attitude: -15 }], events: [{ id: "tithe_day", action: "accelerate", day: 2 }] },
-    hook: "The player stole and ate a Devil Fruit from Danvers' garrison strongbox last night and barely escaped wounded; soldiers are searching Saltcradle door to door." },
-  { id: "credit", req: "fruit", title: "Bought it on credit from the Cinder Exchange",
-    text: "A smiling broker sold you the fruit for a signature. The fine print is in ash-ink.",
-    cons: "Berries wiped out. You owe ฿50,000,000. A debt collector arrives on Day 6.",
-    effects: { player: { berries: -3000, add_items: ["Cinder Exchange debt marker: ฿50,000,000 owed"] }, factions: [{ id: "cinder_exchange", attitude: -10, note: "The player owes them 50 million." }],
-      new_events: [{ id: "debt_collector", day: 6, title: "The debt collector arrives", desc: "A Cinder Exchange collector (or Nessa Thorne on contract) comes to Brinemoor to take payment in berries, service, or flesh.", public: false }] },
-    hook: "The player bought their Devil Fruit on credit from a Cinder Exchange broker and owes 50,000,000 berries. Repayment is due soon." },
-  { id: "shrine", req: "fruit", title: "Found it in a Moonmaw shrine chest",
-    text: "A shrine chest washed up on Brinemoor's shore. You ate the fruit inside. Now strangers in tide-robes watch you.",
-    cons: "The Tide-Cult has marked you as their eclipse sacrifice. Kaeli has heard of you.",
-    effects: { npcs: [{ id: "kaeli_moss", note: "Heard a fruit from the drowned shrine was eaten by someone in Brinemoor." }],
-      events: [{ id: "blood_eclipse", action: "alter", desc: "The drowned shrine opens for one night. The Tide-Cult intends to sacrifice the player, who ate a fruit from their shrine." }],
-      new_events: [{ id: "cult_hunters", day: 5, title: "Tide-Cult hunters reach Brinemoor", desc: "Two masked tide-priests come to take the player to Moonmaw alive.", public: false }] },
-    hook: "The player ate a Devil Fruit from a shrine chest that drifted from Moonmaw. The Tide-Cult has marked them as the sacrifice for the coming blood eclipse; masked watchers have been seen." },
-  { id: "childhood", req: "fruit", title: "Ate it as a child",
-    text: "You ate it at age six, thinking it was a weird melon. Saltcradle grew up with your power.",
-    cons: "The village trusts you. Danvers watches you closely. You start with real control.",
-    effects: { player: { mastery: 10 }, npcs: [{ id: "old_pell", disposition: 10 }, { id: "rook_danvers", disposition: -10, note: "Keeps a file on the village's fruit user." }] },
-    hook: "The player has had their Devil Fruit since childhood. All of Saltcradle knows; Danvers keeps a close eye on them as a 'potential asset or threat'." },
-  { id: "apprentice", req: "nofruit", title: "Haki apprentice to Old Pell",
-    text: "Pell has been beating Haki into you since you could walk, without ever explaining why he knows it.",
-    cons: "Start with real Observation and Armament Haki. Pell trusts you deeply.",
-    effects: { player: { observation: 8, armament: 4 }, npcs: [{ id: "old_pell", disposition: 20, note: "Trained the player in Haki for years." }] },
-    hook: "The player is Old Pell's secret Haki apprentice. They have basic Observation and Armament Haki, which no salt-raker should know." },
-  { id: "runaway", req: "nofruit", title: "Blue Oath runaway",
-    text: "You were a cabin hand on a Blue Oath ship that the Iron Tide sank. You washed up on Brinemoor with a coded letter.",
-    cons: "Blue Oath trusts you, Iron Tide wants you. ฿1,000,000 bounty. You know where Lanterngate's hideout is.",
-    effects: { player: { bounty: 1000000, add_items: ["Waterlogged coded letter addressed to 'Lantern'"] }, factions: [{ id: "blue_oath", attitude: 25 }, { id: "iron_tide", attitude: -20 }], npcs: [{ id: "mireille_osei", disposition: 15, note: "Expecting a letter from a missing ship." }] },
-    hook: "The player is a Blue Oath runaway, the only survivor of a sunk ship, carrying a coded letter for Mireille 'Lantern' Osei. The Iron Tide wants them." },
-  { id: "partner", req: "nofruit", title: "Suri's partner",
-    text: "You and Suri have spent two years building a boat out of salt-iron scraps. It almost floats.",
-    cons: "Start with a small boat and Suri on your crew. Danvers wants the boat for scrap.",
-    effects: { player: { ship: "The Saltcracker: a patched salt-iron dinghy with one sail (barely seaworthy)", add_crew: [{ name: "Suri Quell", role: "Shipwright", npc_id: "suri_quell" }] }, npcs: [{ id: "suri_quell", disposition: 30 }, { id: "rook_danvers", note: "Plans to seize the kids' boat as tithe scrap." }] },
-    hook: "The player and Suri Quell have built a small boat together; Suri is already their crewmate. Danvers plans to seize it as tithe." },
-  { id: "framed", req: "any", title: "Framed",
-    text: "Someone blew up a tithe barge last night and the posters already have your face on them.",
-    cons: "฿15,000,000 bounty for a crime you didn't commit. Iron Tide hostile. Bounty hunters come early.",
-    effects: { player: { bounty: 15000000 }, factions: [{ id: "iron_tide", attitude: -20 }, { id: "unchained_dawn", attitude: 10 }], events: [{ id: "hunter_season", action: "accelerate", day: 5 }] },
-    hook: "The player has been framed for blowing up a Concord tithe barge (the real culprits were Unchained Dawn agents). A 15,000,000 bounty poster with their face went up this morning." }
-];
 
-/* ---- threat tiers: power scales with where you are ---- */
-const TIERS = { brinemoor: 1, frostmark: 1, corsairs_rest: 1, lanterngate: 2, galeharrow: 2, moonmaw: 2, vellichor: 3, ironhold: 3, undertow: 3, the_wound: 5, emberwake: 4, sunken_reach: 4, hundred_bells: 4, aurelion: 4, nadir: 5 };
-for (const i of WORLD_SEED.islands) i.tier = TIERS[i.id] || 2;
-const TIER_TEXT = ["", "Blues (weak foes: thugs, petty officers, rookies under ฿10M)", "Early Grand Line (rookies ฿10M–100M, Marine captains, Sea Kings)", "Deep Paradise (Vice Admirals, ฿100M–500M pirates, elite hunters)", "New World (Emperor commanders ฿500M–2B, Admirals, monsters)", "The Wound / endgame (Emperors, Fleet Admiral, ancient weapons)"];
-const RANKS = ["Raw", "Honed", "Awakened", "Master", "Legend"];
-
-/* ---- hidden mission seeds (never shown to the player) ---- */
-const SEEDS = [
-  // main beats
-  { id: "m_pell_stone", kind: "main", where: "brinemoor", npc: "old_pell", text: "Old Pell's buried Echo Stone shard starts humming when the player is near; someone else hears it too." },
-  { id: "m_danvers_ledger", kind: "main", where: "brinemoor", npc: "rook_danvers", text: "Danvers' secret ledger proves he sells families to the Cinder Exchange. Exposing it could free Brinemoor." },
-  { id: "m_refugee_ship", kind: "main", where: "brinemoor", text: "A ship of 'relocated' Saltcradle families is leaving for Galeharrow's living-lot auction." },
-  { id: "m_lantern_letter", kind: "main", where: "lanterngate", npc: "mireille_osei", text: "Mireille needs someone the Iron Tide doesn't know to scout Vane's fleet." },
-  { id: "m_siege_evac", kind: "main", where: "lanterngate", text: "When the siege comes, ten thousand refugees need a way out through the lantern tunnels." },
-  { id: "m_auction_stone", kind: "main", where: "galeharrow", text: "An Echo Stone is lot 47 at the Cinder Auction. Every faction sends a bidder or a thief." },
-  { id: "m_cartographer", kind: "main", where: "galeharrow", npc: "ilse_morrow", text: "A quiet mapmaker asks the player to carry a 'blank' chart to Ironhold. It isn't blank." },
-  { id: "m_wren_ears", kind: "main", where: "galeharrow", npc: "wren", text: "Wren collapses with a nosebleed near the auction house. She can hear the Echo Stone singing." },
-  { id: "m_eclipse", kind: "main", where: "moonmaw", text: "The blood eclipse will open the drowned shrine where the Bakunawa fruit and the blade Gravemoon sleep." },
-  { id: "m_vellichor_path", kind: "main", where: "vellichor", npc: "archivist_odo", text: "Only someone who hears an Echo Stone can find Vellichor; Odo waits for a worthy reader." },
-  { id: "m_dock_nine", kind: "main", where: "ironhold", npc: "dr_ferro", text: "Dock Nine hides the Tidewall core. Dr. Ferro left a flaw that a brave saboteur could use." },
-  { id: "m_vane_doubts", kind: "main", where: "ironhold", npc: "haldor_vane", text: "Vane's locked desk holds the drowning projections; if he sees them made public, he may turn." },
-  { id: "m_undertow_break", kind: "main", where: "undertow", npc: "ulric_grail", text: "Breaking Warden Grail breaks every curse he holds, including the one killing the Matriarch." },
-  { id: "m_matriarch_cure", kind: "main", where: "sunken_reach", npc: "ondine_mako", text: "The Matriarch will trade an Echo Stone for whoever ends her curse." },
-  { id: "m_abbot_daughter", kind: "main", where: "hundred_bells", npc: "sorin_kuge", text: "The Thunder Abbot would stop the war for proof his daughter lives." },
-  { id: "m_black_bell", kind: "main", where: "hundred_bells", npc: "jun_kagari", text: "Black Bell's forged attack orders could be exposed to end the Storm War." },
-  { id: "m_old_ash_books", kind: "main", where: "emberwake", npc: "gideon_halloway", text: "Old Ash's ledger shows he funds both Tidewall and the Dawn. Whoever steals it controls the war." },
-  { id: "m_reverie_crash", kind: "main", where: "aurelion", npc: "ysolde", text: "The Reverie broadcast reaches every Den Den in the world. Hijacking it could tell the truth of the Sundering." },
-  { id: "m_regent_secret", kind: "main", where: "aurelion", npc: "ysolde", text: "Proof that the Regent was born a slave is hidden in a fallen Mariejois archive at the bottom of the Wound." },
-  { id: "m_wound_dive", kind: "main", where: "the_wound", text: "With three Echo Stones, the Wound's currents can be read; the descent to the fallen Holy Land is possible." },
-  { id: "m_crown_truth", kind: "main", where: "nadir", text: "The Hollow Crown is a broadcast engine. Whoever claims it chooses what the whole world hears." },
-  { id: "m_tamsin_hunt", kind: "main", where: "any", npc: "tamsin_vey", text: "Admiral Vey adds the player to her notebook once their bounty passes 30M and begins a slow hunt." },
-  { id: "m_crowe_rival", kind: "main", where: "any", npc: "bastian_crowe", text: "Grin Crowe races the player for every Echo Stone and keeps showing up at the worst moments." },
-  { id: "m_dawn_recruit", kind: "main", where: "any", text: "The Unchained Dawn sends a coded invitation once the player defies the Concord publicly." },
-  { id: "m_mireille_sin", kind: "main", where: "any", npc: "mireille_osei", text: "Mireille confesses she gave the order that caused the Sundering, if the player earns her trust." },
-  // side seeds
-  { id: "s_salt_ghost", kind: "side", where: "brinemoor", text: "Children say a drowned salt-raker walks the evaporation pans at night, crying for his ring." },
-  { id: "s_suri_hull", kind: "side", where: "brinemoor", npc: "suri_quell", text: "Suri needs seastone rivets from the garrison armory to finish her hull." },
-  { id: "s_tithe_cheat", kind: "side", where: "brinemoor", text: "A widow is short three sacks of salt for Tithe Day and her son is on the list." },
-  { id: "s_frost_shipwright", kind: "side", where: "frostmark", text: "The best ice-shipwright in the North Blue will build a hull only for someone who wins her ice-fishing contest." },
-  { id: "s_frost_deserters", kind: "side", where: "frostmark", text: "A deserter squad is hunted by its own former officer, who is closing in tonight." },
-  { id: "s_lottery_rigged", kind: "side", where: "corsairs_rest", text: "The whirlpool lottery is rigged with a hidden drain-gate. A whole barge-family is about to lose everything." },
-  { id: "s_card_shark", kind: "side", where: "corsairs_rest", text: "A legendary card shark challenges anyone to a game for a stolen vault key." },
-  { id: "s_lighthouse", kind: "side", where: "lanterngate", text: "The keeper of the last working lantern tower is cursed to never sleep. Something whispers in the lamp." },
-  { id: "s_refugee_twins", kind: "side", where: "lanterngate", text: "Twin refugee kids are searching for a mother listed as 'deceased' by the Concord." },
-  { id: "s_kite_race", kind: "side", where: "galeharrow", text: "The Galeharrow kite-cargo race pays a fortune and has no rules." },
-  { id: "s_seaking_calf", kind: "side", where: "galeharrow", text: "A Sea King calf is being sold in a tank behind the auction house. Its mother is circling the island." },
-  { id: "s_forger_trouble", kind: "side", where: "galeharrow", text: "A forger's pardons were discovered; refugees who used them will be arrested at dawn." },
-  { id: "s_cookoff", kind: "side", where: "moonmaw", npc: "kaeli_moss", text: "A pirate chef challenges Kaeli to a cook-off; the stakes are her kitchen and the child she hides." },
-  { id: "s_moon_pearls", kind: "side", where: "moonmaw", text: "Pearl divers are vanishing near the drowned shrine; the cult blames 'the moon's hunger'." },
-  { id: "s_wave_race", kind: "side", where: "moonmaw", text: "A wave-riding race around the crescent islands, where losers lose their boards and their pride." },
-  { id: "s_scholar_test", kind: "side", where: "vellichor", text: "The library's riddle-doors test what a visitor is willing to forget." },
-  { id: "s_tailor_apprentices", kind: "side", where: "ironhold", text: "Three apprentices in Ironhold's workshops need to vanish before an inspection." },
-  { id: "s_marine_cadet", kind: "side", where: "ironhold", text: "A cadet is about to be executed for refusing an order; his squad plans a hopeless rescue." },
-  { id: "s_undertow_letter", kind: "side", where: "undertow", text: "A prisoner's last letter needs to reach his daughter in the East Blue." },
-  { id: "s_wound_salvage", kind: "side", where: "the_wound", text: "Salvage crews dive palace ruins in the Wound. One found a sealed vault door with a Celestial crest." },
-  { id: "s_ash_pit", kind: "side", where: "emberwake", text: "The ash pit fights are rigged; a chained fighter will be 'retired' after tonight." },
-  { id: "s_forge_master", kind: "side", where: "emberwake", text: "A blind smith will forge a Grade blade for anyone who brings him a Sea King's tooth." },
-  { id: "s_dome_crack", kind: "side", where: "sunken_reach", text: "A glass dome is cracking and the Brood blames surface spies." },
-  { id: "s_bell_thief", kind: "side", where: "hundred_bells", text: "Someone stole the smallest bell, and the Abbot's monks are about to execute an innocent novice." },
-  { id: "s_cloud_shrine", kind: "side", where: "hundred_bells", text: "The Cloud Shrine opens only for one who has never lied. It holds something holy." },
-  { id: "s_gilded_servant", kind: "side", where: "aurelion", text: "A slave-born servant in Aurelion wants to smuggle her brother down to the sea." },
-  { id: "s_any_rival", kind: "side", where: "any", text: "A rookie crew with a grudge (invent them) challenges the player publicly." },
-  { id: "s_any_stowaway", kind: "side", where: "any", text: "A stowaway is found aboard with a secret that puts the crew in danger." },
-  { id: "s_any_storm", kind: "side", where: "any", text: "A freak storm strands the player with an unlikely enemy." },
-  { id: "s_any_merchant", kind: "side", where: "any", text: "A traveling merchant sells a map, a cursed item, or a fruit rumor. Some of it is real." },
-  { id: "s_any_ghostship", kind: "side", where: "any", text: "A ghost ship appears only in fog, with a crew still fighting a battle from the Sundering." },
-  { id: "s_any_hunter", kind: "side", where: "any", text: "A bounty hunter (invent one, scaled to the region) comes for the player's head." },
-  { id: "s_any_festival", kind: "side", where: "any", text: "A local festival, tournament, or feast with a hidden danger." },
-  { id: "s_any_old_friend", kind: "side", where: "any", text: "Someone from the player's origin turns up, needing help or wanting payback." },
-  { id: "s_any_seaking", kind: "side", where: "any", text: "A Sea King blocks the route and something about it is strange (injured, tamed, carrying a rider)." },
-  { id: "s_any_bearer", kind: "side", where: "any", text: "A Devil Fruit user from the bearer list crosses the player's path in an interesting situation." }
-];
-
-/* ============================================================
-   AIR-AIR FRUIT (Kuki Kuki no Mi, Paramecia): the showcase fruit
-   ============================================================ */
-Object.assign(WORLD_SEED.fruits.find((f) => f.id === "kuki"), {
-  featured: true,
-  power: "Shape any air you touch or breathe out. Compress it into bullets and cannons, harden it into invisible walls and stairs, empty it into vacuums, and steer currents to fly in bursts. Air you've shaped stays under your control until you let go or lose focus.",
-  limit: "No body transformation: you are flesh and blood and can be hit. You must touch the air or breathe it out to claim it, so range starts at arm's length plus one breath. You can't make air from nothing: underwater, in a vacuum, or with a seastone gag you are nearly powerless."
-});
-
-// mastery path: what the Air fruit can do at each mastery level
+/* ---- Air-Air Fruit showcase: mastery path and ready-made moves ---- */
 const AIR_PATH = [
   { at: 0, name: "Breath Shaping", desc: "Harden one breath into a small air bullet or a palm-sized shield. Range: arm's length." },
   { at: 10, name: "Sky Step", desc: "Stamp air solid under your feet to run up a few steps of empty sky." },
@@ -334,12 +265,3 @@ const AIR_MOVES = [
   { name: "Tempest Palm", desc: "Spin compressed air into a small cyclone fired from the palm." }
 ];
 
-// a start path only the Air fruit can take
-STARTS.splice(4, 0, {
-  id: "skyfall", req: "kuki", title: "Fell from the sky",
-  text: "You were a sky-courier until a Concord gunship shot your balloon down. You ate the Air fruit from the cargo as you fell, and your first breath of power broke your fall onto Brinemoor's salt-flats.",
-  cons: "Air mastery starts higher. A Hundred Bells sky-monk is hunting the 'stolen' fruit, and the Concord wants the cargo's other contents.",
-  effects: { player: { mastery: 10, hp: -10, add_items: ["Torn courier satchel with a sealed Concord dispatch"] }, factions: [{ id: "gilded_concord", attitude: -10 }, { id: "hundred_bells", attitude: -10, note: "A monk is sent to recover the Air fruit." }],
-    new_events: [{ id: "sky_monk_arrives", day: 4, title: "A sky-monk descends on Brinemoor", desc: "Hakuen-style monk from Hundred Bells (invent or use one) arrives to reclaim the Air fruit 'stolen' from their cargo, by persuasion or by force.", public: false }] },
-  hook: "The player was a sky-courier whose balloon was shot down by a Concord gunship. While falling they ate the Air-Air Fruit (Kuki Kuki no Mi) from the cargo and caught themselves on a cushion of their own breath. They still carry a sealed Concord dispatch from the wreck. A sky-monk is coming for the fruit."
-});
