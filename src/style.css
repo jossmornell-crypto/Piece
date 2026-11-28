@@ -394,3 +394,10 @@ details.sec > summary::-webkit-details-marker { display: none; }
 .deathstats b { font-family: var(--f-display); font-weight: 400; color: var(--ochre); font-size: 18px; }
 .deathsheet .list { text-align: left; }
 .deathsheet .actions { justify-content: center; }
+
+/* ---- v5: every island on the map ---- */
+.mapcount { color: var(--mist); font-size: 12px; }
+.tag.unexp { background: var(--hull); color: var(--mist); border: 1px dashed var(--rope); }
+.tag:not(.canon):not(.orig):not(.unexp) { background: var(--hull); color: var(--foam); }
+.islerow.unexp > span:first-child { color: var(--mist); font-style: italic; }
+.legend i.unexp { background: transparent; border: 2px dashed var(--mist); }

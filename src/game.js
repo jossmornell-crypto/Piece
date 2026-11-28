@@ -65,6 +65,7 @@ function migrate(s) {
   s.namedWeapons ||= JSON.parse(JSON.stringify(NAMED_WEAPONS));
   p.kills ||= 0; if (p.conqueror) p.conqueror_lvl ||= 0;
   for (const i of WORLD_SEED.islands) if (!s.islands.some((x) => x.id === i.id)) s.islands.push(JSON.parse(JSON.stringify(i)));
+  for (const i of s.islands) { const w = WORLD_SEED.islands.find((x) => x.id === i.id); if (w) { i.x = w.x; i.y = w.y; } }
   return s;
 }
 function isOldStory(s) { return !s || s.v !== 2; }

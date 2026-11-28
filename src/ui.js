@@ -258,7 +258,7 @@ $("#panel").addEventListener("click", (e) => {
 let mapPick = null;
 const TIER_COLORS = ["", "#47c2b1", "#8fd16a", "#e6a93d", "#e0784f", "#e0564f"];
 function mapSVG(big) {
-  const isl = S.islands.filter((i) => i.known);
+  const isl = S.islands; // every island shows; unexplored ones are dimmed
   const seaLabels = [["EAST BLUE", 800, 570], ["NORTH BLUE", 240, 50], ["SOUTH BLUE", 240, 575], ["WEST BLUE", 800, 50], ["PARADISE", 740, 212], ["NEW WORLD", 250, 212]];
   const route = (S.route || []).map((id) => byId(S.islands, id)).filter((i) => i && i.known);
   let path = ""; route.forEach((i, k) => { path += `${k ? "L" : "M"}${i.x} ${i.y} `; });
@@ -278,17 +278,26 @@ function mapSVG(big) {
     <g transform="translate(70 520)" opacity=".8"><circle r="34" fill="none" stroke="#9fb3ba" stroke-width="1"/><path d="M0 -30 L6 0 L0 30 L-6 0Z" fill="#e6a93d"/><path d="M-30 0 L0 5 L30 0 L0 -5Z" fill="#9fb3ba"/><text y="-38" fill="#ebe5d2" font-size="12" text-anchor="middle" font-family="sans-serif">N</text></g>
     ${isl.map((i) => {
       const here = i.id === S.location, pick = i.id === mapPick, c = TIER_COLORS[i.tier || 1];
-      return `<g class="isle" data-island="${esc(i.id)}" tabindex="0" role="button" aria-label="${esc(i.name)}">
+      const unexp = !i.known && !here, label = big || i.known || here || pick;
+      const op = here || i.visited ? 1 : i.known ? 0.75 : 0.45;
+      return `<g class="isle ${unexp ? "unexp" : ""}" data-island="${esc(i.id)}" tabindex="0" role="button" aria-label="${esc(i.name)}${unexp ? " (unexplored)" : ""}" opacity="${op}">
         <circle cx="${i.x}" cy="${i.y}" r="22" fill="transparent"/>
         ${here ? `<circle cx="${i.x}" cy="${i.y}" r="16" fill="none" stroke="#e6a93d" stroke-width="2"><animate attributeName="r" values="10;24;10" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="2.4s" repeatCount="indefinite"/></circle>` : ""}
-        <circle cx="${i.x}" cy="${i.y}" r="${here ? 10 : 7}" fill="${here ? "#e6a93d" : c}" stroke="${pick ? "#fff" : "#07121d"}" stroke-width="${pick ? 3 : 2}" opacity="${i.visited || here ? 1 : 0.7}"/>
-        <text x="${i.x}" y="${i.y - 15}" fill="#ebe5d2" font-size="${big ? 15 : 24}" text-anchor="middle" font-family="sans-serif" paint-order="stroke" stroke="#07121d" stroke-width="5">${esc(i.name)}</text>
-        <text x="${i.x}" y="${i.y + 24}" fill="${c}" font-size="${big ? 11 : 16}" text-anchor="middle" font-family="sans-serif" paint-order="stroke" stroke="#07121d" stroke-width="3">${"★".repeat(i.tier || 1)}</text></g>`;
+        <circle cx="${i.x}" cy="${i.y}" r="${here ? 10 : 7}" fill="${here ? "#e6a93d" : unexp ? "#0a1a27" : c}" stroke="${pick ? "#fff" : unexp ? c : "#07121d"}" stroke-width="${pick ? 3 : 2}" ${unexp ? 'stroke-dasharray="3 2"' : ""}/>
+        ${label ? `<text x="${i.x}" y="${i.y - 15}" fill="#ebe5d2" font-size="${big ? (unexp ? 12 : 15) : 24}" font-style="${unexp ? "italic" : "normal"}" text-anchor="${i.x > 930 ? "end" : i.x < 70 ? "start" : "middle"}" font-family="sans-serif" paint-order="stroke" stroke="#07121d" stroke-width="5">${esc(i.name)}</text>
+        <text x="${i.x}" y="${i.y + 24}" fill="${c}" font-size="${big ? 11 : 16}" text-anchor="middle" font-family="sans-serif" paint-order="stroke" stroke="#07121d" stroke-width="3">${"★".repeat(i.tier || 1)}</text>` : ""}</g>`;
     }).join("")}
   </svg>`;
 }
 function islandCard(i) {
   if (!i) return `<p class="empty">Tap an island on the chart to see what you know about it.</p>`;
+  if (!i.known && i.id !== S.location) {
+    const teaser = (i.desc.match(/^[^.!?]*[.!?]/) || [i.desc])[0];
+    return `<div class="card islecard"><div class="t">${esc(i.name)} <span class="tag unexp">Unexplored</span></div>
+      <div class="s">${esc(i.sea)} · <span style="color:${TIER_COLORS[i.tier || 1]}">${"★".repeat(i.tier || 1)}</span></div>
+      ${esc(teaser)}<div class="s" style="margin-top:6px">Sail there to learn who rules it and what's happening.</div>
+      <button type="button" class="mini" data-use="I set a course for ${esc(i.name)} and ">Set course</button></div>`;
+  }
   const people = S.npcs.filter((n) => n.known && n.location === i.id && n.status === "alive");
   return `<div class="card islecard"><div class="t">${esc(i.name)}${i.id === S.location ? " · YOU ARE HERE" : ""}</div>
     <div class="s">${esc(i.sea)} · <span style="color:${TIER_COLORS[i.tier || 1]}">${"★".repeat(i.tier || 1)}</span> · held by ${esc(factionName(i.controller))}${i.visited ? " · visited" : ""}</div>
@@ -298,22 +307,30 @@ function islandCard(i) {
 }
 function mapPanelHTML() {
   const pick = byId(S.islands, mapPick || S.location);
-  let h = `<div class="maphead"><h3 style="margin:0">Chart of the seas</h3><button type="button" class="mini" id="openChart">Open full chart</button></div>
+  const visited = S.islands.filter((i) => i.visited).length;
+  let h = `<div class="maphead"><div><h3 style="margin:0">Chart of the seas</h3><small class="mapcount">${S.islands.length} islands · ${visited} visited</small></div><button type="button" class="mini" id="openChart">Open full chart</button></div>
     <div id="mapWrap">${mapSVG(false)}</div>
-    <div class="legend">${[1, 2, 3, 4, 5].map((t) => `<span><i style="background:${TIER_COLORS[t]}"></i>${"★".repeat(t)}</span>`).join("")}<span><i class="route"></i>your route</span></div>
+    <div class="legend">${[1, 2, 3, 4, 5].map((t) => `<span><i style="background:${TIER_COLORS[t]}"></i>${"★".repeat(t)}</span>`).join("")}<span><i class="route"></i>your route</span><span><i class="unexp"></i>unexplored</span></div>
     ${islandCard(pick)}`;
   const seas = {};
-  for (const i of S.islands.filter((x) => x.known)) (seas[i.sea.split(" — ")[0].split(" (")[0]] ||= []).push(i);
-  for (const [sea, list] of Object.entries(seas)) h += `<h3>${esc(sea)}</h3>` + list.map((i) => `<button type="button" class="islerow" data-island="${esc(i.id)}"><span>${esc(i.name)}${i.id === S.location ? " ⚓" : ""}</span><span style="color:${TIER_COLORS[i.tier || 1]}">${"★".repeat(i.tier || 1)}</span></button>`).join("");
+  for (const i of S.islands) (seas[i.sea.split(" — ")[0].split(" (")[0]] ||= []).push(i);
+  for (const [sea, list] of Object.entries(seas)) h += `<h3>${esc(sea)}</h3>` + list.map((i) => { const unexp = !i.known && i.id !== S.location; return `<button type="button" class="islerow ${unexp ? "unexp" : ""}" data-island="${esc(i.id)}"><span>${esc(i.name)}${i.id === S.location ? " ⚓" : ""}${unexp ? ' <span class="tag unexp">Unexplored</span>' : i.visited ? "" : ' <span class="tag">Heard of</span>'}</span><span style="color:${TIER_COLORS[i.tier || 1]}">${"★".repeat(i.tier || 1)}</span></button>`; }).join("");
   return h;
 }
 /* full-screen chart with zoom and pan */
 const chartView = { k: 1, x: 0, y: 0 };
 function openChart() {
   $("#chartInner").innerHTML = mapSVG(true);
-  Object.assign(chartView, { k: 1, x: 0, y: 0 }); applyChart();
   const pick = byId(S.islands, mapPick || S.location); $("#chartCard").innerHTML = islandCard(pick);
   show("chart");
+  fitChart(); // measure only once the overlay is visible
+}
+// open zoomed out so the whole map fits, centered
+function fitChart() {
+  const r = $("#chartViewport").getBoundingClientRect();
+  const w = Math.min(r.width, r.height * 1000 / 600);
+  $("#chartInner").style.width = w + "px";
+  Object.assign(chartView, { k: 1, x: (r.width - w) / 2, y: Math.max(0, (r.height - w * 0.6) / 2) }); applyChart();
 }
 function applyChart() { $("#chartInner").style.transform = `translate(${chartView.x}px, ${chartView.y}px) scale(${chartView.k})`; }
 function zoomChart(f, cx, cy) {
@@ -340,7 +357,7 @@ function zoomChart(f, cx, cy) {
   vp.addEventListener("wheel", (e) => { e.preventDefault(); const r = vp.getBoundingClientRect(); zoomChart(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
   vp.addEventListener("click", (e) => { if (moved) return; const g = e.target.closest("[data-island]"); if (g) { mapPick = g.dataset.island; $("#chartInner").innerHTML = mapSVG(true); $("#chartCard").innerHTML = islandCard(byId(S.islands, mapPick)); } });
   $("#zoomIn").onclick = () => zoomChart(1.3); $("#zoomOut").onclick = () => zoomChart(1 / 1.3);
-  $("#zoomReset").onclick = () => { Object.assign(chartView, { k: 1, x: 0, y: 0 }); applyChart(); };
+  $("#zoomReset").onclick = () => fitChart();
   $("#chartCard").addEventListener("click", (e) => { const u = e.target.closest("[data-use]"); if (u) { hide("chart"); $("#action").value = u.dataset.use; $("#side").classList.remove("open"); $("#action").focus(); } });
   $("#panel").addEventListener("click", (e) => { if (e.target.id === "openChart") openChart(); });
 })();
